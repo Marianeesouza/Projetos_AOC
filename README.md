@@ -1,5 +1,7 @@
 # MIPShelf
-Livro
+
+## Requisitos
+**Livro**
 
 1 - O sistema deve ser capaz de cadastrar livros no acervo, permitindo o registro de título, autor, ISBN e quantidade de exemplares disponíveis.
 
@@ -9,13 +11,13 @@ Livro
 
 4 - O sistema deve ser capaz de remover registros de livros do acervo.
 
-Usuário
+**Usuário**
 
 5 - O sistema deve ser capaz de cadastrar usuários, armazenando nome, matrícula e curso.
 
 6 - O sistema deve ser capaz de remover registros de usuários.
 
-Empréstimo
+**Empréstimo**
 
 7 - O sistema deve ser capaz de registrar empréstimos de livros, vinculando-os a usuários previamente cadastrados e armazenando as datas de retirada e devolução previstas.
 
@@ -23,7 +25,7 @@ Empréstimo
 
 9 - O sistema deve ser capaz de gerar relatórios que listem os livros atualmente emprestados, os usuários em atraso e o tempo de atraso (em dias).
 
-Geral
+**Geral**
 
 10 - O sistema deve ser capaz de salvar todos os dados registrados em arquivos, de modo que as informações sejam recuperadas na inicialização.
 
