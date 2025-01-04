@@ -1,5 +1,6 @@
 # MIPShelf
 Livro
+
 1 - O sistema deve ser capaz de cadastrar livros no acervo, permitindo o registro de título, autor, ISBN e quantidade de exemplares disponíveis.
 
 2 - O sistema deve ser capaz de registrar a devolução de livros, atualizando o status de disponibilidade no acervo e confirmando a data de devolução efetiva.
