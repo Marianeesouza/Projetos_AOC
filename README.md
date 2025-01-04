@@ -8,11 +8,13 @@ Livro
 3 - O sistema deve ser capaz de consultar a disponibilidade de livros no acervo, informando se estão disponíveis para empréstimo ou não.
 
 4 - O sistema deve ser capaz de remover registros de livros do acervo.
+
 Usuário
 
 5 - O sistema deve ser capaz de cadastrar usuários, armazenando nome, matrícula e curso.
 
 6 - O sistema deve ser capaz de remover registros de usuários.
+
 Empréstimo
 
 7 - O sistema deve ser capaz de registrar empréstimos de livros, vinculando-os a usuários previamente cadastrados e armazenando as datas de retirada e devolução previstas.
