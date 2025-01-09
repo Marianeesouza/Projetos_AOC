@@ -3,7 +3,7 @@
 # Alunos: Heitor Leander Feitosa da silva
 #         João victor Morais Barreto da silva
 #         Mariane Elisa dos Santos Souza
-
+#         Samuel Roberto de Carvalho Bezerra
 .text
 	main:
     	jal esperar_teclado_carregar
