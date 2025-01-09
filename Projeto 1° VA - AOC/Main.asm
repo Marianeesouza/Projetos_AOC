@@ -23,8 +23,8 @@
 	# Empréstimo:
 	matricula_usuario_ass: 	.space 10   # Espaço reservado para a matrícula do usuário associado ao empréstimo
 	ISBN_livro_ass:         .space 10   # Espaço reservado para o código de ISBN do livro associado ao empréstimo
-	data_registro:  	.space 10   # Espaço reservado para a data em que foi registrado o empréstimo
-	data_devolucao: 	.space 10   # Espaço reservado para a data de devolução do empréstimo
+	data_registro:  	.space 10       # Espaço reservado para a data em que foi registrado o empréstimo
+	data_devolucao: 	.space 10       # Espaço reservado para a data de devolução do empréstimo
 	
 	# Comandos:
 	cmd_data_hora: 			.asciiz "data_hora"
@@ -113,10 +113,22 @@ esperar_input_teclado:
     
     j esperar_input_teclado # entra em loop para esperar o próximo caractere
     
-escrever_caractere_digitado_display:
-    li $t0, 0xFFFF0008   		   		  # Endereço do status do display
+esperar_display_carregar:
+	li $t0, 0xFFFF0008   		   		  # Endereço do status do display
     lw $t1, 0($t0)        				  # Carrega o status do display em $t1
-    beqz $t1, escrever_caractere_digitado_display  # Se status for 0, entra em loop
+    beqz $t1, esperar_display_carregar    # Se status for 0, entra em loop
+    
+    jr $ra
+    
+escrever_caractere_digitado_display:
+    # Aloca espaço no $sp para salvar o endeço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal esperar_display_carregar
+    
+    lw $ra, 0($sp) 		  #resgata o $ra original do $sp
+    addi $sp, $sp, 4      #devolve a pilha para a posicao original
 	
     li $t0, 0xFFFF000C    # Endereço do data do display
 	sw $t2, 0($t0)        # Escreve o caractere no display
@@ -124,10 +136,14 @@ escrever_caractere_digitado_display:
 	j esperar_input_teclado
 	
 escrever_barra_n_display:
-    li $t0, 0xFFFF0008         # Endereço do status do display
-esperar_display:
-    lw $t1, 0($t0)             # Carrega o status do display em $t1
-    beqz $t1, esperar_display  # Se status for 0, espera
+    # Aloca espaço no $sp para salvar o endeço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal esperar_display_carregar
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
 
     la $t2, barra_n            # Carrega o endereço de barra_n
     lb $t2, 0($t2)             # Carrega o valor de barra_n em $t2
@@ -140,6 +156,5 @@ esperar_display:
 verificar_comando:
 	jal escrever_barra_n_display
     # Aqui será implementada a lógica de verificação de comando
-    
     
     j main   #  pula pro main
