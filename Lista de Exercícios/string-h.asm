@@ -3,6 +3,7 @@
 # Alunos: Heitor Leander Feitosa da silva
 #         João victor Morais Barreto da silva
 #         Mariane Elisa dos Santos Souza
+#         Samuel Roberto de Carvalho Bezerra
 
 .data
 	source:    .asciiz "Hello, MIPS!"    # String de origem
