@@ -49,7 +49,7 @@
 	msgE_comando_invalido:          .asciiz "Comando inválido"
 	msgE_acervo_vazio:				.asciiz "O acervo está vazio."
 	msgE_esprestimo_indisponivel: 	.asciiz "Livro indisponível para o empréstimo."
-	msgE_relatorios_indisponivel:   .asciiz "Não há dados disponíveis para gerar o relatório."
+	msgE_relatorio_indisponivel:    .asciiz "Não há dados disponíveis para gerar o relatório."
 	msgE_livro_nao_encontrado:      .asciiz "O livro informado não foi encontrado no acervo."
 	msgE_livro_esta_emprestado:     .asciiz "O livro não pode ser removido por estar emprestado."
 	msgE_usuario_nao_encontrado:    .asciiz "O usuário informado não foi encontrado no acervo."
@@ -60,25 +60,37 @@
 
 main:
 	# Escrever aqui a função que lê os dados do arquivo .txt	
-	jal imprimir_banner_display
+	jal escrever_banner_display
 	jal esperar_input_teclado
 	
 	j main # entra em loop
 	
-imprimir_banner_display:
-	li $t0, 0xFFFF0008    # Endereço do status do display
-    lw $t1, 0($t0)        # Carrega o status do display em $t1
-    beqz $t1, imprimir_banner_display  # Se status for 0, espera
+esperar_display_carregar:
+	li $t0, 0xFFFF0008   		   		  # Endereço do status do display
+    lw $t1, 0($t0)        				  # Carrega o status do display em $t1
+    beqz $t1, esperar_display_carregar    # Se status for 0, entra em loop
     
-    li $t0, 0xFFFF000C   # Endereço do data do display
-    la $t1, banner       # Carrega o endereço do início da string do banner
+    jr $ra
 
-    loop:
-        lb $t2, 0($t1)    # Carrega um caractere da string para $t2
-        beqz $t2, fim     # Se o caractere for o fim da string, sai do loop
-        sw $t2, 0($t0)    # Escreve o caractere no display
-        addi $t1, $t1, 1  # Avança para o próximo caractere
-        j loop            # Continua no loop
+# função genérica que escreve qualquer string cujo endereço esteja armazenado em $t2 no display 
+escrever_string_display:
+	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal esperar_display_carregar
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+    
+    li $t0, 0xFFFF000C         # Endereço do data do display
+
+	loop_string_display:
+		lb $t3, 0($t2)   			# Carrega um caractere da string de $t2 para $t3
+    	beqz $t3, fim    			# Se o caractere for o fim da string, sai do loop
+    	sw $t3, 0($t0)    			# Escreve o caractere no display
+    	addi $t2, $t2, 1  			# Avança para o próximo caractere
+    	j loop_string_display       # Continua no loop
     
     fim:
     jr $ra
@@ -88,11 +100,11 @@ esperar_input_teclado:
     lw $t1, 0($t0)        			 # Carrega o status do teclado em $t1
     beqz $t1, esperar_input_teclado  # Se status for 0, entra em loop
 	
-	li $t0, 0xFFFF0004    # Endereço do data do teclado
-   	lw $t2, 0($t0)        # Carrega o caractere digitado em $t2
+	li $t0, 0xFFFF0004       # Endereço do data do teclado
+   	lw $t2, 0($t0)           # Carrega o caractere digitado em $t2
     
   	# O trecho seguinte armazena o caractere digitado no espaço reservado para comando
-    la $t3, comando       # Carrega o endereço de comando em $t3
+    la $t3, comando          # Carrega o endereço de comando em $t3
     
     loop_armazenar:
         lb $t4, 0($t3)       # Lê o caractere atual do comando e armazena em $t4
@@ -113,13 +125,6 @@ esperar_input_teclado:
     
     j esperar_input_teclado # entra em loop para esperar o próximo caractere
     
-esperar_display_carregar:
-	li $t0, 0xFFFF0008   		   		  # Endereço do status do display
-    lw $t1, 0($t0)        				  # Carrega o status do display em $t1
-    beqz $t1, esperar_display_carregar    # Se status for 0, entra em loop
-    
-    jr $ra
-    
 escrever_caractere_digitado_display:
     # Aloca espaço no $sp para salvar o endeço de $ra
     addi $sp, $sp, -4
@@ -130,13 +135,13 @@ escrever_caractere_digitado_display:
     lw $ra, 0($sp) 		  #resgata o $ra original do $sp
     addi $sp, $sp, 4      #devolve a pilha para a posicao original
 	
-    li $t0, 0xFFFF000C    # Endereço do data do display
+    li $t0, 0xFFFF000C    # Endereço do Receiver data do display
 	sw $t2, 0($t0)        # Escreve o caractere no display
 
-	j esperar_input_teclado
+	jr $ra	
 	
 escrever_barra_n_display:
-    # Aloca espaço no $sp para salvar o endeço de $ra
+    # Aloca espaço no $sp para salvar o endereço de $ra
     addi $sp, $sp, -4
     sw $ra, 0($sp)
     
@@ -148,11 +153,207 @@ escrever_barra_n_display:
     la $t2, barra_n            # Carrega o endereço de barra_n
     lb $t2, 0($t2)             # Carrega o valor de barra_n em $t2
 
-    li $t0, 0xFFFF000C         # Endereço do data do display
+    li $t0, 0xFFFF000C         # Endereço do Transmitter data do display
     sw $t2, 0($t0)             # Escreve o caractere \n no display
 
-    jr $ra                     # Retorna para o chamador
+    jr $ra
+    
+escrever_banner_display:
+	la $t2, banner        # Carrega o endereço do início da string do banner
 	
+    # Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra
+
+escrever_livro_cadastrado_display:
+    la $t2, msgC_livro_cadastrado   # Carrega o endereço de msgC_livro_cadastrado
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra   
+    
+escrever_usuario_cadastrado_display:
+    la $t2, msgC_usuario_cadastrado   # Carrega o endereço de msgC_usuario_cadastrado
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra 
+    
+escrever_emprestimo_realizado_display:
+    la $t2, msgC_emprestimo_realizado   # Carrega o endereço de msgC_emprestimo_realizado
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra     
+    
+escrever_livro_removido_display:
+    la $t2, msgC_livro_removido   # Carrega o endereço de msgC_livro_removido
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra    
+    
+escrever_usuario_removido_display:
+    la $t2, msgC_usuario_removido   # Carrega o endereço de msgC_usuario_removido
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra            
+
+escrever_comando_invalido_display:
+	la $t2, msgE_comando_invalido   # Carrega o endereço de msgE_comando_invalido
+	
+    # Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra
+	
+escrever_acervo_vazio_display:
+    la $t2, msgE_acervo_vazio  # Carrega o endereço de msgE_acervo_vazio
+	
+    # Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra            
+
+escrever_esprestimo_indisponivel_display:
+    la $t2, msgE_esprestimo_indisponivel   # Carrega o endereço de msgE_comando_invalido
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra          
+
+escrever_relatorio_indisponivel_display:
+    la $t2, msgE_relatorio_indisponivel   # Carrega o endereço de msgE_relatorio_indisponivel
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra 
+    
+escrever_livro_nao_encontrado_display:
+    la $t2, msgE_livro_nao_encontrado   # Carrega o endereço de msgE_livro_nao_encontrado
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra         
+
+escrever_livro_esta_emprestado_display:
+    la $t2, msgE_livro_esta_emprestado   # Carrega o endereço de msgE_livro_esta_emprestado
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra   
+    
+escrever_usuario_nao_encontrado_display:
+    la $t2, msgE_usuario_nao_encontrado   # Carrega o endereço de msgE_usuario_nao_encontrado
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra    
+    
+escrever_usuario_tem_pendencias_display:
+    la $t2, msgE_usuario_tem_pendencias   # Carrega o endereço de msgE_usuario_tem_pendencias
+ 	
+ 	# Aloca espaço no $sp para salvar o endereço de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal escrever_string_display
+    
+    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
+    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+
+    jr $ra    
+
 verificar_comando:
 	jal escrever_barra_n_display
     # Aqui será implementada a lógica de verificação de comando
