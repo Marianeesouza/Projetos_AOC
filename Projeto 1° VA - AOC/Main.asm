@@ -83,14 +83,14 @@ escrever_string_display:
     lw $ra, 0($sp) 			   #resgata o $ra original do $sp
     addi $sp, $sp, 4		   #devolve a pilha para a posicao original
     
-    li $t0, 0xFFFF000C         # Endereço do data do display
+    li $t0, 0xFFFF000C         # Endereço do Transmiter data do display
 
 	loop_string_display:
 		lb $t3, 0($t2)   			# Carrega um caractere da string de $t2 para $t3
-    	beqz $t3, fim    			# Se o caractere for o fim da string, sai do loop
-    	sw $t3, 0($t0)    			# Escreve o caractere no display
+    	beqz $t3, fim    			# Se o caractere em $t3 for o caractere de fim de string, sai do loop
+    	sw $t3, 0($t0)    			# Caso contrário, escreve o caractere no display
     	addi $t2, $t2, 1  			# Avança para o próximo caractere
-    	j loop_string_display       # Continua no loop
+    	j loop_string_display       # Continua com loop
     
     fim:
     jr $ra
@@ -100,7 +100,7 @@ esperar_input_teclado:
     lw $t1, 0($t0)        			 # Carrega o status do teclado em $t1
     beqz $t1, esperar_input_teclado  # Se status for 0, entra em loop
 	
-	li $t0, 0xFFFF0004       # Endereço do data do teclado
+	li $t0, 0xFFFF0004       # Endereço do Receiver data do teclado
    	lw $t2, 0($t0)           # Carrega o caractere digitado em $t2
     
   	# O trecho seguinte armazena o caractere digitado no espaço reservado para comando
@@ -174,188 +174,73 @@ escrever_banner_display:
 
 escrever_livro_cadastrado_display:
     la $t2, msgC_livro_cadastrado   # Carrega o endereço de msgC_livro_cadastrado
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra   
+    jal escrever_string_display     # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main   
     
 escrever_usuario_cadastrado_display:
-    la $t2, msgC_usuario_cadastrado   # Carrega o endereço de msgC_usuario_cadastrado
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra 
+    la $t2, msgC_usuario_cadastrado # Carrega o endereço de msgC_usuario_cadastrado 
+    jal escrever_string_display     # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main
     
 escrever_emprestimo_realizado_display:
-    la $t2, msgC_emprestimo_realizado   # Carrega o endereço de msgC_emprestimo_realizado
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra     
+    la $t2, msgC_emprestimo_realizado  # Carrega o endereço de msgC_emprestimo_realizado
+    jal escrever_string_display        # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main     
     
 escrever_livro_removido_display:
     la $t2, msgC_livro_removido   # Carrega o endereço de msgC_livro_removido
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra    
+    jal escrever_string_display   # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main    
     
 escrever_usuario_removido_display:
     la $t2, msgC_usuario_removido   # Carrega o endereço de msgC_usuario_removido
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra            
+    jal escrever_string_display     # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main            
 
 escrever_comando_invalido_display:
 	la $t2, msgE_comando_invalido   # Carrega o endereço de msgE_comando_invalido
-	
-    # Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra
+    jal escrever_string_display     # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main
 	
 escrever_acervo_vazio_display:
-    la $t2, msgE_acervo_vazio  # Carrega o endereço de msgE_acervo_vazio
-	
-    # Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra            
+    la $t2, msgE_acervo_vazio     # Carrega o endereço de msgE_acervo_vazio
+    jal escrever_string_display   # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main            
 
 escrever_esprestimo_indisponivel_display:
     la $t2, msgE_esprestimo_indisponivel   # Carrega o endereço de msgE_comando_invalido
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra          
+    jal escrever_string_display            # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main          
 
 escrever_relatorio_indisponivel_display:
     la $t2, msgE_relatorio_indisponivel   # Carrega o endereço de msgE_relatorio_indisponivel
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra 
+    jal escrever_string_display           # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main 
     
 escrever_livro_nao_encontrado_display:
-    la $t2, msgE_livro_nao_encontrado   # Carrega o endereço de msgE_livro_nao_encontrado
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra         
+    la $t2, msgE_livro_nao_encontrado   # Carrega o endereço de msgE_livro_nao_encontrado 
+    jal escrever_string_display         # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main         
 
 escrever_livro_esta_emprestado_display:
     la $t2, msgE_livro_esta_emprestado   # Carrega o endereço de msgE_livro_esta_emprestado
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra   
+    jal escrever_string_display          # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main   
     
 escrever_usuario_nao_encontrado_display:
     la $t2, msgE_usuario_nao_encontrado   # Carrega o endereço de msgE_usuario_nao_encontrado
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra    
+    jal escrever_string_display           # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main    
     
 escrever_usuario_tem_pendencias_display:
     la $t2, msgE_usuario_tem_pendencias   # Carrega o endereço de msgE_usuario_tem_pendencias
- 	
- 	# Aloca espaço no $sp para salvar o endereço de $ra
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    jal escrever_string_display
-    
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
-
-    jr $ra    
+    jal escrever_string_display           # Pula para a função genérica que irá imprimir a string armazenada em $t2
+    j main    
 
 verificar_comando:
-	jal escrever_barra_n_display
+	jal escrever_barra_n_display    # pula para a função que escreve o caractere de quebra de linha (\n) no display
+    sb $zero, 0($t3)       			# Substitui o \n pelo caractere de fim de string (\0)
+    
     # Aqui será implementada a lógica de verificação de comando
     
     j main   #  pula pro main
