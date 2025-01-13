@@ -13,6 +13,7 @@
 	# Caracteres
 	barra_n:   		.byte 10      # Valor em ASCII do caractere de quebra de linha '\n'
 	espaco:			.byte 32      # Valor em ASCII do caractere de espaço ' '       
+	aspas_duplas:   .byte 34      # Valor em AscII do caractere de aspas duplas ""
 	
 	# Livro:
 	titulo:  	.space 30     # Espaço reservado para o título do livro
@@ -142,7 +143,7 @@ esperar_input_teclado:
     addi $s7, $s7, 1        # Incrementa $s7 para a próxima posição de inserção de caracteres em comando
     
     # Verifica se o caractere digitado é barra_n (\n)
-    la $t2, barra_n                  # Carrega o endereço de barra_n
+	la $t2, barra_n                  # Carrega o endereço de barra_n
     lb $t2, 0($t2)                   # Carrega o valor de barra_n
     beq $t1, $t2, verificar_comando  # Se for barra_n, chama verificar_comando
 
@@ -204,7 +205,7 @@ comparar_strings:
 	#	$s2: reg que possui a quantidade de caracteres que deve ser lida 
 	#	$s3: reg que servirá como contador de caracteres lidos, a qual é incrementado a cada loop     	         
     
-   	li $s3, 1   # inicializa $s3 com 0
+   	li $s3, 1   # inicializa $s3 com 1
    
 	comparador_loop:
 		lb $t0, 0($s0)                          	# Carrega o caractere em $s0 em $t0
@@ -299,6 +300,7 @@ verificar_comando:
   	li $s2, 9                       # Define a quantidade de caracteres de comando que irão ser comparados
   	jal comparar_strings            # Pula para a função que irá comparar as strings
   	beq $v0, 1, formatar_dados      # se $v0 for 1, significa que o comando digitado foi o de data_hora
+    
     j escrever_comando_invalido_display
 
 cadastrar_livro:
