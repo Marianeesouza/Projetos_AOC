@@ -6,11 +6,11 @@
 
 .data
 
-# Constantes
-	keyboard_status:	.word 0xFFFF0000 # endereco do status do teclado
-	display_status:		.word 0xFFFF0008 # endereco do status do display
-	keyboard_buffer:	.word 0xFFFF0004 # endereco do buffer do teclado
-	display_buffer:		.word 0xFFFF000C # endereco do buffer do display
+	# Constantes
+.eqv	keyboard_status 0xFFFF0000 # endereco do status do teclado
+.eqv	display_status 0xFFFF0008 # endereco do status do display
+.eqv	keyboard_buffer 0xFFFF0004 # endereco do buffer do teclado
+.eqv	display_buffer 0xFFFF000C # endereco do buffer do display
 
 	
 	banner:  		.asciiz "MIPShelf-shell>>"
@@ -38,7 +38,7 @@
 	matricula_usuario_ass: 	.space 10   # Espaco reservado para a matricula do usuario associado ao emprestimo
 	ISBN_livro_ass:         .space 10   # Espaco reservado para o codigo de ISBN do livro associado ao emprestimo
 	data_registro:  		.space 10   # Espaco reservado para a data em que foi registrado o emprestimo
-	data_devolucao: 		.space 10   # Espaco reservado para a data de devoluïcao do emprestimo
+	data_devolucao: 		.space 10   # Espaco reservado para a data de devoluï¿½cao do emprestimo
 	
 	# Comandos:
 	cmd_cadastrar_livro: 	.asciiz "cadastrar_livro"
@@ -83,6 +83,8 @@
 	msgE_parte1_falta_argumento_obrigatorio: .asciiz "O campo \"" 
 	msgE_parte2_falta_argumento_obrigatorio: .asciiz "\" e obrigatorio, certifique de usa-lo para que a operacao seja realizada"
 	
+
+
 .text
 .globl main
 
