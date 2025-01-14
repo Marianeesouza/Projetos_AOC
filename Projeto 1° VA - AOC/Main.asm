@@ -12,7 +12,6 @@
 .eqv	keyboard_buffer 0xFFFF0004 # endereco do buffer do teclado
 .eqv	display_buffer 0xFFFF000C # endereco do buffer do display
 
-	
 	banner:  		.asciiz "MIPShelf-shell>>"
 	comando: 		.space 100    # Espaco reservado para o comando digitado pelo usuario
 	data_sistema:   .space 5  	  # Espaco reservado para a data do sistema
@@ -22,6 +21,7 @@
 	barra_n:   		.byte 10      # Valor em ASCII do caractere de quebra de linha '\n'
 	espaco:			.byte 32      # Valor em ASCII do caractere de espaco ' '       
 	aspas_duplas:   .byte 34      # Valor em AscII do caractere de aspas duplas ""
+	virgula:		.byte 44      # Valor em AscII do caractere da vírgula (',')
 	
 	# Livro:
 	titulo:  	.space 30     # Espaco reservado para o titulo do livro
@@ -40,6 +40,16 @@
 	data_registro:  		.space 10   # Espaco reservado para a data em que foi registrado o emprestimo
 	data_devolucao: 		.space 10   # Espaco reservado para a data de devoluï¿½cao do emprestimo
 	
+	# Repositórios Temporários
+	repo_livro: .space 4500 # Espaço reservado para a gravação temporária dos livros cadastrados
+	repo_usuario: .space 4500 # Espaço reservado para a gravação temporária dos usuários cadastrados
+	repo_emprestimo: .space 4000 # Espaço reservado para a gravação temporária dos empréstimos cadastrados
+	
+	# Locais dos arquivos salvos
+	local_arquivo_livros: .asciiz  "C:/repo_livros.txt"
+	local_arquivo_usuario: .asciiz  "C:/repo_usuarios.txt"
+	local_arquivo_emprestimo: .asciiz  "C:/repo_emprestimos.txt"	
+	
 	# Comandos:
 	cmd_cadastrar_livro: 	.asciiz "cadastrar_livro"
 	cmd_cadastrar_usuario:  .asciiz "cadastrar_usuario"
@@ -48,7 +58,7 @@
 	cmd_gerar_relatorio:    .asciiz "gerar_relatorio"
 	cmd_remover_livro:      .asciiz "remover_livro"
 	cmd_remover_usuario: 	.asciiz "remover_usuario"
-	cmd_savar_dados: 	    .asciiz "salvar_dados"
+	cmd_salvar_dados: 	    .asciiz "salvar_dados"
 	cmd_formatar_dados: 	.asciiz "formatar_dados"
 	cmd_data_hora: 			.asciiz "data_hora"
 	
@@ -64,12 +74,13 @@
 	arg_data:           .asciiz "--data"
 	arg_hora:           .asciiz "--hora"
 	
-	# Mensagens de confirmacao:
-	msgC_livro_cadastrado: 		.asciiz "Livro cadastrado com sucesso!"
-	msgC_usuario_cadastrado: 	.asciiz "Usuario cadastrado com sucesso!"
-	msgC_emprestimo_realizado: 	.asciiz "Emprestimo realizado com sucesso!"
-	msgC_livro_removido:        .asciiz "Livro removido com sucesso!"
-	msgC_usuario_removido:      .asciiz "usuario removido com sucesso!"
+	# Mensagens de confirmação:
+	msgC_livro_cadastrado: 		.asciiz "Livro cadastrado"
+	msgC_usuario_cadastrado: 	.asciiz "Usuario cadastrado"
+	msgC_emprestimo_realizado: 	.asciiz "Empréstimo realizado"
+	msgC_livro_removido:        .asciiz "Livro removido"
+	msgC_usuario_removido:      .asciiz "Usuario removido"
+	msgC_com_sucesso: 			.asciiz " com sucesso!"
 	
 	# Mensagens de erro:
 	msgE_comando_invalido:         			 .asciiz "Comando invalido!"
@@ -210,32 +221,69 @@ escrever_banner_display:
     jr $ra
 
 comparar_strings:
-	#	$s0: reg que possui o endereco do comando digitado pelo usuario
-	#	$s1: reg que possui o endereco da string a ser comparada com o comando
+	#	$s0: reg que possui o endereço do comando digitado pelo usuário
+	#	$s1: reg que possui o endereço da string a ser comparada com o comando
 	#	$s2: reg que possui a quantidade de caracteres que deve ser lida 
-	#	$s3: reg que servira como contador de caracteres lidos, a qual e incrementado a cada loop     	         
-    
-   	li $s3, 1   # inicializa $s3 com 1
    
 	comparador_loop:
+		beqz $s2, retorno_strings_iguais       		# Se $s2 é igual a zero significa que a contagem terminou e eles são iguais
 		lb $t0, 0($s0)                          	# Carrega o caractere em $s0 em $t0
 		lb $t1, 0($s1)                          	# Carrega o caractere em $s1 em $t1
-		bne $t0, $t1, retorno_strings_diferentes    # se os caracteres sao diferentes $v0 	
-		addi $s0, $s0, 1                            # Incrementa $s0, para seguir com o proximo caractere da string
-		addi $s1, $s1, 1                            # Incrementa $s1, para seguir com o proximo caractere da string
-		addi $s3, $s3, 1 							# Incrementa $s3
-		beq  $s2, $s3, retorno_strings_iguais       # Se $s2 e $s3 sao iguais significa que os caracteres sao iguais         
+		bne $t0, $t1, retorno_strings_diferentes    # se os caracteres são diferentes $v0 	
+		addi $s0, $s0, 1                            # Incrementa $s0, para seguir com o próximo caractere da string
+		addi $s1, $s1, 1                            # Incrementa $s1, para seguir com o próximo caractere da string
+		subi $s2, $s2, 1							# Subtrai $s2, para verificar se a contagem terminou
 		j comparador_loop
 		
 	retorno_strings_iguais:
-		li $v0, 1         # Da ao reg $v0 valor 1 para sinalizar como flag que as strings sao iguais
+		li $v0, 1         # Dá ao reg $v0 valor 1 para sinalizar como flag que as strings são iguais
 		j fim_loop 		  # pula para o fim do loop 
 	
 	retorno_strings_diferentes:
-		li $v0, 0  		  # Da ao reg $v0 o valor 0 para sinalizar como flag que as strings sao diferentes
+		li $v0, 0  		  # Dá ao reg $v0 o valor 0 para sinalizar como flag que as strings são diferentes
 
 	fim_loop: 
-		jr $ra  
+		jr $ra 
+
+str_concat:
+    # $s0: registrador que carrega a primeira parte da concatenação
+    # $s1: registrador que carrega a segunda parte da concatenação (a parte que será copiada)
+
+    # Encontra o final da string em $s0
+    acha_final_concat:
+        lb $t0, 0($s0)         # Carrega o caractere atual de $s0
+        beq $t0, $zero, copia_para_s0  # Se encontrar NULL (\0), fim da string
+        addi $s0, $s0, 1       # Avança o ponteiro de $s0
+        j acha_final_concat    # Continua procurando o final
+
+    # Copia a string de $s1 para o final de $s0
+    copia_para_s0:
+        lb $t0, 0($s1)         # Carrega o caractere atual de $s1
+        beq $t0, $zero, fim_concat  # Se encontrar NULL (\0), fim da string de origem
+        sb $t0, 0($s0)         # Escreve o caractere de $s1 no local apontado por $s0
+        addi $s0, $s0, 1       # Avança o ponteiro de $s0
+        addi $s1, $s1, 1       # Avança o ponteiro de $s1
+        j copia_para_s0        # Continua copiando
+
+    # Finaliza a string concatenada
+    fim_concat:
+        sb $zero, 0($s0)       # Adiciona NULL (\0) ao final da string concatenada
+        jr $ra                 # Retorna
+
+clear_buffer:
+    # $s1: Aponta para o início do buffer a ser limpo
+
+    li $t0, 0            # Carrega 0 em $t0 (valor para limpar)
+    
+	clear_loop:
+    	lb $t1, 0($s1)       # Carrega o byte atual do buffer
+    	beq $t1, $zero, end_clear  # Se encontrar NULL (\0), fim da string
+    	sb $t0, 0($s1)       # Substitui o byte por 0
+    	addi $s1, $s1, 1     # Avança o ponteiro de $s0
+    	j clear_loop         # Continua limpando
+
+	end_clear:
+    	jr $ra               # Retorna
 		
 verificar_comando:
 	jal escrever_barra_n_display    # Pula para a funcao que escreve o caractere de quebra de linha (\n) no display
@@ -290,12 +338,12 @@ verificar_comando:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, remover_usuario     # se $v0 for 1, significa que o comando digitado foi o de remover_usuario
   	
-  	# Verifica cmd_savar_dados
-  	la $s1, cmd_savar_dados         # Carrega o endereco de cmd_savar_dados
+  	# Verifica cmd_salvar_dados
+  	la $s1, cmd_salvar_dados         # Carrega o endereco de cmd_savar_dados
     la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 12                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
-  	beq $v0, 1, savar_dados         # se $v0 for 1, significa que o comando digitado foi o de savar_dados
+  	beq $v0, 1, salvar_dados         # se $v0 for 1, significa que o comando digitado foi o de savar_dados
   	
   	# Verifica cmd_formatar_dados
   	la $s1, cmd_formatar_dados      # Carrega o endereco de cmd_formatar_dados
@@ -313,75 +361,227 @@ verificar_comando:
     
     j escrever_comando_invalido_display
 
+guardar_info_buffer:
+	# $t1: contém qual o buffer a ser usado
+	# $s0: contém o comando dado pelo usuário
+	
+	lb $t0, 0($s0)           # Carrega o próximo caractere
+	li $t2, 34 			   	# Carrega aspas duplas
+    bne $t0, $t2, escrever_comando_invalido_display 	# caso o próximo caracter não for de aspas duplas, o comando é inválido
+    addi $s0, $s0, 1
+
+	# Copia os caracteres até a segunda aspa dupla
+	copy_loop:
+    	lb $t0, 0($s0)           # Carrega o próximo caractere
+    	beqz $t0, end            # Se for nulo (fim da string), encerra
+    	beq $t0, $t2, finalize    # Se for aspas duplas ('"'), finaliza a cópia
+    	sb $t0, 0($t1)           # Copia o caractere para o buffer do título
+    	addi $s0, $s0, 1         # Avança para o próximo caractere
+    	addi $t1, $t1, 1         # Avança no buffer do título
+    	j copy_loop
+
+	# Finaliza o buffer adicionando a vírgula
+	finalize:
+		addi $s0, $s0, 1 			#Passa das aspas
+    	jr $ra
+    end:
+    	j escrever_comando_invalido_display 	# Caso haja um caracter nulo e não um de aspas duplas, o comando é inválido
+
 cadastrar_livro:
-	# Em construcao
-	j escrever_livro_cadastrado_display
+	# Em construção
+	
+	# Primeiro, verificamos se o argumento a seguir é o esperado
+	la $s1, arg_titulo
+	# $s0 já tem o comando a ser passado
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	li $s2, 8
+	jal comparar_strings
+	beqz $v0, escrever_falta_argumento_titulo_display
+	
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	# Pega o que está entre aspas e salva no buffer
+	la $t1, titulo
+	jal guardar_info_buffer
+	# Colocar a vírgula no fim do buffer
+	la $t2, virgula               # Carrega o valor ASCII da vírgula (',')
+    sb $t2, 0($t1)           # Adiciona a vírgula ao final do título
+	
+	# Verificamos se o argumento a seguir é válido
+	la $s1, arg_autor
+	# $s0 já tem o comando a ser passado
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	li $s2, 7
+	jal comparar_strings
+	beqz $v0, escrever_falta_argumento_autor_display
+	
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	# Pega o que está entre aspas e salva no buffer
+	la $t1, autor
+	jal guardar_info_buffer
+	la $t2, virgula               # Carrega o valor ASCII da vírgula (',')
+    sb $t2, 0($t1)           # Adiciona a vírgula ao final do autor
+	
+	# Verificamos se o argumento a seguir é válido
+	la $s1, arg_ISBN
+	# $s0 já tem o comando a ser passado
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	li $s2, 6
+	jal comparar_strings
+	beqz $v0, escrever_falta_argumento_ISBN_display
+	
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	# Pega o que está entre aspas e salva no buffer
+	la $t1, ISBN
+	jal guardar_info_buffer
+	la $t2, virgula               # Carrega o valor ASCII da vírgula (',')
+    sb $t2, 0($t1)           # Adiciona a vírgula ao final do ISBN
+    
+    # Verificamos se o argumento a seguir é válido
+	la $s1, arg_quantidade
+	# $s0 já tem o comando a ser passado
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	li $s2, 5
+	jal comparar_strings
+	beqz $v0, escrever_falta_argumento_quantidade_display
+	
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	# Pega o que está entre aspas e salva no buffer
+	la $t1, quantidade
+	jal guardar_info_buffer
+	la $t2, barra_n               # Carrega o valor ASCII de \n
+    sb $t2, 0($t1)           # Adiciona ao final da quantidade
+	
+	# Agora vamos salvar no repositório (buffer) de livros
+	# Para isso, vamos concatenar todas as informações que obtivemos em uma única string e coloca-la no repo
+	la $s0, repo_livro
+	la $s1, titulo
+	jal str_concat
+	
+	jal clear_buffer	# Limpa o buffer de titulo
+	
+	la $s1, autor
+	jal str_concat
+	
+	jal clear_buffer	# Limpa o buffer de autor
+	
+	la $s1, ISBN
+	jal str_concat
+	
+	jal clear_buffer	# Limpa o buffer de ISBN
+	
+	la $s1, quantidade
+	jal str_concat
+	
+	jal clear_buffer	# Limpa o buffer de qtd
+	
+	# Teste para ver o que está no repositório
+	la $t1, repo_livro
+	jal escrever_string_display
+	jal escrever_barra_n_display    # pula para a função que irá imprimir uma quebra de linha no display
+	
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
+	la $t1, msgC_livro_cadastrado   # Carrega o endereço de msgC_livro_cadastrado
+	j escrever_com_sucesso_display
 
 remover_livro:
-	# Em construcao
-	j escrever_livro_removido_display
+	# Em construção
+	
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
+	la $t1, msgC_livro_removido     # Carrega o endereço de msgC_livro_removido
+	j escrever_com_sucesso_display
 
 listar_livro:
-	# Em construcao	
+	# Em construção	
+	
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
 	j main
 
 cadastrar_usuario:
-	# Em construcao
-	j escrever_usuario_cadastrado_display
+	# Em construção
+	
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
+	
+	la $t1, msgC_usuario_cadastrado # Carrega o endereço de msgC_usuario_cadastrado 
+	j escrever_com_sucesso_display
 	
 remover_usuario:
-	# Em construcao
-	j escrever_usuario_removido_display
+	# Em construção
+	
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
+	la $t1, msgC_usuario_removido   # Carrega o endereço de msgC_usuario_removido
+	j escrever_com_sucesso_display
 	
 registrar_emprestimo:
-	# Em construcao
-	j escrever_emprestimo_realizado_display
+	# Em construção
+	
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
+	la $t1, msgC_emprestimo_realizado  # Carrega o endereço de msgC_emprestimo_realizado
+	j escrever_com_sucesso_display
 
 gerar_relatorio:
-	# Em construcao
+	# Em construção
+	
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
 	j main
 
-savar_dados:
+salvar_dados:
 	# Agr aqui tu faz o L aqui, parceira.
+	
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
 	j main
 	
 formatar_dados:
 	# Do your jump, mari
+	
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
 	j main
 	
 data_hora:
 	# Agr aqui tu faz o L aqui, parceira.
-	j main
 	
-escrever_livro_cadastrado_display:
-    la $t1, msgC_livro_cadastrado   # Carrega o endereco de msgC_livro_cadastrado
-    jal escrever_string_display     # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
-    j main   
-    
-escrever_usuario_cadastrado_display:
-    la $t1, msgC_usuario_cadastrado # Carrega o endereco de msgC_usuario_cadastrado 
-    jal escrever_string_display     # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
-    j main   
-    
-escrever_emprestimo_realizado_display:
-    la $t1, msgC_emprestimo_realizado  # Carrega o endereco de msgC_emprestimo_realizado
-    jal escrever_string_display        # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display       # pula para a funcao que ira imprimir uma quebra de linha no display
-    j main   
-    
-escrever_livro_removido_display:
-    la $t1, msgC_livro_removido     # Carrega o endereco de msgC_livro_removido
-    jal escrever_string_display     # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
-    j main   
-    
-escrever_usuario_removido_display:   
-    la $t1, msgC_usuario_removido   # Carrega o endereco de msgC_usuario_removido
-    jal escrever_string_display     # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
-    j main   
+	# Limpa o buffer de comando
+	la $s1, comando
+	jal clear_buffer
+	
+	j main
+
+	# Função única para mensagens de confirmação
+escrever_com_sucesso_display:
+	# $t1: reg possui a primeira parte da mensagem de confirmação
+
+	jal escrever_string_display  # Pula para a função genérica que irá imprimir a string armazenada em $t1
+	la $t1, msgC_com_sucesso  # Carrega o endeço de msgC_com_sucesso
+	jal escrever_string_display  # Pula para a função genérica que irá imprimir a string armazenada em $t1
+	jal escrever_barra_n_display    # pula para a função que irá imprimir uma quebra de linha no display
+	
+	j main
 
 escrever_comando_invalido_display:
 	la $t1, msgE_comando_invalido   # Carrega o endereco de msgE_comando_invalido
@@ -431,7 +631,7 @@ escrever_usuario_tem_pendencias_display:
     jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
     j main   
 
-# Funï¿½ï¿½o generica que imprime a mensagem de falta de qualquer argumento no display
+# Funcao generica que imprime a mensagem de falta de qualquer argumento no display
 escrever_falta_argumento_obrigatorio_display:
 	# $s1: reg que possui o endereco do argumento faltante
 	
