@@ -16,6 +16,7 @@ tamanho_arquivo:	.word 0 # variavel para contar tamanho do arquivo
 main:
 #jal cadastrar_livro
 jal aloca_rep
+jal imprime_rep_livro
 
 li $v0, 10
 syscall
@@ -94,7 +95,31 @@ alocar_espaco:
 	sw $v0, repositorio_livro # armazena endereço do espaco  alocado em repositorio_livro
 	jr $ra
 	
+
+imprime_rep_livro:
+	# abre o arquivo com no modo leitura
+	li $v0, 13 
+	la $a0, filelivro
+	li $a1, 0
+	li $a2, 0
+	syscall 
+	move $s0, $v0
 	
+	# le o arquivo e envia dados no repositorio
+	li $v0, 14
+	move $a0, $s0
+	lw $a1, repositorio_livro
+	lw $a2, tamanho_arquivo
+	syscall
+	
+	# imprime conteudo do repositorio
+	li $v0, 4
+	lw $a0, repositorio_livro
+	syscall
+	
+	jr $ra
+	
+		
 
 	
 	
