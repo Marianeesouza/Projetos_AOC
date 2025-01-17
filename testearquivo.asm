@@ -10,13 +10,18 @@ repositorio_livro: 	.word 0 # local do endereco do espaço alocado
 buffer:				.space 1
 tamanho_arquivo:	.word 0 # variavel para contar tamanho do arquivo
 
+teste_repositorio:	.asciiz "Teste,Teste,123456789,10"
+
 .text 	
 .globl main
 
 main:
 #jal cadastrar_livro
-jal aloca_rep
-jal imprime_rep_livro
+#jal aloca_rep
+#jal imprime_rep_livro
+la $t0, filelivro
+la $t1, teste_repositorio
+jal salvar_dados
 
 li $v0, 10
 syscall
@@ -118,6 +123,49 @@ imprime_rep_livro:
 	syscall
 	
 	jr $ra
+repositorio_len:	
+
+	lb $t4, ($t3) # carrega o byte de t3
+	addi $t3, $t3, 1 
+	addi $t2, $t2, 1
+	bnez $t4, repositorio_len # se t4 é diferente de 0 recomeça a função
+	subi $t2, $t2, 1 # subtrai 1 de t2 no final da função
+	jr $ra #volta para ra
+salvar_dados:
+#$t0  caminho arquivo de destino
+#$t1  endereço do repositiorio
+#$t2  usado para contar o tamnho do repositorio, não é necessário informar valor
+#$t3  usado na funcao de repositorio_len
+#$t4  usado na funcao de repositorio_len
+#$s0  usado para salvar descritor
+#$s1	 usado para armazenar $ra
+li $t2, 0 # inicializa t2 com 0
+
+
+li $v0, 13 # abre o arquivo no modo leitura
+move $a0, $t0 # move nome do arquivo output em a0
+li $a1, 1 # mode escrita
+li $a2, 0 # valor padrão
+syscall
+
+move $s0, $v0 # salva descritor em s0
+move $s1, $ra # salvar o valor atual de ra em s1
+move $t3, $t1 # salva o endereço de t1 em t3
+move $s1, $ra # salva ra em s1
+jal repositorio_len # conta o tamanho do repositorio e salva em t2
+move $ra, $s1 # retorna o valor de $ra
+
+li $v0, 15
+move $a0, $s0 # move descritor para a0
+move $a1, $t1 # move endereço do repositorio para a1
+move $a2, $t2 # move tamanho do repositorio para a2
+syscall
+
+jr $ra
+
+
+
+
 	
 		
 

@@ -46,10 +46,10 @@
 	data_registro:  		.space 10   # Espaco reservado para a data em que foi registrado o emprestimo
 	data_devolucao: 		.space 10   # Espaco reservado para a data de devoluï¿½cao do emprestimo
 	
-	# Repositórios Temporários
-	repo_livro: .space 4500      # Espaço reservado para a gravação temporária dos livros cadastrados
-	repo_usuario: .space 4500    # Espaço reservado para a gravação temporária dos usuários cadastrados
-	repo_emprestimo: .space 4000 # Espaço reservado para a gravação temporária dos empréstimos cadastrados
+	# Repositï¿½rios Temporï¿½rios
+	repo_livro: .space 4500      # Espaï¿½o reservado para a gravaï¿½ï¿½o temporï¿½ria dos livros cadastrados
+	repo_usuario: .space 4500    # Espaï¿½o reservado para a gravaï¿½ï¿½o temporï¿½ria dos usuï¿½rios cadastrados
+	repo_emprestimo: .space 4000 # Espaï¿½o reservado para a gravaï¿½ï¿½o temporï¿½ria dos emprï¿½stimos cadastrados
 	
 	# Locais dos arquivos salvos
 	local_arquivo_livros: .asciiz     "C:/repo_livros.txt"
@@ -81,10 +81,10 @@
 	arg_data:           .asciiz "--data"
 	arg_hora:           .asciiz "--hora"
 	
-	# Mensagens de confirmação:
+	# Mensagens de confirmaï¿½ï¿½o:
 	msgC_livro_cadastrado: 		.asciiz "Livro cadastrado"
 	msgC_usuario_cadastrado: 	.asciiz "Usuario cadastrado"
-	msgC_emprestimo_realizado: 	.asciiz "Empréstimo realizado"
+	msgC_emprestimo_realizado: 	.asciiz "Emprï¿½stimo realizado"
 	msgC_livro_removido:        .asciiz "Livro removido"
 	msgC_usuario_removido:      .asciiz "Usuario removido"
 	msgC_com_sucesso: 			.asciiz " com sucesso!"
@@ -228,40 +228,40 @@ escrever_banner_display:
     jr $ra
 
 comparar_strings:
-	#	$s0: reg que possui o endereço do comando digitado pelo usuário
-	#	$s1: reg que possui o endereço da string a ser comparada com o comando
+	#	$s0: reg que possui o endereï¿½o do comando digitado pelo usuï¿½rio
+	#	$s1: reg que possui o endereï¿½o da string a ser comparada com o comando
 	#	$s2: reg que possui a quantidade de caracteres que deve ser lida 
    
 	comparador_loop:
 		
 		lb $t0, 0($s0)                          	# Carrega o caractere em $s0 em $t0
 		lb $t1, 0($s1)                          	# Carrega o caractere em $s1 em $t1
-		bne $t0, $t1, retorno_strings_diferentes    # se os caracteres são diferentes $v0 	
-		addi $s0, $s0, 1                            # Incrementa $s0, para seguir com o próximo caractere da string
-		addi $s1, $s1, 1                            # Incrementa $s1, para seguir com o próximo caractere da string
+		bne $t0, $t1, retorno_strings_diferentes    # se os caracteres sï¿½o diferentes $v0 	
+		addi $s0, $s0, 1                            # Incrementa $s0, para seguir com o prï¿½ximo caractere da string
+		addi $s1, $s1, 1                            # Incrementa $s1, para seguir com o prï¿½ximo caractere da string
 		subi $s2, $s2, 1							# Subtrai $s2, para verificar se a contagem terminou
-		beqz $s2, retorno_strings_iguais       		# Se $s2 é igual a zero significa que a contagem terminou e eles são iguais
+		beqz $s2, retorno_strings_iguais       		# Se $s2 ï¿½ igual a zero significa que a contagem terminou e eles sï¿½o iguais
 		j comparador_loop
 		
 	retorno_strings_iguais:
-		li $v0, 1         # Dá ao reg $v0 valor 1 para sinalizar como flag que as strings são iguais
+		li $v0, 1         # Dï¿½ ao reg $v0 valor 1 para sinalizar como flag que as strings sï¿½o iguais
 		j fim_loop 		  # pula para o fim do loop 
 	
 	retorno_strings_diferentes:
-		li $v0, 0  		  # Dá ao reg $v0 o valor 0 para sinalizar como flag que as strings são diferentes
+		li $v0, 0  		  # Dï¿½ ao reg $v0 o valor 0 para sinalizar como flag que as strings sï¿½o diferentes
 
 	fim_loop: 
 		jr $ra 
 
 str_concat:
-    # $s0: registrador que carrega a primeira parte da concatenação
-    # $s1: registrador que carrega a segunda parte da concatenação (a parte que será copiada)
+    # $s0: registrador que carrega a primeira parte da concatenaï¿½ï¿½o
+    # $s1: registrador que carrega a segunda parte da concatenaï¿½ï¿½o (a parte que serï¿½ copiada)
 
     # Encontra o final da string em $s0
     acha_final_concat:
         lb $t0, 0($s0)         # Carrega o caractere atual de $s0
         beq $t0, $zero, copia_para_s0  # Se encontrar NULL (\0), fim da string
-        addi $s0, $s0, 1       # Avança o ponteiro de $s0
+        addi $s0, $s0, 1       # Avanï¿½a o ponteiro de $s0
         j acha_final_concat    # Continua procurando o final
 
     # Copia a string de $s1 para o final de $s0
@@ -269,8 +269,8 @@ str_concat:
         lb $t0, 0($s1)         # Carrega o caractere atual de $s1
         beq $t0, $zero, fim_concat  # Se encontrar NULL (\0), fim da string de origem
         sb $t0, 0($s0)         # Escreve o caractere de $s1 no local apontado por $s0
-        addi $s0, $s0, 1       # Avança o ponteiro de $s0
-        addi $s1, $s1, 1       # Avança o ponteiro de $s1
+        addi $s0, $s0, 1       # Avanï¿½a o ponteiro de $s0
+        addi $s1, $s1, 1       # Avanï¿½a o ponteiro de $s1
         j copia_para_s0        # Continua copiando
 
     # Finaliza a string concatenada
@@ -279,7 +279,7 @@ str_concat:
         jr $ra                 # Retorna
 
 clear_buffer:
-    # $s1: Aponta para o início do buffer a ser limpo
+    # $s1: Aponta para o inï¿½cio do buffer a ser limpo
 
     li $t0, 0            # Carrega 0 em $t0 (valor para limpar)
     
@@ -287,7 +287,7 @@ clear_buffer:
     	lb $t1, 0($s1)       # Carrega o byte atual do buffer
     	beq $t1, $zero, end_clear  # Se encontrar NULL (\0), fim da string
     	sb $t0, 0($s1)       # Substitui o byte por 0
-    	addi $s1, $s1, 1     # Avança o ponteiro de $s0
+    	addi $s1, $s1, 1     # Avanï¿½a o ponteiro de $s0
     	j clear_loop         # Continua limpando
 
 	end_clear:
@@ -309,7 +309,7 @@ verificar_comando:
   	jal verificar_cmd_data_hora
 	jal verificar_ajustar_data
     
-    # Se não foi digitado nenhum dos comandos 
+    # Se nï¿½o foi digitado nenhum dos comandos 
     j escrever_comando_invalido_display
 
 verificar_cmd_cadastrar_livro:
@@ -489,96 +489,96 @@ verificar_ajustar_data:
   	jr $ra
 	
 guardar_info_buffer:
-	# $t1: contém qual o buffer a ser usado
-	# $s0: contém o comando dado pelo usuário
+	# $t1: contï¿½m qual o buffer a ser usado
+	# $s0: contï¿½m o comando dado pelo usuï¿½rio
 	
-	lb $t0, 0($s0)           # Carrega o próximo caractere
+	lb $t0, 0($s0)           # Carrega o prï¿½ximo caractere
 	li $t2, 34 			   	 # Carrega aspas duplas
-    bne $t0, $t2, escrever_comando_invalido_display 	# caso o próximo caracter não for de aspas duplas, o comando é inválido
+    bne $t0, $t2, escrever_comando_invalido_display 	# caso o prï¿½ximo caracter nï¿½o for de aspas duplas, o comando ï¿½ invï¿½lido
     addi $s0, $s0, 1
 
-	# Copia os caracteres até a segunda aspa dupla
+	# Copia os caracteres atï¿½ a segunda aspa dupla
 	copy_loop:
-    	lb $t0, 0($s0)            # Carrega o próximo caractere
+    	lb $t0, 0($s0)            # Carrega o prï¿½ximo caractere
     	beqz $t0, end             # Se for nulo (fim da string), encerra
-    	beq $t0, $t2, finalize    # Se for aspas duplas ('"'), finaliza a cópia
-    	sb $t0, 0($t1)            # Copia o caractere para o buffer do título
-    	addi $s0, $s0, 1          # Avança para o próximo caractere
-    	addi $t1, $t1, 1          # Avança no buffer do título
+    	beq $t0, $t2, finalize    # Se for aspas duplas ('"'), finaliza a cï¿½pia
+    	sb $t0, 0($t1)            # Copia o caractere para o buffer do tï¿½tulo
+    	addi $s0, $s0, 1          # Avanï¿½a para o prï¿½ximo caractere
+    	addi $t1, $t1, 1          # Avanï¿½a no buffer do tï¿½tulo
     	j copy_loop
 
-	# Finaliza o buffer adicionando a vírgula
+	# Finaliza o buffer adicionando a vï¿½rgula
 	finalize:
 		addi $s0, $s0, 1 			#Passa das aspas
     	jr $ra
     end:
-    	j escrever_comando_invalido_display 	# Caso haja um caracter nulo e não um de aspas duplas, o comando é inválido
+    	j escrever_comando_invalido_display 	# Caso haja um caracter nulo e nï¿½o um de aspas duplas, o comando ï¿½ invï¿½lido
 
 cadastrar_livro:
 	
-	# Primeiro, verificamos se o argumento a seguir é o esperado
+	# Primeiro, verificamos se o argumento a seguir ï¿½ o esperado
 	la $s1, arg_titulo
-	# $s0 já tem o comando a ser passado
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	# $s0 jï¿½ tem o comando a ser passado
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comandos
 	li $s2, 8           # Define a quantidade de caracteres a ser avaliados
 	jal comparar_strings
 	beqz $v0, escrever_falta_argumento_titulo_display
 	
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
-	# Pega o que está entre aspas e salva no buffer
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comandos
+	# Pega o que estï¿½ entre aspas e salva no buffer
 	la $t1, titulo
 	jal guardar_info_buffer
-	# Colocar a vírgula no fim do buffer
-	la $t2, virgula          # Carrega o valor ASCII da vírgula (',')
-    sb $t2, 0($t1)           # Adiciona a vírgula ao final do título
+	# Colocar a vï¿½rgula no fim do buffer
+	la $t2, virgula          # Carrega o valor ASCII da vï¿½rgula (',')
+    sb $t2, 0($t1)           # Adiciona a vï¿½rgula ao final do tï¿½tulo
 	
-	# Verificamos se o argumento a seguir é válido
+	# Verificamos se o argumento a seguir ï¿½ vï¿½lido
 	la $s1, arg_autor
-	# $s0 já tem o comando a ser passado
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	# $s0 jï¿½ tem o comando a ser passado
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comandos
 	li $s2, 7
 	jal comparar_strings
 	beqz $v0, escrever_falta_argumento_autor_display
 	
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
-	# Pega o que está entre aspas e salva no buffer
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comandos
+	# Pega o que estï¿½ entre aspas e salva no buffer
 	la $t1, autor
 	jal guardar_info_buffer
-	la $t2, virgula          # Carrega o valor ASCII da vírgula (',')
-    sb $t2, 0($t1)           # Adiciona a vírgula ao final do autor
+	la $t2, virgula          # Carrega o valor ASCII da vï¿½rgula (',')
+    sb $t2, 0($t1)           # Adiciona a vï¿½rgula ao final do autor
 	
-	# Verificamos se o argumento a seguir é válido
+	# Verificamos se o argumento a seguir ï¿½ vï¿½lido
 	la $s1, arg_ISBN
-	# $s0 já tem o comando a ser passado
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	# $s0 jï¿½ tem o comando a ser passado
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comandos
 	li $s2, 6
 	jal comparar_strings
 	beqz $v0, escrever_falta_argumento_ISBN_display
 	
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
-	# Pega o que está entre aspas e salva no buffer
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comandos
+	# Pega o que estï¿½ entre aspas e salva no buffer
 	la $t1, ISBN
 	jal guardar_info_buffer
-	la $t2, virgula          # Carrega o valor ASCII da vírgula (',')
-    sb $t2, 0($t1)           # Adiciona a vírgula ao final do ISBN
+	la $t2, virgula          # Carrega o valor ASCII da vï¿½rgula (',')
+    sb $t2, 0($t1)           # Adiciona a vï¿½rgula ao final do ISBN
     
-    # Verificamos se o argumento a seguir é válido
+    # Verificamos se o argumento a seguir ï¿½ vï¿½lido
 	la $s1, arg_quantidade
-	# $s0 já tem o comando a ser passado
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
+	# $s0 jï¿½ tem o comando a ser passado
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comandos
 	li $s2, 5
 	jal comparar_strings
 	beqz $v0, escrever_falta_argumento_quantidade_display
 	
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
-	# Pega o que está entre aspas e salva no buffer
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comandos
+	# Pega o que estï¿½ entre aspas e salva no buffer
 	la $t1, quantidade
 	jal guardar_info_buffer
 	la $t2, barra_n          # Carrega o valor ASCII de \n
     sb $t2, 0($t1)           # Adiciona ao final da quantidade
 	
-	# Agora vamos salvar no repositório (buffer) de livros
-	# Para isso, vamos concatenar todas as informações que obtivemos em uma única string e coloca-la no repo
+	# Agora vamos salvar no repositï¿½rio (buffer) de livros
+	# Para isso, vamos concatenar todas as informaï¿½ï¿½es que obtivemos em uma ï¿½nica string e coloca-la no repo
 	la $s0, repo_livro
 	la $s1, titulo
 	jal str_concat
@@ -600,30 +600,30 @@ cadastrar_livro:
 	
 	jal clear_buffer	# Limpa o buffer de qtd
 	
-	# Teste para ver o que está no repositório
+	# Teste para ver o que estï¿½ no repositï¿½rio
 	la $t1, repo_livro
 	jal escrever_string_display
-	jal escrever_barra_n_display    # pula para a função que irá imprimir uma quebra de linha no display
+	jal escrever_barra_n_display    # pula para a funï¿½ï¿½o que irï¿½ imprimir uma quebra de linha no display
 	
 	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
 	
-	la $t1, msgC_livro_cadastrado   # Carrega o endereço de msgC_livro_cadastrado
+	la $t1, msgC_livro_cadastrado   # Carrega o endereï¿½o de msgC_livro_cadastrado
 	j escrever_com_sucesso_display
 
 remover_livro:
-	# Em construção
+	# Em construï¿½ï¿½o
 	
 	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
 	
-	la $t1, msgC_livro_removido     # Carrega o endereço de msgC_livro_removido
+	la $t1, msgC_livro_removido     # Carrega o endereï¿½o de msgC_livro_removido
 	j escrever_com_sucesso_display
 
 listar_livro:
-	# Em construção	
+	# Em construï¿½ï¿½o	
 	
 	# Limpa o buffer de comando
 	la $s1, comando
@@ -632,47 +632,84 @@ listar_livro:
 	j main
 
 cadastrar_usuario:
-	# Em construção
+	# Em construï¿½ï¿½o
 	
 	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
 	
 	
-	la $t1, msgC_usuario_cadastrado # Carrega o endereço de msgC_usuario_cadastrado 
+	la $t1, msgC_usuario_cadastrado # Carrega o endereï¿½o de msgC_usuario_cadastrado 
 	j escrever_com_sucesso_display
 	
 remover_usuario:
-	# Em construção
+	# Em construï¿½ï¿½o
 	
 	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
 	
-	la $t1, msgC_usuario_removido   # Carrega o endereço de msgC_usuario_removido
+	la $t1, msgC_usuario_removido   # Carrega o endereï¿½o de msgC_usuario_removido
 	j escrever_com_sucesso_display
 	
 registrar_emprestimo:
-	# Em construção
+	# Em construï¿½ï¿½o
 	
 	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
 	
-	la $t1, msgC_emprestimo_realizado  # Carrega o endereço de msgC_emprestimo_realizado
+	la $t1, msgC_emprestimo_realizado  # Carrega o endereï¿½o de msgC_emprestimo_realizado
 	j escrever_com_sucesso_display
 
 gerar_relatorio:
-	# Em construção
+	# Em construï¿½ï¿½o
 	
 	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
 	
 	j main
+repositorio_len:	
 
+	lb $t4, ($t3) # carrega o byte de t3
+	addi $t3, $t3, 1 
+	addi $t2, $t2, 1
+	bnez $t4, repositorio_len # se t4 Ã© diferente de 0 recomeÃ§a a funÃ§Ã£o
+	subi $t2, $t2, 1 # subtrai 1 de t2 no final da funÃ§Ã£o
+	jr $ra #volta para ra
+	
 salvar_dados:
 	# Agr aqui tu faz o L.
+#$t0  caminho arquivo de destino
+#$t1  endereÃ§o do repositiorio
+#$t2  usado para contar o tamnho do repositorio, nÃ£o Ã© necessÃ¡rio informar valor
+#$t3  usado na funcao de repositorio_len
+#$t4  usado na funcao de repositorio_len
+#$s0  usado para salvar descritor
+#$s1  usado para armazenar $ra
+	li $t2, 0 # inicializa t2 com 0
+
+
+	li $v0, 13 # abre o arquivo no modo leitura
+	move $a0, $t0 # move nome do arquivo output em a0
+	li $a1, 1 # mode escrita
+	li $a2, 0 # valor padrÃ£o
+	syscall
+
+	move $s0, $v0 # salva descritor em s0
+	move $s1, $ra # salvar o valor atual de ra em s1
+	move $t3, $t1 # salva o endereÃ§o de t1 em t3
+	move $s1, $ra # salva o valor de $ra em $s1
+	jal repositorio_len # conta o tamanho do repositorio e salva em t2
+	move $ra, $s1 # retorna o valor de $ra, $s1 esta livre
+
+	li $v0, 15 # syscall para escrita
+	move $a0, $s0 # move descritor para a0
+	move $a1, $t1 # move endereÃ§o do repositorio para a1
+	move $a2, $t2 # move tamanho do repositorio para a2
+	syscall # chama syscall de escrita
+	
 	
 	# Limpa o buffer de comando
 	la $s1, comando
@@ -691,16 +728,16 @@ formatar_dados:
 
 data_hora:
     la $t0, data_config_usuario   					# Carrega o endereco de data_config_usuario
-    lb $t1, 0($t0)          						# Carrega carrega o 1° byte 
-    beqz $t1, gerar_e_imprimir_data_hora_atual  	# Se o 1° byte for 0, pula para a funcao que vai imprimir a data e hora atual
+    lb $t1, 0($t0)          						# Carrega carrega o 1ï¿½ byte 
+    beqz $t1, gerar_e_imprimir_data_hora_atual  	# Se o 1ï¿½ byte for 0, pula para a funcao que vai imprimir a data e hora atual
     
-    # Caso contrário, então o usuário armazenou a data e hora da configuradas por ele
+    # Caso contrï¿½rio, entï¿½o o usuï¿½rio armazenou a data e hora da configuradas por ele
     jal imprimir_data_hora_usuario
 	
 	j main
 	
 gerar_e_imprimir_data_hora_atual:
-	jal gerar_data_atual  # Funcao que armazena o ano no $s0, o mês no $s1 e o dia no $s2
+	jal gerar_data_atual  # Funcao que armazena o ano no $s0, o mï¿½s no $s1 e o dia no $s2
 
     move $t0, $s0  # Copia o ano para $t0
     move $t1, $s1  # Copia o mes para $t1
@@ -710,7 +747,7 @@ gerar_e_imprimir_data_hora_atual:
 
 	li $t5, 10            # inicializa $t5 com 10
 	
-	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do código
+	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do cï¿½digo
 	# por meio do jr $ra do inserir_zero retorne volte para a linha:  move $t7, $t2 (6 linhas abaixo)                    
 	addi $ra, $ra, 12
 	
@@ -728,11 +765,11 @@ gerar_e_imprimir_data_hora_atual:
 	
 	li $t5, 10              # inicializa $t5 com 10
 	
-	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do código
+	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do cï¿½digo
 	# por meio do jr $ra do inserir_zero retorne volte para a linha:  move $t7, $t1 (7 linhas abaixo)                    
 	addi $ra, $ra, 40 
 	
-    # Verifica se o mês é menor que 10 e se for, pula para colocar um zero na frente
+    # Verifica se o mï¿½s ï¿½ menor que 10 e se for, pula para colocar um zero na frente
     blt $t1, $t5, inserir_zero
     move $t7, $t1                    # Copia o valor de $t1 em $t7 (O mes) 
     jal  converter_int_para_string   # Pula para a funcao que vai converter o inteiro para string e inserir em data_atual 
@@ -762,7 +799,7 @@ gerar_e_imprimir_data_hora_atual:
 	la $t6, hora_atual    # Carrega o endereco de hora_Atual
 	li $t5, 10            # inicializa $t5 com 10
 	
-	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do código
+	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do cï¿½digo
 	# por meio do jr $ra do inserir_zero retorne volte para a linha:  move $t7, $t0 (5 linhas abaixo)                    
 	addi $ra, $ra, 32
 	
@@ -779,7 +816,7 @@ gerar_e_imprimir_data_hora_atual:
 	
 	li $t5, 10            # inicializa $t5 com 10
 	
-	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do código
+	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do cï¿½digo
 	# por meio do jr $ra do inserir_zero retorne volte para a linha:  move $t7, $t1 (4 linhas abaixo)                    
 	addi $ra, $ra, 40
 	
@@ -797,7 +834,7 @@ gerar_e_imprimir_data_hora_atual:
 	j main
 
 inserir_zero:
-	# $t6: reg que possui o endereço da data_atual onde o 0 será inserido
+	# $t6: reg que possui o endereï¿½o da data_atual onde o 0 serï¿½ inserido
 	
 	li $t9, 0           # Carrega o valor de 0 em $t8
 	addi $t9, $t9, 48   # Converte o valor 0 para o caractere ASCII '0'
@@ -807,11 +844,11 @@ inserir_zero:
 	jr $ra
 	
 converter_int_para_string:
-	# $t6: reg que possui espaço de memoria que irá ser inserida a string
+	# $t6: reg que possui espaï¿½o de memoria que irï¿½ ser inserida a string
 	# $t7: reg que possui o inteiro a ser convertido para string 
 	
     li $t2, 10  # Carrega o valor 10 em t1 
-    li $t3, 0   # Carrega $t3 com 0 (reg que servirá como contador de dígitos do inteiro)
+    li $t3, 0   # Carrega $t3 com 0 (reg que servirï¿½ como contador de dï¿½gitos do inteiro)
     
     loop_string:
         div $t7, $t2         		    # Opera $t2 / $t1
@@ -822,7 +859,7 @@ converter_int_para_string:
     	sb $t5, 0($sp)                  # insere o caractere no sp
     	addi $t3, $t3, 1                # Incrementa $t3 
         move $t7, $t4	    			# Atualiza o $t4 com o quociente
-        bne $t7, $zero, loop_string 	# Entra em loop até que o inteiro seja 0
+        bne $t7, $zero, loop_string 	# Entra em loop atï¿½ que o inteiro seja 0
         
      loop_inserir_string_t0:
      	lb $t2, 0($sp)                   # Carrega o caractere do topo da pilha
@@ -830,7 +867,7 @@ converter_int_para_string:
      	addi $sp, $sp, 1                 # Incrementa o ponteiro do $sp voltando 1
      	subi $t3, $t3, 1                 # Decrementa $t3
      	beqz $t3, fim_loop_inserir       # Se $t3 for 0, quer dizer que todos os caracteres foram inseridos em $t0
-     	addi $t6, $t6, 1                 # Caso contrário, incrementa $t6, para a insercao do proximo caractere
+     	addi $t6, $t6, 1                 # Caso contrï¿½rio, incrementa $t6, para a insercao do proximo caractere
      	j loop_inserir_string_t0         # Entra em loop
      	
      fim_loop_inserir:
@@ -858,8 +895,8 @@ gerar_data_atual:
     # para obter a quantidade total de minutos decorridos de 01/01/1970 pra ca
     add $t0, $t0, $t1
     
-    # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicação de 71582 * $t1
-    # utilizou um valor aproximado, desconsiderando os seis dígitos depois da virgula, e a ausencia
+    # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicaï¿½ï¿½o de 71582 * $t1
+    # utilizou um valor aproximado, desconsiderando os seis dï¿½gitos depois da virgula, e a ausencia
     # desses valores causa um atraso de 138 minutos para que a data seja atualizada, por isso o 
     # trecho abaixo corrige esse tempo de atraso 
     addi $t0, $t0, 138
@@ -873,9 +910,9 @@ gerar_data_atual:
     li $s0, 1970         	# Inicializa $s0 com 1970 (a qual vai ser contantemente incrementado)
 	
 	ano_loop:
-    li $t1, 365          	# Inicializa $t1 com 365 (quantidade de dias em um ano não bissexto)
+    li $t1, 365          	# Inicializa $t1 com 365 (quantidade de dias em um ano nï¿½o bissexto)
     li $t2, 4            	# Inicializa com $t6 com 4
-    rem $t3, $s0, $t2    	# Armazena o resto da divisão de $s0 com $t2
+    rem $t3, $s0, $t2    	# Armazena o resto da divisï¿½o de $s0 com $t2
     beqz $t3, ano_bissexto  # Se resto de $t3 for 0, o ano e bissexto
     j verificar_dias_restantes_ano
 
@@ -889,8 +926,8 @@ gerar_data_atual:
    		j ano_loop
    		
    	calcular_mes:
-   		li $s1, 1       	# Inicializa $s1 com 1 (reg que vai conter o mês do ano)
-   		addi $t0, $t0, 1  	# incrementando $t0 para corrigir a diferença de 1 dia menos que tava sendo gerada antes dessa linha de código existir
+   		li $s1, 1       	# Inicializa $s1 com 1 (reg que vai conter o mï¿½s do ano)
+   		addi $t0, $t0, 1  	# incrementando $t0 para corrigir a diferenï¿½a de 1 dia menos que tava sendo gerada antes dessa linha de cï¿½digo existir
    		
    		mes_loop:
    			li $t1, 30
@@ -904,20 +941,20 @@ gerar_data_atual:
    			j verificar_dias_restantes_mes    
    			    
    		mes_com_31_dias:
-   			addi $t1, $t1, 1  # Incrementa $t0 com 1 para indicar que o mês em $s1 eh um mês de 31 dias
+   			addi $t1, $t1, 1  # Incrementa $t0 com 1 para indicar que o mï¿½s em $s1 eh um mï¿½s de 31 dias
    			j verificar_dias_restantes_mes
    		
    		mes_com_29_dias:
-   			subi $t1, $t1, 1   # Decrementa $t0 com 1 para indicar que o mês em $s1 eh um mês de 29 dias
+   			subi $t1, $t1, 1   # Decrementa $t0 com 1 para indicar que o mï¿½s em $s1 eh um mï¿½s de 29 dias
    			j verificar_dias_restantes_mes
    			
    		mes_com_28_dias:
-   			subi $t1, $t1, 2   # Decrementa $t0 com 2 para indicar que o mês em $s1 eh um mês de 28 dias    
+   			subi $t1, $t1, 2   # Decrementa $t0 com 2 para indicar que o mï¿½s em $s1 eh um mï¿½s de 28 dias    
 			j verificar_dias_restantes_mes
 			
 		verificar_dias_fevereiro:
 			li $t2, 4 
-			rem $t3, $s0, $t2   	   # Armazena o resto da divisão de $s0 com $t1
+			rem $t3, $s0, $t2   	   # Armazena o resto da divisï¿½o de $s0 com $t1
     		beqz $t3, mes_com_29_dias  # Se resto de $t2 for 0, significa que o ano eh bissexto 
     		j mes_com_28_dias          # Se o ano nao eh bissexto pula para a funcao que ajusta a qtd de dias para 28
     		
@@ -953,13 +990,13 @@ gerar_hora_atual:
     # para obter a quantidade total de minutos decorridos de 01/01/1970 pra ca
     add $t0, $t0, $t1
     
-    # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicação de 71582 * $t1
-    # utilizou um valor aproximado, desconsiderando os seis dígitos depois da virgula, e a ausencia
+    # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicaï¿½ï¿½o de 71582 * $t1
+    # utilizou um valor aproximado, desconsiderando os seis dï¿½gitos depois da virgula, e a ausencia
     # desses valores causa um atraso de 138 minutos para que a data seja atualizada, por isso o 
     # trecho abaixo corrige esse tempo de atraso 
     addi $t0, $t0, 138
 
-    # Obtenção do total de mintos do dia atual
+    # Obtenï¿½ï¿½o do total de mintos do dia atual
     li $t1, 1440         # Inicializa t1 com 24 (quantidade de minutos em um dia) 
     div $t0, $t1         # opera $t0 / $t1 para obter a quantidade total de dias decorridos
 	mfhi $t0
@@ -982,14 +1019,14 @@ ajustar_data:
 
 	# Em Construcao
 
-	# Função única para mensagens de confirmação
+	# Funï¿½ï¿½o ï¿½nica para mensagens de confirmaï¿½ï¿½o
 escrever_com_sucesso_display:
-	# $t1: reg possui a primeira parte da mensagem de confirmação
+	# $t1: reg possui a primeira parte da mensagem de confirmaï¿½ï¿½o
 
-	jal escrever_string_display  # Pula para a função genérica que irá imprimir a string armazenada em $t1
-	la $t1, msgC_com_sucesso  # Carrega o endeço de msgC_com_sucesso
-	jal escrever_string_display  # Pula para a função genérica que irá imprimir a string armazenada em $t1
-	jal escrever_barra_n_display    # pula para a função que irá imprimir uma quebra de linha no display
+	jal escrever_string_display  # Pula para a funï¿½ï¿½o genï¿½rica que irï¿½ imprimir a string armazenada em $t1
+	la $t1, msgC_com_sucesso  # Carrega o endeï¿½o de msgC_com_sucesso
+	jal escrever_string_display  # Pula para a funï¿½ï¿½o genï¿½rica que irï¿½ imprimir a string armazenada em $t1
+	jal escrever_barra_n_display    # pula para a funï¿½ï¿½o que irï¿½ imprimir uma quebra de linha no display
 	
 	j main
 
