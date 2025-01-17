@@ -14,7 +14,7 @@
 
 	banner:  		.asciiz "MIPShelf-shell>>"
 	comando: 		.space 100    # Espaco reservado para o comando digitado pelo usuario
-data_config_usuario:       .space 20    # Espaco reservado para a data do sistema configurada pelo usuario
+	data_config_usuario:       .space 20    # Espaco reservado para a data do sistema configurada pelo usuario
 	hora_config_usuario:       .space 20	# Espaco reservado para a hora do sistema configurado pelo usuario
 	data_atual: 	           .space 20    # Espaco reservado para armazenar a data atual 
 	hora_atual:                .space 20    # Espaco reservado para armazenar a data atual
@@ -67,6 +67,7 @@ data_config_usuario:       .space 20    # Espaco reservado para a data do sistem
 	cmd_salvar_dados: 	    .asciiz "salvar_dados"
 	cmd_formatar_dados: 	.asciiz "formatar_dados"
 	cmd_data_hora: 			.asciiz "data_hora"
+	cmd_ajustar_data: 	    .asciiz "ajustar_data"
 	
 	# Argumentos
 	arg_titulo:      	.asciiz "--titulo"
@@ -296,96 +297,214 @@ verificar_comando:
 	jal escrever_barra_n_display    # Pula para a funcao que escreve o caractere de quebra de linha (\n) no display
     sb $zero, 0($s0)       			# Substitui o \n digitado pelo usuario pelo caractere nulo (\0)
     
-    # Verifica cadastrar_livro
+  	jal verificar_cmd_cadastrar_livro
+  	jal verificar_cmd_cadastrar_usuario
+  	jal verificar_cmd_listar_livro
+  	jal verificar_cmd_reg_emprestimo
+	jal verificar_cmd_gerar_relatorio
+  	jal verificar_cmd_remover_livro
+	jal verificar_cmd_remover_usuario
+  	jal verificar_cmd_salvar_dados
+  	jal verificar_cmd_formatar_dados
+  	jal verificar_cmd_data_hora
+	jal verificar_ajustar_data
+    
+    # Se não foi digitado nenhum dos comandos 
+    j escrever_comando_invalido_display
+
+verificar_cmd_cadastrar_livro:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+	
   	la $s1, cmd_cadastrar_livro     # Carrega o endereco de cmd_cadastrar_livro
   	la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 15                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, cadastrar_livro     # se $v0 for 1, significa que o comando digitado foi o de cadastrar_livro 
   	
-  	# Verifica cadastrar_Usuario
+  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+  	jr $ra
+
+verificar_cmd_cadastrar_usuario:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+	
   	la $s1, cmd_cadastrar_usuario   # Carrega o endereco de cmd_cadastrar_usuario
   	la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 17                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, cadastrar_usuario   # se $v0 for 1, significa que o comando digitado foi o de cadastrar_usuario
-  	
-  	# Verifica cmd_listar_livro
+	
+	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+	
+	jr $ra
+	
+verificar_cmd_listar_livro:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
   	la $s1, cmd_listar_livro        # Carrega o endereco de cmd_listar_livro
   	la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 12                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, listar_livro        # se $v0 for 1, significa que o comando digitado foi o de listar_livro
   	
-  	# Verifica cmd_reg_emprestimo
+  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+  	jr $ra
+  	
+verificar_cmd_reg_emprestimo:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
   	la $s1, cmd_reg_emprestimo      # Carrega o endereco de cmd_reg_emprestimo
   	la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 20                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, listar_livro        # se $v0 for 1, significa que o comando digitado foi o de reg_emprestimo
-  	
-  	# Verifica cmd_gerar_relatorio
+	
+	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+	jr $ra
+	
+verificar_cmd_gerar_relatorio:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
   	la $s1, cmd_gerar_relatorio     # Carrega o endereco de cmd_gerar_relatorio
   	la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 20                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, gerar_relatorio     # se $v0 for 1, significa que o comando digitado foi o de gerar_relatorio
-  	
-  	# Verifica cmd_remover_livro
+	
+	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+	jr $ra
+	
+verificar_cmd_remover_livro:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
   	la $s1, cmd_remover_livro       # Carrega o endereco de cmd_remover_livro
   	la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 13                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, remover_livro       # se $v0 for 1, significa que o comando digitado foi o de remover_livro
   	
-  	# Verifica cmd_remover_usuario
+  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+  	jr $ra
+  	
+verificar_cmd_remover_usuario:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
   	la $s1, cmd_remover_usuario     # Carrega o endereco de cmd_remover_usuario
   	la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 15                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, remover_usuario     # se $v0 for 1, significa que o comando digitado foi o de remover_usuario
-  	
-  	# Verifica cmd_salvar_dados
+	
+	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+	jr $ra
+
+verificar_cmd_salvar_dados:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
   	la $s1, cmd_salvar_dados        # Carrega o endereco de cmd_savar_dados
     la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 12                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, salvar_dados        # se $v0 for 1, significa que o comando digitado foi o de savar_dados
   	
-  	# Verifica cmd_formatar_dados
+  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+  	jr $ra
+  	
+verificar_cmd_formatar_dados:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
   	la $s1, cmd_formatar_dados      # Carrega o endereco de cmd_formatar_dados
     la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 14                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, formatar_dados      # se $v0 for 1, significa que o comando digitado foi o de formatar_dados
   	
-  	# Verifica cmd_data_hora
+  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+	jr $ra
+	
+verificar_cmd_data_hora:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
   	la $s1, cmd_data_hora           # Carrega o endereco de cmd_data_hora
     la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 9                       # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, data_hora           # se $v0 for 1, significa que o comando digitado foi o de data_hora
+  	
+  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
     
-    # Se não foi digitado nenhum dos comandos 
-    j escrever_comando_invalido_display
-
+  	jr $ra
+  	
+verificar_ajustar_data:	
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+  	la $s1, cmd_ajustar_data        # Carrega o endereco de ajustar_data
+    la $s0, comando                 # Carrega o endereco de comando em S0
+  	li $s2, 12                      # Define a quantidade de caracteres de comando que irao ser comparados
+  	jal comparar_strings            # Pula para a funcao que ira comparar as strings
+  	beq $v0, 1, data_hora           # se $v0 for 1, significa que o comando digitado foi o de ajustar_data
+  	
+  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+  	jr $ra
+	
 guardar_info_buffer:
 	# $t1: contém qual o buffer a ser usado
 	# $s0: contém o comando dado pelo usuário
 	
 	lb $t0, 0($s0)           # Carrega o próximo caractere
-	li $t2, 34 			   	# Carrega aspas duplas
+	li $t2, 34 			   	 # Carrega aspas duplas
     bne $t0, $t2, escrever_comando_invalido_display 	# caso o próximo caracter não for de aspas duplas, o comando é inválido
     addi $s0, $s0, 1
 
 	# Copia os caracteres até a segunda aspa dupla
 	copy_loop:
-    	lb $t0, 0($s0)           # Carrega o próximo caractere
-    	beqz $t0, end            # Se for nulo (fim da string), encerra
+    	lb $t0, 0($s0)            # Carrega o próximo caractere
+    	beqz $t0, end             # Se for nulo (fim da string), encerra
     	beq $t0, $t2, finalize    # Se for aspas duplas ('"'), finaliza a cópia
-    	sb $t0, 0($t1)           # Copia o caractere para o buffer do título
-    	addi $s0, $s0, 1         # Avança para o próximo caractere
-    	addi $t1, $t1, 1         # Avança no buffer do título
+    	sb $t0, 0($t1)            # Copia o caractere para o buffer do título
+    	addi $s0, $s0, 1          # Avança para o próximo caractere
+    	addi $t1, $t1, 1          # Avança no buffer do título
     	j copy_loop
 
 	# Finaliza o buffer adicionando a vírgula
@@ -396,13 +515,12 @@ guardar_info_buffer:
     	j escrever_comando_invalido_display 	# Caso haja um caracter nulo e não um de aspas duplas, o comando é inválido
 
 cadastrar_livro:
-	# Em construção
 	
 	# Primeiro, verificamos se o argumento a seguir é o esperado
 	la $s1, arg_titulo
 	# $s0 já tem o comando a ser passado
 	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comandos
-	li $s2, 8
+	li $s2, 8           # Define a quantidade de caracteres a ser avaliados
 	jal comparar_strings
 	beqz $v0, escrever_falta_argumento_titulo_display
 	
@@ -411,7 +529,7 @@ cadastrar_livro:
 	la $t1, titulo
 	jal guardar_info_buffer
 	# Colocar a vírgula no fim do buffer
-	la $t2, virgula               # Carrega o valor ASCII da vírgula (',')
+	la $t2, virgula          # Carrega o valor ASCII da vírgula (',')
     sb $t2, 0($t1)           # Adiciona a vírgula ao final do título
 	
 	# Verificamos se o argumento a seguir é válido
@@ -426,7 +544,7 @@ cadastrar_livro:
 	# Pega o que está entre aspas e salva no buffer
 	la $t1, autor
 	jal guardar_info_buffer
-	la $t2, virgula               # Carrega o valor ASCII da vírgula (',')
+	la $t2, virgula          # Carrega o valor ASCII da vírgula (',')
     sb $t2, 0($t1)           # Adiciona a vírgula ao final do autor
 	
 	# Verificamos se o argumento a seguir é válido
@@ -441,7 +559,7 @@ cadastrar_livro:
 	# Pega o que está entre aspas e salva no buffer
 	la $t1, ISBN
 	jal guardar_info_buffer
-	la $t2, virgula               # Carrega o valor ASCII da vírgula (',')
+	la $t2, virgula          # Carrega o valor ASCII da vírgula (',')
     sb $t2, 0($t1)           # Adiciona a vírgula ao final do ISBN
     
     # Verificamos se o argumento a seguir é válido
@@ -456,7 +574,7 @@ cadastrar_livro:
 	# Pega o que está entre aspas e salva no buffer
 	la $t1, quantidade
 	jal guardar_info_buffer
-	la $t2, barra_n               # Carrega o valor ASCII de \n
+	la $t2, barra_n          # Carrega o valor ASCII de \n
     sb $t2, 0($t1)           # Adiciona ao final da quantidade
 	
 	# Agora vamos salvar no repositório (buffer) de livros
@@ -554,7 +672,7 @@ gerar_relatorio:
 	j main
 
 salvar_dados:
-	# Agr aqui tu faz o L aqui, parceira.
+	# Agr aqui tu faz o L.
 	
 	# Limpa o buffer de comando
 	la $s1, comando
@@ -580,7 +698,7 @@ data_hora:
     jal imprimir_data_hora_usuario
 	
 	j main
-
+	
 gerar_e_imprimir_data_hora_atual:
 	jal gerar_data_atual  # Funcao que armazena o ano no $s0, o mês no $s1 e o dia no $s2
 
@@ -740,11 +858,11 @@ gerar_data_atual:
     # para obter a quantidade total de minutos decorridos de 01/01/1970 pra ca
     add $t0, $t0, $t1
     
-    # O trecho abaixo soma o total de minutos com 150, isso porque a multiplicação de 71582 * $t1
+    # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicação de 71582 * $t1
     # utilizou um valor aproximado, desconsiderando os seis dígitos depois da virgula, e a ausencia
-    # desses valores causa um atraso de 150 minutos para que a data seja atualizada, por isso o 
+    # desses valores causa um atraso de 138 minutos para que a data seja atualizada, por isso o 
     # trecho abaixo corrige esse tempo de atraso 
-    addi $t0, $t0, 139
+    addi $t0, $t0, 138
 
     # Conversao do total de horas decorridas para dias
     li $t1, 1440         # Inicializa t7 com 24 (quantidade de minutos em um dia) 
@@ -835,11 +953,11 @@ gerar_hora_atual:
     # para obter a quantidade total de minutos decorridos de 01/01/1970 pra ca
     add $t0, $t0, $t1
     
-    # O trecho abaixo soma o total de minutos com 140, isso porque a multiplicação de 71582 * $t1
+    # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicação de 71582 * $t1
     # utilizou um valor aproximado, desconsiderando os seis dígitos depois da virgula, e a ausencia
-    # desses valores causa um atraso de 140 minutos para que a data seja atualizada, por isso o 
+    # desses valores causa um atraso de 138 minutos para que a data seja atualizada, por isso o 
     # trecho abaixo corrige esse tempo de atraso 
-    addi $t0, $t0, 139
+    addi $t0, $t0, 138
 
     # Obtenção do total de mintos do dia atual
     li $t1, 1440         # Inicializa t1 com 24 (quantidade de minutos em um dia) 
@@ -858,6 +976,11 @@ imprimir_data_hora_usuario:
 	# Em construcao
 	
 	j main
+	
+	
+ajustar_data:
+
+	# Em Construcao
 
 	# Função única para mensagens de confirmação
 escrever_com_sucesso_display:
