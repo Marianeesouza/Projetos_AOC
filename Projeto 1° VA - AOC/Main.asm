@@ -632,15 +632,77 @@ listar_livro:
 	j main
 
 cadastrar_usuario:
-	# Em constru��o
+
+    	# Verifica o argumento "--nome"
+    	la $s1, arg_nome # Carrega o endereco string "--nome" em $s1
+    	addi $s0, $s0, 1  # Passa um caractere para frente por conta do espaco
+    	li $s2, 6  # Tamanho esperado argumento
+    	jal comparar_strings # funcao para comparar strings
+    	beqz $v0, escrever_falta_argumento_nome_display # Se as strings nao forem iguai, exibe erro
+
+    	addi $s0, $s0, 1 # Move o ponteiro para a proxima info
+    	la $t1, nome # Carrega o endereco do nome em $t1
+    	jal guardar_info_buffer # Guarda o conteudo entre aspas no bufffer nome
+    	la $t2, virgula # Carrega "," em $t2
+    	sb $t2, 0($t1)  # Adiciona vírgula ao final do nome
+
+
+    	# Verifica o argumento "--matricula"
+    	la $s1, arg_matricula # Carrega o endereco da string "--matricula"  em $s1
+    	addi $s0, $s0, 1 #move o ponteiro para o proximo argumento
+    	li $s2, 11  # Tamanho esperado do argumento
+    	jal comparar_strings # funcao para comparar strings
+    	beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguai, exibe erro
+
+    	addi $s0, $s0, 1 # Move o ponteiro para a proxima info
+    	la $t1, matricula # Carrega o endereco do matricula em $t1
+    	jal guardar_info_buffer # Guarda o conteudo entre aspas no bufffer matricula
+    	la $t2, virgula # Carrega "," em $t2
+    	sb $t2, 0($t1)  # Adiciona vírgula ao final da matrícula
+
+
+    	# Verifica o argumento "--curso"
+    	la $s1, arg_curso # Carrega o endereco string "--curso"em $s1
+    	addi $s0, $s0, 1  # Passa um caractere para frente por conta do espaco
+    	li $s2, 7  # Tamanho esperado do argumento
+    	jal comparar_strings # funcao para comparar strings
+    	beqz $v0, escrever_falta_argumento_curso_display # Se as strings nao forem iguai, exibe erro
+
+    	addi $s0, $s0, 1 # Move o ponteiro para a proxima info
+    	la $t1, curso # Carrega o endereco do curso em $t1
+    	jal guardar_info_buffer # Guarda o conteudo entre aspas no bufffer curso
+    	la $t2, barra_n # Carrega o caractere '\n' em $t2.
+    	sb $t2, 0($t1)  # Adiciona \n ao final do curso
+
+    	# Concatena as informações no repositório de usuários
+    	la $s0, repo_usuario # Carrega o endereço do repositório de usuários em $s0.
+    	la $s1, nome #Carrega o endereço do buffer "nome" em $s1.
+    	jal str_concat  # Concatena o nome ao repositório de usuários.
+    	
+    	jal clear_buffer # Limpa o buffer "nome".
+
+    	la $s1, matricula # Carrega o endereço do buffer `matricula` em $s1.
+    	jal str_concat  # Concatena a matrícula ao repositório de usuários.
+
+	jal clear_buffer # Limpa o buffer "matricula".
+
+    	la $s1, curso # Carrega o endereço do buffer `curso` em $s1.
+    	jal str_concat # Concatena o curso ao repositório de usuários.
+    	
+    	jal clear_buffer # Limpa o buffer "curso".
+	
+	la $t1, repo_usuario # Carrega o endereço do repositório de usuários em $t1.
+	jal escrever_string_display # Exibe o conteúdo do repositório de usuários.
+	jal escrever_barra_n_display # Exibe uma quebra de linha no display.
 	
 	# Limpa o buffer de comando
-	la $s1, comando
-	jal clear_buffer
-	
-	
-	la $t1, msgC_usuario_cadastrado # Carrega o endere�o de msgC_usuario_cadastrado 
-	j escrever_com_sucesso_display
+    	la $s1, comando # Carrega o endereço do buffer `comando` em $s1.
+    	jal clear_buffer # Limpa o buffer de comando.
+
+    	# Mensagem de sucesso
+    	la $t1, msgC_usuario_cadastrado # Carrega a mensagem de sucesso em $t1.
+    	j escrever_com_sucesso_display # Exibe a mensagem de sucesso.
+
 	
 remover_usuario:
 	# Em constru��o
