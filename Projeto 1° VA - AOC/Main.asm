@@ -7,21 +7,27 @@
 .data
 
 	# Constantes
-.eqv	keyboard_status 0xFFFF0000 # endereco do status do teclado
-.eqv	display_status 0xFFFF0008 # endereco do status do display
-.eqv	keyboard_buffer 0xFFFF0004 # endereco do buffer do teclado
-.eqv	display_buffer 0xFFFF000C # endereco do buffer do display
+.eqv	keyboard_status 0xFFFF0000  # endereco do status do teclado
+.eqv	display_status  0xFFFF0008  # endereco do status do display
+.eqv	keyboard_buffer 0xFFFF0004  # endereco do buffer do teclado
+.eqv	display_buffer  0xFFFF000C  # endereco do buffer do display
 
 	banner:  		.asciiz "MIPShelf-shell>>"
 	comando: 		.space 100    # Espaco reservado para o comando digitado pelo usuario
-	data_sistema:   .space 5  	  # Espaco reservado para a data do sistema
-	hora_sistema: 	.space 5 	  # Espaco reservado para a hora do sistema
+data_config_usuario:       .space 20    # Espaco reservado para a data do sistema configurada pelo usuario
+	hora_config_usuario:       .space 20	# Espaco reservado para a hora do sistema configurado pelo usuario
+	data_atual: 	           .space 20    # Espaco reservado para armazenar a data atual 
+	hora_atual:                .space 20    # Espaco reservado para armazenar a data atual
+	tempo_hora_configurada1:   .space 4     # Espaco reservado para armazenar o tempo em que o usuario configurou a hora no sistema
+    tempo_hora_configurada2:   .space 4     # Espaco reservado para armazenar o tempo em que o usuario configurou a hora no sistema
 	
 	# Caracteres
 	barra_n:   		.byte 10      # Valor em ASCII do caractere de quebra de linha '\n'
 	espaco:			.byte 32      # Valor em ASCII do caractere de espaco ' '       
 	aspas_duplas:   .byte 34      # Valor em AscII do caractere de aspas duplas ""
-	virgula:		.byte 44      # Valor em AscII do caractere da vírgula (',')
+	virgula:		.byte 44      # Valor em AscII do caractere da virgula (',')
+	dois_pontos:    .byte 58      # Valor em ASCII do caractere de dois pontos (':')
+    barra:          .byte 47      # Valor em ASCII do caractere de barra ('/')
 	
 	# Livro:
 	titulo:  	.space 30     # Espaco reservado para o titulo do livro
@@ -29,25 +35,25 @@
 	ISBN:       .space 10     # Espaco reservado para o codigo de ISBN do livro
 	quantidade: .space 5   	  # Espaco reservado para a quantidade de livros disponiveis:
 	
-	# Usuï¿½rio:
+	# Usuario:
 	nome:   	.space 30     # Espaco reservado para o nome do usuario
 	matricula:	.space 10     # Espaco reservado para o numero de matricula do usuario
 	curso:      .space 15     # Espaco reservado para o curso do usuario
 	
-	# Emprï¿½stimo:
+	# Emprestimo:
 	matricula_usuario_ass: 	.space 10   # Espaco reservado para a matricula do usuario associado ao emprestimo
 	ISBN_livro_ass:         .space 10   # Espaco reservado para o codigo de ISBN do livro associado ao emprestimo
 	data_registro:  		.space 10   # Espaco reservado para a data em que foi registrado o emprestimo
 	data_devolucao: 		.space 10   # Espaco reservado para a data de devoluï¿½cao do emprestimo
 	
 	# Repositórios Temporários
-	repo_livro: .space 4500 # Espaço reservado para a gravação temporária dos livros cadastrados
-	repo_usuario: .space 4500 # Espaço reservado para a gravação temporária dos usuários cadastrados
+	repo_livro: .space 4500      # Espaço reservado para a gravação temporária dos livros cadastrados
+	repo_usuario: .space 4500    # Espaço reservado para a gravação temporária dos usuários cadastrados
 	repo_emprestimo: .space 4000 # Espaço reservado para a gravação temporária dos empréstimos cadastrados
 	
 	# Locais dos arquivos salvos
-	local_arquivo_livros: .asciiz  "C:/repo_livros.txt"
-	local_arquivo_usuario: .asciiz  "C:/repo_usuarios.txt"
+	local_arquivo_livros: .asciiz     "C:/repo_livros.txt"
+	local_arquivo_usuario: .asciiz     "C:/repo_usuarios.txt"
 	local_arquivo_emprestimo: .asciiz  "C:/repo_emprestimos.txt"	
 	
 	# Comandos:
@@ -93,9 +99,9 @@
 	msgE_usuario_tem_pendencias:    		 .asciiz "O usuario nao pode ser removido por ter devolucoes pendentes."
 	msgE_parte1_falta_argumento_obrigatorio: .asciiz "O campo \"" 
 	msgE_parte2_falta_argumento_obrigatorio: .asciiz "\" e obrigatorio, certifique de usa-lo para que a operacao seja realizada"
-	
 
-
+	string_data:     .asciiz "Data: "
+    string_hora:     .asciiz "Hora: "
 .text
 .globl main
 
@@ -168,7 +174,7 @@ esperar_input_teclado:
     lb $t2, 0($t2)                   # Carrega o valor de barra_n
     beq $t1, $t2, verificar_comando  # Se for barra_n, chama verificar_comando
 
-    # caso contrario, exibe o caractere no display
+    # Caso contrario, exibe o caractere no display
     jal escrever_caractere_digitado_display
     
     j esperar_input_teclado # entra em loop para esperar o proximo caractere
@@ -180,8 +186,8 @@ escrever_caractere_digitado_display:
     
     jal esperar_display_carregar
     
-    lw $ra, 0($sp) 		  #resgata o $ra original do $sp
-    addi $sp, $sp, 4      #devolve a pilha para a posicao original
+    lw $ra, 0($sp) 		  # Resgata o $ra original do $sp
+    addi $sp, $sp, 4      # Devolve a pilha para a posicao original
 	
     li $t0, 0xFFFF000C    # Endereco do Receiver data do display
 	sw $t1, 0($t0)        # Escreve o caractere no display
@@ -195,8 +201,8 @@ escrever_barra_n_display:
     
     jal esperar_display_carregar
     
-    lw $ra, 0($sp) 			   #resgata o $ra original do $sp
-    addi $sp, $sp, 4		   #devolve a pilha para a posicao original
+    lw $ra, 0($sp) 			   # Resgata o $ra original do $sp
+    addi $sp, $sp, 4		   # Devolve a pilha para a posicao original
 
     la $t1, barra_n            # Carrega o endereco de barra_n
     lb $t1, 0($t1)             # Carrega o valor de barra_n diretamente em $t1
@@ -226,13 +232,14 @@ comparar_strings:
 	#	$s2: reg que possui a quantidade de caracteres que deve ser lida 
    
 	comparador_loop:
-		beqz $s2, retorno_strings_iguais       		# Se $s2 é igual a zero significa que a contagem terminou e eles são iguais
+		
 		lb $t0, 0($s0)                          	# Carrega o caractere em $s0 em $t0
 		lb $t1, 0($s1)                          	# Carrega o caractere em $s1 em $t1
 		bne $t0, $t1, retorno_strings_diferentes    # se os caracteres são diferentes $v0 	
 		addi $s0, $s0, 1                            # Incrementa $s0, para seguir com o próximo caractere da string
 		addi $s1, $s1, 1                            # Incrementa $s1, para seguir com o próximo caractere da string
 		subi $s2, $s2, 1							# Subtrai $s2, para verificar se a contagem terminou
+		beqz $s2, retorno_strings_iguais       		# Se $s2 é igual a zero significa que a contagem terminou e eles são iguais
 		j comparador_loop
 		
 	retorno_strings_iguais:
@@ -339,11 +346,11 @@ verificar_comando:
   	beq $v0, 1, remover_usuario     # se $v0 for 1, significa que o comando digitado foi o de remover_usuario
   	
   	# Verifica cmd_salvar_dados
-  	la $s1, cmd_salvar_dados         # Carrega o endereco de cmd_savar_dados
+  	la $s1, cmd_salvar_dados        # Carrega o endereco de cmd_savar_dados
     la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 12                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
-  	beq $v0, 1, salvar_dados         # se $v0 for 1, significa que o comando digitado foi o de savar_dados
+  	beq $v0, 1, salvar_dados        # se $v0 for 1, significa que o comando digitado foi o de savar_dados
   	
   	# Verifica cmd_formatar_dados
   	la $s1, cmd_formatar_dados      # Carrega o endereco de cmd_formatar_dados
@@ -357,8 +364,9 @@ verificar_comando:
     la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 9                       # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
-  	beq $v0, 1, formatar_dados      # se $v0 for 1, significa que o comando digitado foi o de data_hora
+  	beq $v0, 1, data_hora           # se $v0 for 1, significa que o comando digitado foi o de data_hora
     
+    # Se não foi digitado nenhum dos comandos 
     j escrever_comando_invalido_display
 
 guardar_info_buffer:
@@ -562,13 +570,292 @@ formatar_dados:
 	jal clear_buffer
 	
 	j main
-	
+
 data_hora:
-	# Agr aqui tu faz o L aqui, parceira.
+    la $t0, data_config_usuario   					# Carrega o endereco de data_config_usuario
+    lb $t1, 0($t0)          						# Carrega carrega o 1° byte 
+    beqz $t1, gerar_e_imprimir_data_hora_atual  	# Se o 1° byte for 0, pula para a funcao que vai imprimir a data e hora atual
+    
+    # Caso contrário, então o usuário armazenou a data e hora da configuradas por ele
+    jal imprimir_data_hora_usuario
 	
-	# Limpa o buffer de comando
-	la $s1, comando
-	jal clear_buffer
+	j main
+
+gerar_e_imprimir_data_hora_atual:
+	jal gerar_data_atual  # Funcao que armazena o ano no $s0, o mês no $s1 e o dia no $s2
+
+    move $t0, $s0  # Copia o ano para $t0
+    move $t1, $s1  # Copia o mes para $t1
+    move $t2, $s2  # Copia o dia para $t2
+    
+	la $t6, data_atual    # Carrega o endereco de data_atual 
+
+	li $t5, 10            # inicializa $t5 com 10
+	
+	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do código
+	# por meio do jr $ra do inserir_zero retorne volte para a linha:  move $t7, $t2 (6 linhas abaixo)                    
+	addi $ra, $ra, 12
+	
+	# Verifica se o dia eh menor que 10, se for, pula para a funcao que coloca o 0 primeiro em data_sistema
+	blt $t2, $t5, inserir_zero
+	
+	move $t7, $t2                    # Copia o valor de $t2 em $t7  (o dia)
+    jal  converter_int_para_string   # Pula para a funcao que vai converter o inteiro para string e inserir em data_atual 
+	
+	addi $t6, $t6, 1        # Avanca para a proxima posicao
+	la $t4, barra           # Carrega o endereco do caractere de barra
+	lb $t4, 0($t4)          # Carrega o caractere de barra em $t4
+    sb $t4, 0($t6)         	# Insere o caractere de barra em data_atual
+	addi $t6, $t6, 1        # Avanca para a proxima posicao
+	
+	li $t5, 10              # inicializa $t5 com 10
+	
+	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do código
+	# por meio do jr $ra do inserir_zero retorne volte para a linha:  move $t7, $t1 (7 linhas abaixo)                    
+	addi $ra, $ra, 40 
+	
+    # Verifica se o mês é menor que 10 e se for, pula para colocar um zero na frente
+    blt $t1, $t5, inserir_zero
+    move $t7, $t1                    # Copia o valor de $t1 em $t7 (O mes) 
+    jal  converter_int_para_string   # Pula para a funcao que vai converter o inteiro para string e inserir em data_atual 
+    
+    addi $t6, $t6, 1        # Avanca para a proxima posicao
+    la $t4, barra           # Carrega o endereco do caractere de barra
+	lb $t4, 0($t4)          # Carrega o caractere de barra em $t4
+    sb $t4, 0($t6)         	# Insere o caractere de barra em data_atual
+    addi $t6, $t6, 1        # Avanca para a proxima posicao
+    
+	sb $t4, 0($t6)        			 # Insere o caractere de barra em data_sistema
+	move $t7, $t0                    # Copia o valor de $t2 em $t7 (O ano) 
+    jal  converter_int_para_string   # Pula para a funcao que vai converter o inteiro para string e inserir em data_atual 
+	
+	la $t1, string_data
+	jal escrever_string_display   # Escreve a string "Data: " no display
+	
+	la $t1, data_atual				
+	jal escrever_string_display   # Escreve a data  no display
+	jal escrever_barra_n_display  # Causa uma quebra de linha no display
+	
+	jal gerar_hora_atual  # Funcao que armazena a hora no $s0 e o minuto no $s1 
+	
+	move $t0, $s0 		  # Copia a hora para $t0
+    move $t1, $s1 		  # Copia o minuto para $t1
+	
+	la $t6, hora_atual    # Carrega o endereco de hora_Atual
+	li $t5, 10            # inicializa $t5 com 10
+	
+	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do código
+	# por meio do jr $ra do inserir_zero retorne volte para a linha:  move $t7, $t0 (5 linhas abaixo)                    
+	addi $ra, $ra, 32
+	
+	# Verifica se a hora eh menor que 10, se for, pula para a funcao que coloca o 0 primeiro em data_sistema
+	blt $t0, $t5, inserir_zero       
+	move $t7, $t0                    # Copia o valor de $t1 em $t7 (O mes) 
+    jal  converter_int_para_string   # Pula para a funcao que vai converter o inteiro para string e inserir em hora_atual 
+	
+	addi $t6, $t6, 1        # Avanca para a proxima posicao
+    la $t4, dois_pontos     # Carrega o endereco do caractere de barra
+	lb $t4, 0($t4)          # Carrega o caractere de barra em $t4
+    sb $t4, 0($t6)         	# Insere o caractere de barra em data_atual
+    addi $t6, $t6, 1        # Avanca para a proxima posicao
+	
+	li $t5, 10            # inicializa $t5 com 10
+	
+	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do código
+	# por meio do jr $ra do inserir_zero retorne volte para a linha:  move $t7, $t1 (4 linhas abaixo)                    
+	addi $ra, $ra, 40
+	
+	blt $t1, $t5, inserir_zero	  # Verifica se o minuto eh menor que 10, se for, pula para a funcao que coloca o 0 primeiro em data_sistema
+	move $t7, $t1                     # Copia o valor de $t1 em $t7 (O mes) 
+    jal  converter_int_para_string    # Pula para a funcao que vai converter o inteiro para string e inserir em hora_atual 
+	
+	la $t1, string_hora
+	jal escrever_string_display   # Escreve a string "Hora: " no display
+	
+	la $t1, hora_atual				
+	jal escrever_string_display   # Escreve a hora  no display
+	jal escrever_barra_n_display  # Causa uma quebra de linha no display
+	
+	j main
+
+inserir_zero:
+	# $t6: reg que possui o endereço da data_atual onde o 0 será inserido
+	
+	li $t9, 0           # Carrega o valor de 0 em $t8
+	addi $t9, $t9, 48   # Converte o valor 0 para o caractere ASCII '0'
+	sb $t9, 0($t6)      # Insere o 0 na posicao em data_sistema
+	addi $t6, $t6, 1    # Avanca para a proxima posicao
+	
+	jr $ra
+	
+converter_int_para_string:
+	# $t6: reg que possui espaço de memoria que irá ser inserida a string
+	# $t7: reg que possui o inteiro a ser convertido para string 
+	
+    li $t2, 10  # Carrega o valor 10 em t1 
+    li $t3, 0   # Carrega $t3 com 0 (reg que servirá como contador de dígitos do inteiro)
+    
+    loop_string:
+        div $t7, $t2         		    # Opera $t2 / $t1
+        mflo $t4 						# Move o quociente para $t4 
+        mfhi $t5 						# Move o resto para $t5 
+        addi $t5, $t5, 48   			# Converte o resto para caractere
+    	addi $sp, $sp, -1  			    # Aloca espaco no $sp para inserir o caractere
+    	sb $t5, 0($sp)                  # insere o caractere no sp
+    	addi $t3, $t3, 1                # Incrementa $t3 
+        move $t7, $t4	    			# Atualiza o $t4 com o quociente
+        bne $t7, $zero, loop_string 	# Entra em loop até que o inteiro seja 0
+        
+     loop_inserir_string_t0:
+     	lb $t2, 0($sp)                   # Carrega o caractere do topo da pilha
+     	sb $t2, 0($t6)                   # Armazena o caractere em $t0
+     	addi $sp, $sp, 1                 # Incrementa o ponteiro do $sp voltando 1
+     	subi $t3, $t3, 1                 # Decrementa $t3
+     	beqz $t3, fim_loop_inserir       # Se $t3 for 0, quer dizer que todos os caracteres foram inseridos em $t0
+     	addi $t6, $t6, 1                 # Caso contrário, incrementa $t6, para a insercao do proximo caractere
+     	j loop_inserir_string_t0         # Entra em loop
+     	
+     fim_loop_inserir:
+    	jr $ra
+	
+gerar_data_atual:
+    li $v0, 30           # Syscall 30 para obter o tempo do sistema
+    syscall
+    
+    move $t0, $a0        # Move a parte menos significativa dos milissegundos para $t0
+    move $t1, $a1        # Move a parte mais significativa dos milissegundos para $t1
+
+    # Conversao da parte menos significativa dos milissegundos para minutos
+    li $t2, 60000      	 # Carrega em $t2 a quantidade de milissegundos em 1 minuto
+    div $t0, $t2         # Opera $t0 / 60000 (parte baixa para horas) 
+    mflo $t0             # Move para $t0 as horas decorridas da menos significativa
+	
+    # Conversao da parte mais significativa de milissegundos para horas
+    # A conversao eh feita com base na seguinte formula: $t1 * 2^32 / 60000
+    li $t2, 71582        # Carrega 71582 em $t2 que eh o resultado aproximado (2^32) / 60000
+    mul $t1, $t1, $t2    # Multiplica 71582 com $t1 para obter as minutos decorridos com a parte mais significativa
+    
+    # Soma $t0 (quantidade de minutos decorridos da parte menos significativa)
+    # com $t1 (quantidade de minutos decorridos da parte mais significativa)
+    # para obter a quantidade total de minutos decorridos de 01/01/1970 pra ca
+    add $t0, $t0, $t1
+    
+    # O trecho abaixo soma o total de minutos com 150, isso porque a multiplicação de 71582 * $t1
+    # utilizou um valor aproximado, desconsiderando os seis dígitos depois da virgula, e a ausencia
+    # desses valores causa um atraso de 150 minutos para que a data seja atualizada, por isso o 
+    # trecho abaixo corrige esse tempo de atraso 
+    addi $t0, $t0, 139
+
+    # Conversao do total de horas decorridas para dias
+    li $t1, 1440         # Inicializa t7 com 24 (quantidade de minutos em um dia) 
+    div $t0, $t1         # opera $t0 / $t1 para obter a quantidade total de dias decorridos
+    mflo $t0             # Armazena em $t0 a quantidade total de dias decorridos
+	
+    # Calculo dos anos decorridos (considerando anos bissextos)
+    li $s0, 1970         	# Inicializa $s0 com 1970 (a qual vai ser contantemente incrementado)
+	
+	ano_loop:
+    li $t1, 365          	# Inicializa $t1 com 365 (quantidade de dias em um ano não bissexto)
+    li $t2, 4            	# Inicializa com $t6 com 4
+    rem $t3, $s0, $t2    	# Armazena o resto da divisão de $s0 com $t2
+    beqz $t3, ano_bissexto  # Se resto de $t3 for 0, o ano e bissexto
+    j verificar_dias_restantes_ano
+
+	ano_bissexto:
+    	addi $t1, $t1, 1     # Incrementa $t7 com 1 para dizer que o ano em $s0 eh um ano que possui 366 dias
+    	
+	verificar_dias_restantes_ano:
+		blt $t0, $t1, calcular_mes      # Se $t8 < $t7 pula para a funcao que calcula o mes
+    	sub $t0, $t0, $t1  				# Remove os dias do ano de $s0 do total de dias decorridos
+    	addi $s0, $s0, 1                # Incrementa o ano
+   		j ano_loop
+   		
+   	calcular_mes:
+   		li $s1, 1       	# Inicializa $s1 com 1 (reg que vai conter o mês do ano)
+   		addi $t0, $t0, 1  	# incrementando $t0 para corrigir a diferença de 1 dia menos que tava sendo gerada antes dessa linha de código existir
+   		
+   		mes_loop:
+   			li $t1, 30
+   			beq $s1, 1, mes_com_31_dias  			# Se o mes em $s1 for 1, pula para a funcao que ajusta pra 31 dias       
+   			beq $s1, 2, verificar_dias_fevereiro    # Se o mes em $s1 for 2, pula para a funcao que verifica a quantidade de dias
+   			beq $s1, 3, mes_com_31_dias             # Se o mes em $s1 for 3, pula para a funcao que ajusta pra 31 dias
+   			beq $s1, 5, mes_com_31_dias             # Se o mes em $s1 for 5, pula para a funcao que ajusta pra 31 dias
+   			beq $s1, 7, mes_com_31_dias             # Se o mes em $s1 for 7, pula para a funcao que ajusta pra 31 dias
+   			beq $s1, 8, mes_com_31_dias             # Se o mes em $s1 for 8, pula para a funcao que ajusta pra 31 dias
+   			beq $s1, 10, mes_com_31_dias            # Se o mes em $s1 for 10, pula para a funcao que ajusta pra 31 dias
+   			j verificar_dias_restantes_mes    
+   			    
+   		mes_com_31_dias:
+   			addi $t1, $t1, 1  # Incrementa $t0 com 1 para indicar que o mês em $s1 eh um mês de 31 dias
+   			j verificar_dias_restantes_mes
+   		
+   		mes_com_29_dias:
+   			subi $t1, $t1, 1   # Decrementa $t0 com 1 para indicar que o mês em $s1 eh um mês de 29 dias
+   			j verificar_dias_restantes_mes
+   			
+   		mes_com_28_dias:
+   			subi $t1, $t1, 2   # Decrementa $t0 com 2 para indicar que o mês em $s1 eh um mês de 28 dias    
+			j verificar_dias_restantes_mes
+			
+		verificar_dias_fevereiro:
+			li $t2, 4 
+			rem $t3, $s0, $t2   	   # Armazena o resto da divisão de $s0 com $t1
+    		beqz $t3, mes_com_29_dias  # Se resto de $t2 for 0, significa que o ano eh bissexto 
+    		j mes_com_28_dias          # Se o ano nao eh bissexto pula para a funcao que ajusta a qtd de dias para 28
+    		
+		verificar_dias_restantes_mes:
+			blt $t0, $t1, dia_do_mes      # Se $t0 < $t1, pula para a funcao que o dia do mes
+    		sub $t0, $t0, $t1  			  # Remove os dias do mes de $s1 do total de dias decorridos
+    		addi $s1, $s1, 1              # Incrementa o mes
+   			j mes_loop
+   			
+   	dia_do_mes:
+   		move $s2, $t0           # Move os dias que restaram para $s2
+   		jr $ra
+
+gerar_hora_atual:
+    li $v0, 30           # Syscall 30 para obter o tempo do sistema
+    syscall
+    
+    move $t0, $a0        # Move a parte menos significativa dos milissegundos para $t0
+    move $t1, $a1        # Move a parte mais significativa dos milissegundos para $t1
+
+    # Conversao da parte menos significativa dos milissegundos para minutos
+    li $t2, 60000      	 # Carrega em $t2 a quantidade de milissegundos em 1 minuto
+    div $t0, $t2         # Opera $t0 / 60000 (parte baixa para horas) 
+    mflo $t0             # Move para $t0 as horas decorridas da menos significativa
+	
+    # Conversao da parte mais significativa de milissegundos para horas
+    # A conversao eh feita com base na seguinte formula: $t1 * 2^32 / 60000
+    li $t2, 71582        # Carrega 71582 em $t2 que eh o resultado aproximado (2^32) / 60000
+    mul $t1, $t1, $t2    # Multiplica 71582 com $t1 para obter as minutos decorridos com a parte mais significativa
+    
+    # Soma $t0 (quantidade de minutos decorridos da parte menos significativa)
+    # com $t1 (quantidade de minutos decorridos da parte mais significativa)
+    # para obter a quantidade total de minutos decorridos de 01/01/1970 pra ca
+    add $t0, $t0, $t1
+    
+    # O trecho abaixo soma o total de minutos com 140, isso porque a multiplicação de 71582 * $t1
+    # utilizou um valor aproximado, desconsiderando os seis dígitos depois da virgula, e a ausencia
+    # desses valores causa um atraso de 140 minutos para que a data seja atualizada, por isso o 
+    # trecho abaixo corrige esse tempo de atraso 
+    addi $t0, $t0, 139
+
+    # Obtenção do total de mintos do dia atual
+    li $t1, 1440         # Inicializa t1 com 24 (quantidade de minutos em um dia) 
+    div $t0, $t1         # opera $t0 / $t1 para obter a quantidade total de dias decorridos
+	mfhi $t0
+	
+    # Separar minutos em horas e minutos
+    li $t1, 60             # Minutos por hora
+    div $t0, $t1           # Divide para obter horas e resto
+    mflo $s0               # $s0 = horas do dia
+    mfhi $s1               # $s1 = minutos restantes
+
+    jr $ra                 # Retorna ao chamador
+
+imprimir_data_hora_usuario:
+	# Em construcao
 	
 	j main
 
@@ -712,9 +999,3 @@ escrever_falta_argumento_hora_display:
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
     j main  
-
-incrementar_s0:
-	addi $s0, $s0, 1
-    jr $ra	      
-               	         
-
