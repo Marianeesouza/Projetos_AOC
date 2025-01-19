@@ -39,9 +39,9 @@
 	quantidade: .space 5   	  # Espaco reservado para a quantidade de livros disponiveis:
 	
 	# Usuario:
-	nome:   	.space 30     # Espaco reservado para o nome do usuario
-	matricula:	.space 10     # Espaco reservado para o numero de matricula do usuario
-	curso:      .space 15     # Espaco reservado para o curso do usuario
+	nome:   	.space 50     # Espaco reservado para o nome do usuario
+	matricula:	.space 20     # Espaco reservado para o numero de matricula do usuario
+	curso:      .space 40     # Espaco reservado para o curso do usuario
 	
 	# Emprestimo:
 	matricula_usuario_ass: 	.space 10   # Espaco reservado para a matricula do usuario associado ao emprestimo
@@ -50,9 +50,10 @@
 	data_devolucao: 		.space 10   # Espaco reservado para a data de devolucao do emprestimo
 	
 	# Repositorios Temporarios
-	repo_livro: .space 4500      # Espaco reservado para a gravacao temporaria dos livros cadastrados
-	repo_usuario: .space 4500    # Espaco reservado para a gravacao temporaria dos usuarios cadastrados
+	repo_livro:      .space 4500 # Espaco reservado para a gravacao temporaria dos livros cadastrados
+	repo_usuario:    .space 4500 # Espaco reservado para a gravacao temporaria dos usuarios cadastrados
 	repo_emprestimo: .space 4000 # Espaco reservado para a gravacao temporaria dos emprestimos cadastrados
+	buffer_aux:      .space  100 # Espaco reservado para auxiliar no processo de remocao dos dados nos repositorios   
 	
 	# Locais dos arquivos salvos
 	local_arquivo_livros: .asciiz     "C:/repo_livros.txt"
@@ -194,9 +195,11 @@ esperar_input_teclado:
     j esperar_input_teclado # entra em loop para esperar o proximo caractere
     
 tratar_backspace:
-	la $s0, comando     # Carrega o endereco de comando
-  	addi $s7, $s7, -1   # Decrementa $s7 para apontar para o último caractere
-  	li $t2, 0 			# Reg auxiliar para loop
+	la $s0, comando                       # Carrega o endereco de comando
+	lb $t0, 0($s0)                        # Carrega o primeiro byte de comando
+	beqz $t0, limpar_rescrever_display    # se o 1° byte for nulo, entao comando ta vazio, logo nao precisa remover
+  	addi $s7, $s7, -1    # Caso não seja, decrementa $s7 para apontar para o último caractere digitado
+  	li $t2, 0 			 # Reg auxiliar para loop
   	
  	loop_apagar_ultimo_caractere:
   		beq $t2, $s7, apagar_ultimo_caractere  # Quando $t2 e $s7 forem iguais entao estaremos posicionados no ultimo caractere digitado em comando
@@ -207,11 +210,18 @@ tratar_backspace:
   	apagar_ultimo_caractere:
 		sb $zero, 0($s0) # Apaga o ultimo caractere do comando
 	
-	jal escrever_barra_n_display
-	jal escrever_banner_display
-	la $t1, comando
-	jal escrever_string_display
-	j esperar_input_teclado # volta a esperar um proximo caractere
+	limpar_rescrever_display:
+		jal limpar_display
+		jal escrever_banner_display
+		la $t1, comando
+		jal escrever_string_display
+		j esperar_input_teclado # volta a esperar um proximo caractere
+
+limpar_display:
+  li $t0, 0xFFFF000C   # Endereço do Receiver data do display
+  li $t1, 12           # Caractere de controle para limpar o display (código ASCII 12)
+  sw $t1, 0($t0)       # Escreve o caractere de controle no display
+  jr $ra
 
 escrever_caractere_digitado_display:
     # Aloca espaco no $sp para salvar o endereco de $ra
@@ -312,16 +322,16 @@ str_concat:
         jr $ra                 # Retorna
 
 clear_buffer:
-    # $s1: Aponta para o inï¿½cio do buffer a ser limpo
+    # $s1: Aponta para o inicio do buffer a ser limpo
 
     li $t0, 0            # Carrega 0 em $t0 (valor para limpar)
     
 	clear_loop:
-    	lb $t1, 0($s1)       # Carrega o byte atual do buffer
+    	lb $t1, 0($s1)             # Carrega o byte atual do buffer
     	beq $t1, $zero, end_clear  # Se encontrar NULL (\0), fim da string
-    	sb $t0, 0($s1)       # Substitui o byte por 0
-    	addi $s1, $s1, 1     # Avanca o ponteiro de $s0
-    	j clear_loop         # Continua limpando
+    	sb $t0, 0($s1)             # Substitui o byte por 0
+    	addi $s1, $s1, 1           # Avanca o ponteiro de $s0
+    	j clear_loop               # Continua limpando
 
 	end_clear:
     	jr $ra               # Retorna
@@ -557,13 +567,14 @@ cadastrar_livro:
 	jal comparar_strings
 	beqz $v0, escrever_falta_argumento_titulo_display
 	
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comandos
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaco entre os comandos
 	# Pega o que estah entre aspas e salva no buffer
 	la $t1, titulo
 	jal guardar_info_buffer
 	# Colocar a virgula no fim do buffer
-	la $t2, virgula          # Carrega o valor ASCII da virgula (',')
-    sb $t2, 0($t1)           # Adiciona a vigula ao final do titulo
+	la $t3, virgula          # Carrega o endereco da virgula (',')
+	lb $t2, 0($t3)           # Carrega o byte do caractere da virgula
+    sb $t2, 0($t1)           # Adiciona a virgula ao final do titulo
 	
 	# Verificamos se o argumento a seguir eh valido
 	la $s1, arg_autor
@@ -577,7 +588,8 @@ cadastrar_livro:
 	# Pega o que estah entre aspas e salva no buffer
 	la $t1, autor
 	jal guardar_info_buffer
-	la $t2, virgula          # Carrega o valor ASCII da virgula (',')
+	la $t2, virgula          # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
     sb $t2, 0($t1)           # Adiciona a virgula ao final do autor
 	
 	# Verificamos se o argumento a seguir eh valido
@@ -589,10 +601,11 @@ cadastrar_livro:
 	beqz $v0, escrever_falta_argumento_ISBN_display
 	
 	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaco entre os comandos
-	# Pega o que estiver entre aspas e salva no buffer
+	# Pega o que estïver entre aspas e salva no buffer
 	la $t1, ISBN
 	jal guardar_info_buffer
-	la $t2, virgula          # Carrega o valor ASCII da virgula (',')
+	la $t2, virgula          # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
     sb $t2, 0($t1)           # Adiciona a virgula ao final do ISBN
     
     # Verificamos se o argumento a seguir eh valido
@@ -606,37 +619,33 @@ cadastrar_livro:
 	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaco entre os comandos
 	# Pega o que estah entre aspas e salva no buffer
 	la $t1, quantidade
-	jal guardar_info_buffer
-	la $t2, barra_n          # Carrega o valor ASCII de \n
-    sb $t2, 0($t1)           # Adiciona ao final da quantidade
+	jal guardar_info_buffer  # Adiciona ao final da quantidade
+	la $t2, barra_n          # Carrega o endereco de barra_n
+	lb $t2, 0($t2)           # Carrega o byte do caractere de barra n ('\n') 
+    sb $t2, 0($t1)           # Escreve o caractere \n
 	
 	# Agora vamos salvar no repositorio (buffer) de livros
-	# Para isso, vamos concatenar todas as informacoes que obtivemos em uma unica string e coloca-la no repo
-	la $s0, repo_livro
-	la $s1, titulo
-	jal str_concat
-	
+	# Para isso, vamos concatenar todas as informacoes que obtivemos em uma unica string e coloca-la no repo_livro
+	la $s0, repo_livro  # Carrega o endereco de repo_livro
+	la $s1, titulo		# Carrega o endereco de titulo
+	jal str_concat      # Pula para a funcao que vai concatenar os dados de título em repo_livro
+	la $s1, titulo      # Recarrega o endereco de titulo novamente (para voltar ao 1° caractere)
 	jal clear_buffer	# Limpa o buffer de titulo
 	
-	la $s1, autor
-	jal str_concat
-	
+	la $s1, autor       # Carrega o endereco de autor
+	jal str_concat      # Pula para a funcao que vai concatenar os dados de autor em repo_livro
+	la $s1, autor       # Recarrega o endereco de autor novamente (para voltar ao 1° caractere)
 	jal clear_buffer	# Limpa o buffer de autor
 	
-	la $s1, ISBN
-	jal str_concat
-	
+	la $s1, ISBN        # Carrega o endereco de isbn
+	jal str_concat      # Pula para a funcao que vai concatenar os dados de isbn em repo_livro
+	la $s1, ISBN        # Recarrega o endereco de isbn novamente (para voltar ao 1° caractere)
 	jal clear_buffer	# Limpa o buffer de ISBN
 	
-	la $s1, quantidade
-	jal str_concat
-	
-	jal clear_buffer	# Limpa o buffer de qtd
-	
-	# Teste para ver o que estah no repositorio
-	la $t1, repo_livro
-	jal escrever_string_display
-	jal escrever_barra_n_display    # pula para a funcao que irah imprimir uma quebra de linha no display
+	la $s1, quantidade  # Carrega o endereco de quantidade
+	jal str_concat      # Pula para a funcao que vai concatenar os dados de quantidade em repo_livro
+	la $s1, quantidade  # Recarrega o endereco de quantidade novamente (para voltar ao 1° caractere)
+	jal clear_buffer	# Limpa o buffer de quantidade
 	
 	# Limpa o buffer de comando
 	la $s1, comando
@@ -656,9 +665,10 @@ remover_livro:
 	j escrever_com_sucesso_display
 
 listar_livro:
-	# Em construcao	
+		
+	la $t1, repo_livro             # Carrega o endereco de repo_livro
+	jal escrever_string_display    # Pula para a funcao que imprime strings (ele todo no caso)
 	
-	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
 	
@@ -676,22 +686,23 @@ cadastrar_usuario:
     addi $s0, $s0, 1           # Move o ponteiro para a proxima info
     la $t1, nome               # Carrega o endereco do nome em $t1
     jal guardar_info_buffer    # Guarda o conteudo entre aspas no bufffer nome
-    la $t2, virgula            # Carrega "," em $t2
-    sb $t2, 0($t1)             # Adiciona vÃ­rgula ao final do nome
+    la $t2, virgula            # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)             # Carrega o byte do caractere da virgula
+	sb $t2, 0($t1)             # Adiciona o caractere de virgula no final de nome
 
     # Verifica o argumento "--matricula"
-    la $s1, arg_matricula        # Carrega o endereco da string "--matricula"  em $s1
-    addi $s0, $s0, 1             # Move o ponteiro para o proximo argumento
-    li $s2, 11                   # Tamanho esperado do argumento
-    jal comparar_strings         # funcao para comparar strings
-    beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguai, exibe erro
+    la $s1, arg_matricula      # Carrega o endereco da string "--matricula"  em $s1
+    addi $s0, $s0, 1           # Move o ponteiro para o proximo argumento
+    li $s2, 11                 # Tamanho esperado do argumento
+    jal comparar_strings       # funcao para comparar strings
+    beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
 
     addi $s0, $s0, 1            # Move o ponteiro para a proxima info
     la $t1, matricula           # Carrega o endereco do matricula em $t1
     jal guardar_info_buffer     # Guarda o conteudo entre aspas no bufffer matricula
-    la $t2, virgula             # Carrega "," em $t2
-    sb $t2, 0($t1)              # Adiciona vÃ­rgula ao final da matrÃ­cula
-
+    la $t2, virgula             # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
+    sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
 
     # Verifica o argumento "--curso"
     la $s1, arg_curso           # Carrega o endereco string "--curso"em $s1
@@ -702,40 +713,39 @@ cadastrar_usuario:
 
     addi $s0, $s0, 1           # Move o ponteiro para a proxima info
     la $t1, curso              # Carrega o endereco do curso em $t1
-    jal guardar_info_buffer    # Guarda o conteudo entre aspas no bufffer curso
-    la $t2, barra_n            # Carrega o caractere '\n' em $t2.
+    jal guardar_info_buffer    # Guarda o conteudo entre aspas no buffer curso
+    la $t2, barra_n            # Carrega o endereco de barra_n
+	lb $t2, 0($t2)             # Carrega o byte do caractere de barra n ('\n') 
     sb $t2, 0($t1)             # Adiciona \n ao final do curso
 
     # Concatena as informacoes no repositorio de usuarios
     la $s0, repo_usuario    # Carrega o endereco do repositorio de usuarios em $s0.
     la $s1, nome            # Carrega o endereco do buffer "nome" em $s1.
     jal str_concat          # Concatena o nome ao repositario de usuarios.
-    	
-    jal clear_buffer # Limpa o buffer "nome".
+    la $s1, nome            # Recarrega o endereco de nome novamente (para voltar ao 1° caractere)
+    jal clear_buffer        # Limpa o buffer "nome".
 
-    la $s1, matricula   # Carrega o endereco do buffer `matricula` em $s1.
-    jal str_concat      # Concatena a matricula ao repositorio de usuarios.
+    la $s1, matricula   	# Carrega o endereco do buffer `matricula` em $s1.
+    jal str_concat      	# Concatena a matricula ao repositorio de usuarios.
+	la $s1, matricula  		# Recarrega o endereco de matricula novamente (para voltar ao 1° caractere)
+	jal clear_buffer    	# Limpa o buffer "matricula".
 
-	jal clear_buffer    # Limpa o buffer "matricula".
-
-    la $s1, curso       # Carrega o endereco do buffer `curso` em $s1.
-    jal str_concat      # Concatena o curso ao repositorio de usuarios.
-    	
-    jal clear_buffer    # Limpa o buffer "curso".
+    la $s1, curso       	# Carrega o endereco do buffer `curso` em $s1.
+    jal str_concat      	# Concatena o curso ao repositorio de usuarios.
+    la $s1, curso       	# Recarrega o endereco de curso novamente (para voltar ao 1° caractere)	
+    jal clear_buffer    	# Limpa o buffer "curso".
 	
 	la $t1, repo_usuario            # Carrega o endereco do repositorio de usuarios em $t1.
 	jal escrever_string_display     # Exibe o conteudo do repositorio de usuarios.
-	jal escrever_barra_n_display    # Exibe uma quebra de linha no display.
 	
 	# Limpa o buffer de comando
-    	la $s1, comando       # Carrega o endereÃ§o do buffer `comando` em $s1.
-    	jal clear_buffer      # Limpa o buffer de comando.
+    la $s1, comando       # Carrega o endereco do buffer `comando` em $s1.
+    jal clear_buffer      # Limpa o buffer de comando.
 
-    	# Mensagem de sucesso
-    	la $t1, msgC_usuario_cadastrado   # Carrega a mensagem de sucesso em $t1.
-    	j escrever_com_sucesso_display    # Exibe a mensagem de sucesso.
+    # Mensagem de sucesso
+    la $t1, msgC_usuario_cadastrado   # Carrega a mensagem de sucesso em $t1.
+    j escrever_com_sucesso_display    # Exibe a mensagem de sucesso.
 
-	
 remover_usuario:
 	# Em construcao
 	
@@ -1214,7 +1224,6 @@ imprimir_data_hora_usuario:
 	
 	
 ajustar_data:
-
 	# O trecho abaixo compara se o usuario escreveu o argumento "--data"
 	addi $s0, $s0, 1 	  # Passa um caractere para frente, por conta do espaco entre os comandos
 	la $s1, arg_data      # Carrega o endereco do argumento para comparar
@@ -1294,23 +1303,69 @@ escrever_com_sucesso_display:
 	jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
 	
 	j main
-
+	
+limpar_todos_buffers_das_entidades:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+	la $s1, titulo       # Carrega o endereco de titulo
+	jal clear_buffer     # Limpa o buffer de titulo
+	
+	la $s1, autor        # Carrega o endereco de autor
+	jal clear_buffer     # Limpa o buffer de autor
+	
+	la $s1, ISBN         # Carrega o endereco de isbn 
+	jal clear_buffer     # Limpa o buffer de ISBN
+		
+	la $s1, quantidade   # Carrega o endereco de quantidade
+	jal clear_buffer     # Limpa o buffer de quantidade
+		
+	la $s1, nome         # Carrega o endereco de nome
+	jal clear_buffer     # Limpa o buffer de nome
+		
+	la $s1, matricula    # Carrega o endereco de matricula
+	jal clear_buffer     # Limpa o buffer de matricula
+		
+	la $s1, curso        # Carrega o endereco de curso
+	jal clear_buffer     # Limpa o buffer de curso
+		
+	la $s1, matricula_usuario_ass    # Carrega o endereco de matricula_usuario_ass
+	jal clear_buffer     			 # Limpa o buffer de matricula_usuario_ass
+		
+	la $s1, ISBN_livro_ass  # Carrega o endereco de ISBN_livro_ass
+	jal clear_buffer        # Limpa o buffer de ISBN_livro_ass
+		
+	la $s1, data_registro   # Carrega o endereco de data_registro
+	jal clear_buffer        # Limpa o buffer de data_registro
+	
+	la $s1, data_devolucao  # Carrega o endereco de data_devolucao
+	jal clear_buffer        # Limpa o buffer de data_devolucao
+	
+	lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
+    addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
+	
+	jr $ra
+	
 escrever_comando_invalido_display:
 	la $t1, msgE_comando_invalido   # Carrega o endereco de msgE_comando_invalido
     jal escrever_string_display     # Pula para a funcao generica que ira imprimir a string armazenada em $t1
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display   
+    jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_acervo_vazio_display:
     la $t1, msgE_acervo_vazio       # Carrega o endereco de msgE_acervo_vazio
     jal escrever_string_display     # Pula para a funcao generica que ira imprimir a string armazenada em $t1
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
 
 escrever_esprestimo_indisponivel_display:
     la $t1, msgE_esprestimo_indisponivel   # Carrega o endereco de msgE_comando_invalido
     jal escrever_string_display            # Pula para a funcao generica que ira imprimir a string armazenada em $t1
     jal escrever_barra_n_display           # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades 
     j main   
 
 escrever_relatorio_indisponivel_display:
@@ -1323,24 +1378,28 @@ escrever_livro_nao_encontrado_display:
     la $t1, msgE_livro_nao_encontrado   # Carrega o endereco de msgE_livro_nao_encontrado 
     jal escrever_string_display         # Pula para a funcao generica que ira imprimir a string armazenada em $t1
     jal escrever_barra_n_display    	# pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
 
 escrever_livro_esta_emprestado_display:
     la $t1, msgE_livro_esta_emprestado   # Carrega o endereco de msgE_livro_esta_emprestado
     jal escrever_string_display          # Pula para a funcao generica que ira imprimir a string armazenada em $t1
     jal escrever_barra_n_display    	 # pula para a funcao que ira imprimir uma quebra de linha no display
+	jal limpar_todos_buffers_das_entidades   
     j main   
     
 escrever_usuario_nao_encontrado_display:
     la $t1, msgE_usuario_nao_encontrado   # Carrega o endereco de msgE_usuario_nao_encontrado
     jal escrever_string_display           # Pula para a funcao generica que ira imprimir a string armazenada em $t1
     jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
     
 escrever_usuario_tem_pendencias_display:
     la $t1, msgE_usuario_tem_pendencias   # Carrega o endereco de msgE_usuario_tem_pendencias
     jal escrever_string_display           # Pula para a funcao generica que ira imprimir a string armazenada em $t1
     jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
     
 escrever_formato_data_hora_incorreto_display:
@@ -1375,48 +1434,56 @@ escrever_falta_argumento_titulo_display:
 	la $s1, arg_titulo  # Carrega o endereco arg_titulo
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_autor_display:
 	la $s1, arg_autor  # Carrega o endereco arg_autor
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_ISBN_display:
 	la $s1, arg_ISBN  # Carrega o endereco arg_ISBN
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_quantidade_display:
 	la $s1, arg_quantidade  # Carrega o endereco arg_quantidade 
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_nome_display:
 	la $s1, arg_nome  # Carrega o endereco arg_nome
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_matricula_display:
 	la $s1, arg_matricula  # Carrega o endereco arg_matricula
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_curso_display:
 	la $s1, arg_curso  # Carrega o endereco arg_curso
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_devolucao_display:
 	la $s1, arg_devolucao  # Carrega o endereco arg_devolucao
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
     j main  
     
 escrever_falta_argumento_data_display:
