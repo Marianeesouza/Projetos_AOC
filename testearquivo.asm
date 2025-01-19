@@ -132,36 +132,48 @@ repositorio_len:
 	subi $t2, $t2, 1 # subtrai 1 de t2 no final da função
 	jr $ra #volta para ra
 salvar_dados:
-#$t0  caminho arquivo de destino
-#$t1  endereço do repositiorio
-#$t2  usado para contar o tamnho do repositorio, não é necessário informar valor
-#$t3  usado na funcao de repositorio_len
-#$t4  usado na funcao de repositorio_len
-#$s0  usado para salvar descritor
-#$s1	 usado para armazenar $ra
-li $t2, 0 # inicializa t2 com 0
+	#$t0  reg que possui o caminho arquivo de destino
+	#$t1  reg que possui o endereco do repositiorio
+	#$t2  usado para contar o tamanho do repositorio, nao eh necessario informar valor
+	#$t3  usado na funcao de repositorio_len
+	#$t4  usado na funcao de repositorio_len
+	#$s0  usado para salvar descritor
+	#$s1  usado para armazenar $ra
 
+	li $t2, 0      # inicializa t2 com 0
+	li $v0, 13     # abre o arquivo no modo leitura
+	move $a0, $t0  # move nome do arquivo output em a0
+	li $a1, 1      # mode escrita
+	li $a2, 0      # valor padrao
+	syscall
 
-li $v0, 13 # abre o arquivo no modo leitura
-move $a0, $t0 # move nome do arquivo output em a0
-li $a1, 1 # mode escrita
-li $a2, 0 # valor padrão
-syscall
-
-move $s0, $v0 # salva descritor em s0
-move $s1, $ra # salvar o valor atual de ra em s1
-move $t3, $t1 # salva o endereço de t1 em t3
-move $s1, $ra # salva ra em s1
-jal repositorio_len # conta o tamanho do repositorio e salva em t2
-move $ra, $s1 # retorna o valor de $ra
-
-li $v0, 15
-move $a0, $s0 # move descritor para a0
-move $a1, $t1 # move endereço do repositorio para a1
-move $a2, $t2 # move tamanho do repositorio para a2
-syscall
-
-jr $ra
+	move $s0, $v0         # salva descritor em s0
+	move $s1, $ra         # salvar o valor atual de ra em s1
+	move $t3, $t1         # salva o endereco de t1 em t3
+	
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+	
+	jal repositorio_len   # conta o tamanho do repositorio e salva em t2
+	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+	li $v0, 15       # syscall para escrita
+	move $a0, $s0    # move descritor para a0
+	move $a1, $t1    # move endereco do repositorio para a1
+	move $a2, $t2    # move tamanho do repositorio para a2
+	syscall          # chama syscall de escrita
+	
+	# Limpa o buffer de comando
+	#addi $sp, $sp, -4
+ #   sw $ra, 0($sp)
+#	la $s1, comando
+#	jal clear_buffer
+#	lw $ra, 0($sp) 		#resgata o $ra original do $sp
+ #   addi $sp, $sp, 4	#devolve a pilha para a posicao original
+	
+	jr $ra
 
 
 

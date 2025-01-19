@@ -54,9 +54,9 @@
 	repo_emprestimo: .space 4000 # Espaco reservado para a gravacao temporaria dos emprestimos cadastrados
 	
 	# Locais dos arquivos salvos
-	local_arquivo_livros: .asciiz     "C:/repo_livros.txt"
-	local_arquivo_usuario: .asciiz     "C:/repo_usuarios.txt"
-	local_arquivo_emprestimo: .asciiz  "C:/repo_emprestimos.txt"	
+	local_arquivo_livros: .asciiz     "repo_livros.txt"
+	local_arquivo_usuario: .asciiz     "repo_usuarios.txt"
+	local_arquivo_emprestimo: .asciiz  "repo_emprestimos.txt"	
 	
 	# Comandos:
 	cmd_cadastrar_livro: 	.asciiz "cadastrar_livro"
@@ -105,7 +105,7 @@
 	msgE_usuario_tem_pendencias:    		 .asciiz "O usuario nao pode ser removido por ter devolucoes pendentes."
 	msgE_parte1_falta_argumento_obrigatorio: .asciiz "O campo \"" 
 	msgE_parte2_falta_argumento_obrigatorio: .asciiz "\" e obrigatorio, certifique de usa-lo para que a operacao seja realizada"
-	msgE_data_hora_mal_formatada:            .asciiz "O formato da data ou hora está incorreto."         
+	msgE_data_hora_mal_formatada:            .asciiz "O formato da data ou hora estï¿½ incorreto."         
 	
 	# strings auxiliares para impressoes
 	string_data:     .asciiz "Data: "
@@ -563,7 +563,7 @@ cadastrar_livro:
 	beqz $v0, escrever_falta_argumento_ISBN_display
 	
 	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaco entre os comandos
-	# Pega o que estïver entre aspas e salva no buffer
+	# Pega o que estï¿½ver entre aspas e salva no buffer
 	la $t1, ISBN
 	jal guardar_info_buffer
 	la $t2, virgula          # Carrega o valor ASCII da virgula (',')
@@ -626,7 +626,7 @@ remover_livro:
 	la $s1, comando
 	jal clear_buffer
 	
-	la $t1, msgC_livro_removido     # Carrega o endereïco de msgC_livro_removido
+	la $t1, msgC_livro_removido     # Carrega o endereï¿½co de msgC_livro_removido
 	j escrever_com_sucesso_display
 
 listar_livro:
@@ -721,7 +721,7 @@ remover_usuario:
 	j escrever_com_sucesso_display
 	
 registrar_emprestimo:
-	# Em construïcao
+	# Em construï¿½cao
 	
 	# Limpa o buffer de comando
 	la $s1, comando
@@ -743,7 +743,6 @@ salvar_dados:
   	la $t0, local_arquivo_livros      # Carrega o endereco do caminho do arquivo txt de livros
   	la $t1, repo_livro                # Carrega o endereco do repositorio que contem os dados a ser salvos
   	jal salvar_dados_no_arquivo       # pula para a funcao generica que salva os dados no arquivo .txt
-  	
   	la $t0, local_arquivo_usuario     # Carrega o endereco do caminho do arquivo .txt de usuarios
   	la $t1, repo_usuario              # Carrega o endereco do repositorio que contem os dados a ser salvos
   	jal salvar_dados_no_arquivo       # pula para a funcao generica que salva os dados no arquivo .txt
@@ -753,7 +752,7 @@ salvar_dados:
   	jal salvar_dados_no_arquivo       # pula para a funcao generica que salva os dados no arquivo .txt
     
     la $t1, msgC_dados_salvos          # Imprime a mensagem dados confirmando que os dados foram salvos
-    jal escrever_com_sucesso_display         
+    j escrever_com_sucesso_display         
 
 repositorio_len:	
 
@@ -800,10 +799,13 @@ salvar_dados_no_arquivo:
 	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
+
 	
+	move $a0, $s0
+	li $v0, 16
+	syscall
 	lw $ra, 0($sp) 		#resgata o $ra original do $sp
     addi $sp, $sp, 4	#devolve a pilha para a posicao original
-	
 	jr $ra
 	
 formatar_dados:
@@ -1100,7 +1102,7 @@ gerar_hora_atual:
     jr $ra                 # Retorna ao chamador
 
 imprimir_data_hora_usuario:
-	li $v0, 30   # Chama o syscall 30 para obter o horário
+	li $v0, 30   # Chama o syscall 30 para obter o horï¿½rio
     syscall
     
     la $t2, tempo_hora_configurada0   # Carrega o endereco da variavel tempo_hora_configurada0
@@ -1136,7 +1138,7 @@ imprimir_data_hora_usuario:
 
 	add $t0, $t0, $t1        # Soma os minutos configurados pelo usuario com os minutos decorridos
 	
-	# A linha abaixo verifica se o tempo em $t0 é maior que 60 minutos 
+	# A linha abaixo verifica se o tempo em $t0 ï¿½ maior que 60 minutos 
 	bge $t0, 60, ajustar_tempo   # Se o tempo em minutos for maior ou igual a 60 pula para a funcao que vai ajustar o tempo
 	sb  $t0, 2($t1)              # Caso contrario, sobrescreve o byte de minuto em hora_config_usuario 
 	j imprimir_data_tempo        # Pula para a impressao da data e tempo
@@ -1151,7 +1153,7 @@ imprimir_data_hora_usuario:
 		lb  $t4, 0($t3)                  # Carrega em $t4 o byte de hora em hora_config_usuario
 		
 		add $t0, $t4, $t1           # Soma a hora configurada pelo usuario com as horas decorridas
-		bge $t0, 24, ajustar_hora   # Verifica se as horas decorridas é maior que 24 horas
+		bge $t0, 24, ajustar_hora   # Verifica se as horas decorridas ï¿½ maior que 24 horas
 		sb  $t0, 0($t3)    			# Sobrescreve o byte de horas em hora_config_usuario
 		sb  $t2, 2($t3)	   			# sobrescreve o byte de minutos em hora_config_usuario
 		j imprimir_data_tempo 		# Pula para funcao que imprime a data e o tempo
@@ -1171,9 +1173,9 @@ imprimir_data_hora_usuario:
 			add $t5, $t5, $t2            # Soma a quantidade de dias da data configurada com a quantidade de dias decorridos
 			sb  $t5, 0($t1)    			 # Sobrescreve o byte de dias em data_config_usuario
 			
-			# Não irei me dar ao trabalho de verificar se o dia, mes e ano são válidos, após essa soma de dias , 
-			# somei e já tá bom demais, seria muito custoso fazer tudo isso já que os dados da data e hora 
-			# configurados pelo usuario não são salvos em arquivos .txt.
+			# Nï¿½o irei me dar ao trabalho de verificar se o dia, mes e ano sï¿½o vï¿½lidos, apï¿½s essa soma de dias , 
+			# somei e jï¿½ tï¿½ bom demais, seria muito custoso fazer tudo isso jï¿½ que os dados da data e hora 
+			# configurados pelo usuario nï¿½o sï¿½o salvos em arquivos .txt.
 			
 	imprimir_data_tempo:
 		la $t1, data_config_usuario   # Carrega o endereco de data_config_usuario			
@@ -1189,23 +1191,23 @@ imprimir_data_hora_usuario:
 	
 ajustar_data:
 
-	# O trecho abaixo compara se o usuário escreveu o argumento "--data"
-	addi $s0, $s0, 1 	  # Passa um caractere para frente, por conta do espaço entre os comandos
+	# O trecho abaixo compara se o usuï¿½rio escreveu o argumento "--data"
+	addi $s0, $s0, 1 	  # Passa um caractere para frente, por conta do espaï¿½o entre os comandos
 	la $s1, arg_data      # Carrega o endereco do argumento para comparar
-	li $s2, 6             # Define a quantidade de caracteres em comando que será comparada
+	li $s2, 6             # Define a quantidade de caracteres em comando que serï¿½ comparada
 	jal comparar_strings
 	beqz $v0, escrever_falta_argumento_data_display    # caso tenha faltado o argumento ou digitado incorretamente
 	 
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comando
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comando
 	
-	# O trecho abaixo verifica se os dados estão no formato dd/mm/aaaa
+	# O trecho abaixo verifica se os dados estï¿½o no formato dd/mm/aaaa
 	la $t1, barra     # Carrega o endereco de barra
 	lb $t1, 0($t1)    # Carrega o caractere de barra
 	
 	addi $s0, $s0, 3    # Avanca 3 caracteres 
 	lb $t2, 0($s0)      # Carrega o caractere 
 	
-	# Vaso os caractere em $s0 não seja igual ao de $t1, imprime a mensagem de formato incorreto
+	# Vaso os caractere em $s0 nï¿½o seja igual ao de $t1, imprime a mensagem de formato incorreto
 	bne  $t2, $t1, escrever_formato_data_hora_incorreto_display  
 	
 	addi $s0, $s0, 3   # Avanca 3 caracteres
@@ -1216,33 +1218,33 @@ ajustar_data:
 	subi $s0, $s0, 6
 	
 	la $t1, data_config_usuario   # Carrega o endereco de data_config_usuario  
-	jal guardar_info_buffer  	  # Pula para a funcao que pega o que está entre aspas e salva no data_config_usuario
+	jal guardar_info_buffer  	  # Pula para a funcao que pega o que estï¿½ entre aspas e salva no data_config_usuario
 	
-	# O trecho abaixo compara se o usuário escreveu o argumento "--hora"
-	addi $s0, $s0, 1 	  # Passa um caractere para frente, por conta do espaço entre os comandos
+	# O trecho abaixo compara se o usuï¿½rio escreveu o argumento "--hora"
+	addi $s0, $s0, 1 	  # Passa um caractere para frente, por conta do espaï¿½o entre os comandos
 	la $s1, arg_hora      # Carrega o endereco do argumento para comparar
-	li $s2, 6             # Define a quantidade de caracteres em comando que será comparada
+	li $s2, 6             # Define a quantidade de caracteres em comando que serï¿½ comparada
 	jal comparar_strings
 	beqz $v0, escrever_falta_argumento_hora_display    # caso tenha faltado o argumento ou digitado incorretamente
 	
-	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaço entre os comando
+	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaï¿½o entre os comando
 	
-	# O trecho abaixo verifica se os dados estão no formato hh:mm
+	# O trecho abaixo verifica se os dados estï¿½o no formato hh:mm
 	la $t1, dois_pontos     # Carrega o endereco de dois_pontos
 	lb $t1, 0($t1)    		# Carrega o caractere de dois_pontos
 	
 	addi $s0, $s0, 3    # Avanca 3 caracteres
 	lb $t2, 0($s0)      # Carrega o caractere 
-	# Vaso os caractere em $s0 não seja igual ao de $t1, imprime a mensagem de formato incorreto
+	# Vaso os caractere em $s0 nï¿½o seja igual ao de $t1, imprime a mensagem de formato incorreto
 	bne  $t2, $t1, escrever_formato_data_hora_incorreto_display  
 	
 	# Caso esteje tudo nos conformes, volta o $s0 para a sua posicao anterior a essas 2 verificacoes
 	subi $s0, $s0, 3
 	
 	la $t1, hora_config_usuario  # Carrega o endereco de data_config_usuario
-	jal guardar_info_buffer  	 # Pula para a funcao que pega o que está entre aspas e salva no data_config_usuario
+	jal guardar_info_buffer  	 # Pula para a funcao que pega o que estï¿½ entre aspas e salva no data_config_usuario
 	
-	li $v0, 30   # Chama o syscall 30 para obter o instante que o usuário configurou o sistema
+	li $v0, 30   # Chama o syscall 30 para obter o instante que o usuï¿½rio configurou o sistema
     syscall
     
     la $t0, tempo_hora_configurada0   # Carrega o endereco de tempo_hora_configurada0
@@ -1255,7 +1257,7 @@ ajustar_data:
 	la $s1, comando
 	jal clear_buffer
 	
-	la $t1, msgC_data_hora_configurada   # Carrega o endereço de msgC_data_hora_configurada
+	la $t1, msgC_data_hora_configurada   # Carrega o endereï¿½o de msgC_data_hora_configurada
 	j escrever_com_sucesso_display
 
 	# funcao generica para mensagens de confirmacao
