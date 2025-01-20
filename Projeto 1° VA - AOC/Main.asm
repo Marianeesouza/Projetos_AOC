@@ -33,10 +33,10 @@
 	backspace:      .byte 8       # Valor em ASCII do caractere de backspace (botao de apagar)
 	
 	# Livro:
-	titulo:  	.space 30     # Espaco reservado para o titulo do livro
-	autor:    	.space 30     # Espaco reservado para o nome do autor do livro
-	ISBN:       .space 10     # Espaco reservado para o codigo de ISBN do livro
-	quantidade: .space 5   	  # Espaco reservado para a quantidade de livros disponiveis:
+	titulo:  	.space 50     # Espaco reservado para o titulo do livro
+	autor:    	.space 50     # Espaco reservado para o nome do autor do livro
+	ISBN:       .space 15     # Espaco reservado para o codigo de ISBN do livro
+	quantidade: .space 10  	  # Espaco reservado para a quantidade de livros disponiveis:
 	
 	# Usuario:
 	nome:   	.space 50     # Espaco reservado para o nome do usuario
@@ -56,9 +56,9 @@
 	buffer_aux:      .space  100 # Espaco reservado para auxiliar no processo de remocao dos dados nos repositorios   
 	
 	# Locais dos arquivos salvos
-	local_arquivo_livros: .asciiz     "C:/repo_livros.txt"
-	local_arquivo_usuario: .asciiz     "C:/repo_usuarios.txt"
-	local_arquivo_emprestimo: .asciiz  "C:/repo_emprestimos.txt"	
+	local_arquivo_livros:      .asciiz  "repo_livros.txt"
+	local_arquivo_usuario:     .asciiz  "repo_usuarios.txt"
+	local_arquivo_emprestimo:  .asciiz  "repo_emprestimos.txt"	
 	
 	# Comandos:
 	cmd_cadastrar_livro: 	.asciiz "cadastrar_livro"
