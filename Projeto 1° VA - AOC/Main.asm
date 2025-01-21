@@ -116,7 +116,7 @@
 .globl main
 
 main:
-	# Escrever aqui a funcao que le os dados do arquivo .txt 
+	jal ler_dados 
 	jal escrever_banner_display
 	li $s7, 0 		# inicializa $s7 com 0
 	jal esperar_input_teclado
@@ -668,7 +668,7 @@ listar_livro:
 		
 	la $t1, repo_livro             # Carrega o endereco de repo_livro
 	jal escrever_string_display    # Pula para a funcao que imprime strings (ele todo no caso)
-	
+	jal escrever_barra_n_display
 	la $s1, comando
 	jal clear_buffer
 	
@@ -993,106 +993,107 @@ converter_int_para_string:
      	addi $sp, $sp, 1                 # Incrementa o ponteiro do $sp voltando 1
      	subi $t3, $t3, 1                 # Decrementa $t3
      	beqz $t3, fim_loop_inserir       # Se $t3 for 0, quer dizer que todos os caracteres foram inseridos em $t0
-     	addi $t6, $t6, 1                 # Caso contrï¿½rio, incrementa $t6, para a insercao do proximo caractere
+     	addi $t6, $t6, 1                 # Caso contrario, incrementa $t6, para a insercao do proximo caractere
      	j loop_inserir_string_t0         # Entra em loop
      	
      fim_loop_inserir:
     	jr $ra
-	
+   		
 gerar_data_atual:
-    li $v0, 30           # Syscall 30 para obter o tempo do sistema
+    li $v0, 30     # Syscall para obter o tempo do sistema
+    li $a1, 0      # Inicializa a1
     syscall
-    
+
     move $t0, $a0        # Move a parte menos significativa dos milissegundos para $t0
     move $t1, $a1        # Move a parte mais significativa dos milissegundos para $t1
 
     # Conversao da parte menos significativa dos milissegundos para minutos
-    li $t2, 60000      	 # Carrega em $t2 a quantidade de milissegundos em 1 minuto
-    div $t0, $t2         # Opera $t0 / 60000 (parte baixa para horas) 
-    mflo $t0             # Move para $t0 as horas decorridas da menos significativa
-	
-    # Conversao da parte mais significativa de milissegundos para horas
+    li $t2, 60000        # Carrega em $t2 a quantidade de milissegundos em 1 minuto
+    divu $t0, $t0, $t2   # Opera $t0 / 60000 (parte baixa para minutos) como unsigned
+    mflo $t0             # Move para $t0 os minutos decorridos da parte menos significativa
+
+    # Conversao da parte mais significativa de milissegundos para minutos
     # A conversao eh feita com base na seguinte formula: $t1 * 2^32 / 60000
     li $t2, 71582        # Carrega 71582 em $t2 que eh o resultado aproximado (2^32) / 60000
-    mul $t1, $t1, $t2    # Multiplica 71582 com $t1 para obter as minutos decorridos com a parte mais significativa
-    
+    mul $t1, $t1, $t2    # Multiplica 71582 com $t1 para obter os minutos decorridos com a parte mais significativa
+
     # Soma $t0 (quantidade de minutos decorridos da parte menos significativa)
     # com $t1 (quantidade de minutos decorridos da parte mais significativa)
     # para obter a quantidade total de minutos decorridos de 01/01/1970 pra ca
-    add $t0, $t0, $t1
-    
+    addu $t0, $t0, $t1
+
     # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicacao de 71582 * $t1
     # utilizou um valor aproximado, desconsiderando os seis digitos depois da virgula, e a ausencia
     # desses valores causa um atraso de 138 minutos para que a data seja atualizada, por isso o 
     # trecho abaixo corrige esse tempo de atraso 
-    addi $t0, $t0, 139
+    addiu $t0, $t0, 139
 
-    # Conversao do total de horas decorridas para dias
-    li $t1, 1440         # Inicializa t7 com 24 (quantidade de minutos em um dia) 
-    div $t0, $t1         # opera $t0 / $t1 para obter a quantidade total de dias decorridos
+    # Conversao do total de minutos decorridos para dias
+    li $t1, 1440         # Inicializa $t1 com 1440 (quantidade de minutos em um dia)
+    divu $t0, $t0, $t1   # Opera $t0 / $t1 para obter a quantidade total de dias decorridos
     mflo $t0             # Armazena em $t0 a quantidade total de dias decorridos
-	
-    # Calculo dos anos decorridos (considerando anos bissextos)
-    li $s0, 1970         	# Inicializa $s0 com 1970 (a qual vai ser contantemente incrementado)
-	
-	ano_loop:
-    li $t1, 365          	# Inicializa $t1 com 365 (quantidade de dias em um ano nï¿½o bissexto)
-    li $t2, 4            	# Inicializa com $t6 com 4
-    rem $t3, $s0, $t2    	# Armazena o resto da divisao de $s0 com $t2
-    beqz $t3, ano_bissexto  # Se resto de $t3 for 0, o ano e bissexto
-    j verificar_dias_restantes_ano
 
-	ano_bissexto:
-    	addi $t1, $t1, 1     # Incrementa $t7 com 1 para dizer que o ano em $s0 eh um ano que possui 366 dias
-    	
-	verificar_dias_restantes_ano:
-		blt $t0, $t1, calcular_mes      # Se $t8 < $t7 pula para a funcao que calcula o mes
-    	sub $t0, $t0, $t1  				# Remove os dias do ano de $s0 do total de dias decorridos
-    	addi $s0, $s0, 1                # Incrementa o ano
-   		j ano_loop
-   		
-   	calcular_mes:
-   		li $s1, 1       	# Inicializa $s1 com 1 (reg que vai conter o mes do ano)
-   		addi $t0, $t0, 1  	# incrementando $t0 para corrigir a diferenca de 1 dia menos que tava sendo gerada antes dessa linha de cï¿½digo existir
-   		
-   		mes_loop:
-   			li $t1, 30
-   			beq $s1, 1, mes_com_31_dias  			# Se o mes em $s1 for 1, pula para a funcao que ajusta pra 31 dias       
-   			beq $s1, 2, verificar_dias_fevereiro    # Se o mes em $s1 for 2, pula para a funcao que verifica a quantidade de dias
-   			beq $s1, 3, mes_com_31_dias             # Se o mes em $s1 for 3, pula para a funcao que ajusta pra 31 dias
-   			beq $s1, 5, mes_com_31_dias             # Se o mes em $s1 for 5, pula para a funcao que ajusta pra 31 dias
-   			beq $s1, 7, mes_com_31_dias             # Se o mes em $s1 for 7, pula para a funcao que ajusta pra 31 dias
-   			beq $s1, 8, mes_com_31_dias             # Se o mes em $s1 for 8, pula para a funcao que ajusta pra 31 dias
-   			beq $s1, 10, mes_com_31_dias            # Se o mes em $s1 for 10, pula para a funcao que ajusta pra 31 dias
-   			j verificar_dias_restantes_mes    
-   			    
-   		mes_com_31_dias:
-   			addi $t1, $t1, 1  # Incrementa $t0 com 1 para indicar que o mï¿½s em $s1 eh um mï¿½s de 31 dias
-   			j verificar_dias_restantes_mes
-   		
-   		mes_com_29_dias:
-   			subi $t1, $t1, 1   # Decrementa $t0 com 1 para indicar que o mï¿½s em $s1 eh um mï¿½s de 29 dias
-   			j verificar_dias_restantes_mes
-   			
-   		mes_com_28_dias:
-   			subi $t1, $t1, 2   # Decrementa $t0 com 2 para indicar que o mï¿½s em $s1 eh um mï¿½s de 28 dias    
-			j verificar_dias_restantes_mes
-			
-		verificar_dias_fevereiro:
-			li $t2, 4 
-			rem $t3, $s0, $t2   	   # Armazena o resto da divisao de $s0 com $t1
-    		beqz $t3, mes_com_29_dias  # Se resto de $t2 for 0, significa que o ano eh bissexto 
-    		j mes_com_28_dias          # Se o ano nao eh bissexto pula para a funcao que ajusta a qtd de dias para 28
-    		
-		verificar_dias_restantes_mes:
-			blt $t0, $t1, dia_do_mes      # Se $t0 < $t1, pula para a funcao que o dia do mes
-    		sub $t0, $t0, $t1  			  # Remove os dias do mes de $s1 do total de dias decorridos
-    		addi $s1, $s1, 1              # Incrementa o mes
-   			j mes_loop
-   			
-   	dia_do_mes:
-   		move $s2, $t0           # Move os dias que restaram para $s2
-   		jr $ra
+    # Calculo dos anos decorridos (considerando anos bissextos)
+    li $s0, 1970         # Inicializa $s0 com 1970 (a qual vai ser constantemente incrementado)
+
+	ano_loopU:
+   		li $t1, 365          # Inicializa $t1 com 365 (quantidade de dias em um ano nao bissexto)
+    	li $t2, 4            # Inicializa $t2 com 4
+    	remu $t3, $s0, $t2   # Armazena o resto da divisao de $s0 com $t2 como unsigned
+    	beqz $t3, ano_bissextoU # Se resto de $t3 for 0, o ano eh bissexto
+    	j verificar_dias_restantes_anoU
+
+	ano_bissextoU:
+    	addiu $t1, $t1, 1    # Incrementa $t1 com 1 para dizer que o ano em $s0 eh um ano que possui 366 dias
+
+	verificar_dias_restantes_anoU:
+    	bltu $t0, $t1, calcular_mesU # Se $t0 < $t1 pula para a funcao que calcula o mes
+    	subu $t0, $t0, $t1    # Remove os dias do ano de $s0 do total de dias decorridos
+    	addiu $s0, $s0, 1     # Incrementa o ano
+    	j ano_loopU
+
+	calcular_mesU:
+    	li $s1, 1            # Inicializa $s1 com 1 (reg que vai conter o mes do ano)
+    	addiu $t0, $t0, 1    # Incrementando $t0 para corrigir a diferenca de 1 dia menos
+
+	mes_loopU:
+    	li $t1, 30
+    	beq $s1, 1, mes_com_31_diasU   # Se o mes em $s1 for 1, pula para a funcao que ajusta pra 31 dias       
+    	beq $s1, 2, verificar_dias_fevereiroU # Se o mes em $s1 for 2, pula para a funcao que verifica a quantidade de dias
+    	beq $s1, 3, mes_com_31_diasU   # Se o mes em $s1 for 3, pula para a funcao que ajusta pra 31 dias
+    	beq $s1, 5, mes_com_31_diasU   # Se o mes em $s1 for 5, pula para a funcao que ajusta pra 31 dias
+    	beq $s1, 7, mes_com_31_diasU   # Se o mes em $s1 for 7, pula para a funcao que ajusta pra 31 dias
+    	beq $s1, 8, mes_com_31_diasU   # Se o mes em $s1 for 8, pula para a funcao que ajusta pra 31 dias
+    	beq $s1, 10, mes_com_31_diasU  # Se o mes em $s1 for 10, pula para a funcao que ajusta pra 31 dias
+    	j verificar_dias_restantes_mesU
+
+	mes_com_31_diasU:
+    	addiu $t1, $t1, 1  # Incrementa $t1 com 1 para indicar que o mes em $s1 eh um mes de 31 dias
+    	j verificar_dias_restantes_mesU
+
+	mes_com_29_diasU:
+    	subiu $t1, $t1, 1  # Decrementa $t1 com 1 para indicar que o mes em $s1 eh um mes de 29 dias
+    	j verificar_dias_restantes_mesU
+
+	mes_com_28_diasU:
+    	subiu $t1, $t1, 2  # Decrementa $t1 com 2 para indicar que o mes em $s1 eh um mes de 28 dias    
+    	j verificar_dias_restantes_mesU
+
+	verificar_dias_fevereiroU:
+    	li $t2, 4 
+    	remu $t3, $s0, $t2   # Armazena o resto da divisao de $s0 com $t2 como unsigned
+    	beqz $t3, mes_com_29_diasU  # Se resto de $t3 for 0, significa que o ano eh bissexto 
+    	j mes_com_28_diasU  # Se o ano nao eh bissexto pula para a funcao que ajusta a qtd de dias para 28
+
+	verificar_dias_restantes_mesU:
+    	bltu $t0, $t1, dia_do_mesU  # Se $t0 < $t1, pula para a funcao que calcula o dia do mes
+    	subu $t0, $t0, $t1          # Remove os dias do mes de $s1 do total de dias decorridos
+    	addiu $s1, $s1, 1           # Incrementa o mes
+    	j mes_loopU
+
+	dia_do_mesU:
+    	move $s2, $t0        # Move os dias que restaram para $s2
+    	jr $ra
 
 gerar_hora_atual:
     li $v0, 30           # Syscall 30 para obter o tempo do sistema
@@ -1102,38 +1103,38 @@ gerar_hora_atual:
     move $t1, $a1        # Move a parte mais significativa dos milissegundos para $t1
 
     # Conversao da parte menos significativa dos milissegundos para minutos
-    li $t2, 60000      	 # Carrega em $t2 a quantidade de milissegundos em 1 minuto
-    div $t0, $t2         # Opera $t0 / 60000 (parte baixa para horas) 
-    mflo $t0             # Move para $t0 as horas decorridas da menos significativa
+    li $t2, 60000        # Carrega em $t2 a quantidade de milissegundos em 1 minuto
+    divu $t0, $t2        # Opera $t0 / 60000 (unsigned) para calcular minutos
+    mflo $t0             # Move para $t0 os minutos decorridos da parte menos significativa
 	
     # Conversao da parte mais significativa de milissegundos para horas
     # A conversao eh feita com base na seguinte formula: $t1 * 2^32 / 60000
     li $t2, 71582        # Carrega 71582 em $t2 que eh o resultado aproximado (2^32) / 60000
-    mul $t1, $t1, $t2    # Multiplica 71582 com $t1 para obter as minutos decorridos com a parte mais significativa
+    mulu $t1, $t1, $t2   # Multiplica (unsigned) 71582 com $t1 para obter os minutos decorridos com a parte mais significativa
     
     # Soma $t0 (quantidade de minutos decorridos da parte menos significativa)
     # com $t1 (quantidade de minutos decorridos da parte mais significativa)
     # para obter a quantidade total de minutos decorridos de 01/01/1970 pra ca
-    add $t0, $t0, $t1
+    addu $t0, $t0, $t1
     
-    # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicaï¿½ï¿½o de 71582 * $t1
-    # utilizou um valor aproximado, desconsiderando os seis dï¿½gitos depois da virgula, e a ausencia
+    # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicacao de 71582 * $t1
+    # utilizou um valor aproximado, desconsiderando os seis digitos depois da virgula, e a ausencia
     # desses valores causa um atraso de 138 minutos para que a data seja atualizada, por isso o 
     # trecho abaixo corrige esse tempo de atraso 
-    addi $t0, $t0, 139
+    addiu $t0, $t0, 139
 
-    # Obtenï¿½ï¿½o do total de mintos do dia atual
-    li $t1, 1440         # Inicializa t1 com 24 (quantidade de minutos em um dia) 
-    div $t0, $t1         # opera $t0 / $t1 para obter a quantidade total de dias decorridos
-	mfhi $t0
+    # Obtencao do total de minutos do dia atual
+    li $t1, 1440         # Inicializa t1 com 1440 (quantidade de minutos em um dia) 
+    divu $t0, $t1        # Opera $t0 / $t1 (unsigned) para obter a quantidade total de dias decorridos
+    mfhi $t0
 	
     # Separar minutos em horas e minutos
-    li $t1, 60             # Minutos por hora
-    div $t0, $t1           # Divide para obter horas e resto
-    mflo $s0               # $s0 = horas do dia
-    mfhi $s1               # $s1 = minutos restantes
+    li $t1, 60           # Minutos por hora
+    divu $t0, $t1        # Divide (unsigned) para obter horas e resto
+    mflo $s0             # $s0 = horas do dia
+    mfhi $s1             # $s1 = minutos restantes
 
-    jr $ra                 # Retorna ao chamador
+    jr $ra               # Retorna ao chamador
 
 imprimir_data_hora_usuario:
 	li $v0, 30   # Chama o syscall 30 para obter o horario
@@ -1222,7 +1223,6 @@ imprimir_data_hora_usuario:
 		
 		j main
 	
-	
 ajustar_data:
 	# O trecho abaixo compara se o usuario escreveu o argumento "--data"
 	addi $s0, $s0, 1 	  # Passa um caractere para frente, por conta do espaco entre os comandos
@@ -1292,7 +1292,69 @@ ajustar_data:
 	
 	la $t1, msgC_data_hora_configurada   # Carrega o endereco de msgC_data_hora_configurada
 	j escrever_com_sucesso_display
+ler_dados:
+    # Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+	 
+    la $a0, local_arquivo_livros       # Carrega o caminho do arquivo de livros
+    la $a1, repo_livro                 # Carrega o endereço do repositório onde os dados serão carregados
+    li $a2, 4500
+    jal ler_dados_do_arquivo           # Chama a função genérica para leitura do arquivo
 
+    la $a0, local_arquivo_usuario      # Carrega o caminho do arquivo de usuários
+    la $a1, repo_usuario               # Carrega o endereço do repositório onde os dados serão carregados
+    li $a2, 4500
+    jal ler_dados_do_arquivo           # Chama a função genérica para leitura do arquivo
+
+    la $a0, local_arquivo_emprestimo   # Carrega o caminho do arquivo de empréstimos
+    la $a1, repo_emprestimo            # Carrega o endereço do repositório onde os dados serão carregados
+    li $a2, 4500
+    jal ler_dados_do_arquivo           # Chama a função genérica para leitura do arquivo
+	
+	lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
+    addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
+	
+    jr $ra
+
+# Função: ler_arquivo
+# Objetivo: Lê o conteúdo de um arquivo e o armazena no buffer especificado.
+# Parâmetros:
+#   $a0: Endereço do nome do arquivo (ex: local_arquivo_livros)
+#   $a1: Endereço do buffer de destino (ex: repo_livro)
+#   $a2: Tamanho máximo do buffer
+ler_dados_do_arquivo:
+    # Salva $ra, $s0 e $s1 na pilha
+    addi $sp, $sp, -12
+    sw $ra, 8($sp)
+    sw $s0, 4($sp)
+    sw $s1, 0($sp)
+
+    # Abre o arquivo para leitura
+    move $s0, $a1           # Salva o endereço do buffer em $s0
+    li $v0, 13              # Código de syscall para abrir arquivo
+    li $a1, 0               # Modo leitura
+    syscall
+    move $s1, $v0           # Salva o descritor do arquivo em $s1
+
+    # Lê o conteúdo do arquivo
+    li $v0, 14              # Código de syscall para ler de arquivo
+    move $a0, $s1           # Descritor do arquivo
+    move $a1, $s0           # Endereço do buffer (recuperado de $s0)
+    syscall
+
+    # Fecha o arquivo
+    li $v0, 16              # Código de syscall para fechar arquivo
+    move $a0, $s1           # Descritor do arquivo
+    syscall
+
+    # Restaura $ra, $s0 e $s1 e retorna
+    lw $s1, 0($sp)
+    lw $s0, 4($sp)
+    lw $ra, 8($sp)
+    addi $sp, $sp, 12
+    jr $ra
+    
 	# funcao generica para mensagens de confirmacao
 escrever_com_sucesso_display:
 	# $t1: reg possui a primeira parte da mensagem de confirmacao
