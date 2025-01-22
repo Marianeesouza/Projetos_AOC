@@ -33,19 +33,19 @@
 	backspace:      .byte 8       # Valor em ASCII do caractere de backspace (botao de apagar)
 	
 	# Livro:
-	titulo:  	.space 50     # Espaco reservado para o titulo do livro
-	autor:    	.space 50     # Espaco reservado para o nome do autor do livro
+	titulo:  	.space 35     # Espaco reservado para o titulo do livro
+	autor:    	.space 35     # Espaco reservado para o nome do autor do livro
 	ISBN:       .space 15     # Espaco reservado para o codigo de ISBN do livro
 	quantidade: .space 10  	  # Espaco reservado para a quantidade de livros disponiveis:
 	
 	# Usuario:
-	nome:   	.space 50     # Espaco reservado para o nome do usuario
-	matricula:	.space 20     # Espaco reservado para o numero de matricula do usuario
+	nome:   	.space 35     # Espaco reservado para o nome do usuario
+	matricula:	.space 15     # Espaco reservado para o numero de matricula do usuario
 	curso:      .space 40     # Espaco reservado para o curso do usuario
 	
 	# Emprestimo:
-	matricula_usuario_ass: 	.space 10   # Espaco reservado para a matricula do usuario associado ao emprestimo
-	ISBN_livro_ass:         .space 10   # Espaco reservado para o codigo de ISBN do livro associado ao emprestimo
+	matricula_usuario_ass: 	.space 15   # Espaco reservado para a matricula do usuario associado ao emprestimo
+	ISBN_livro_ass:         .space 15   # Espaco reservado para o codigo de ISBN do livro associado ao emprestimo
 	data_registro:  		.space 10   # Espaco reservado para a data em que foi registrado o emprestimo
 	data_devolucao: 		.space 10   # Espaco reservado para a data de devolucao do emprestimo
 	
@@ -94,7 +94,7 @@
 	msgC_dados_salvos:           .asciiz "Dados salvos"
 	msgC_dados_apagados:         .asciiz "Dados apagados"
 	msgC_data_hora_configurada:  .asciiz "Data e hora configurada"
-	msgC_devolucao_registrada:   .asciiz "Devolucao regisrada"
+	msgC_devolucao_registrada:   .asciiz "Devolucao registrada"
 	msgC_com_sucesso: 			 .asciiz " com sucesso!"
 	
 	# Mensagens de erro:
@@ -353,8 +353,8 @@ verificar_comando:
   	jal verificar_cmd_salvar_dados
   	jal verificar_cmd_formatar_dados
   	jal verificar_cmd_data_hora
-	jal verificar_ajustar_data
-    
+	jal verificar_cmd_ajustar_data
+    jal verificar_cmd_reg_devolucao
     # Se nao foi digitado nenhum dos comandos 
     j escrever_comando_invalido_display
 
@@ -518,7 +518,7 @@ verificar_cmd_data_hora:
     
   	jr $ra
   	
-verificar_ajustar_data:	
+verificar_cmd_ajustar_data:	
 	# Aloca espaco no $sp para salvar o endereco de $ra
     addi $sp, $sp, -4
     sw $ra, 0($sp)
@@ -533,7 +533,23 @@ verificar_ajustar_data:
     addi $sp, $sp, 4	#devolve a pilha para a posicao original
     
   	jr $ra
-	
+  	
+verificar_cmd_reg_devolucao:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    la $s1, cmd_reg_devolucao        # Carrega o endereco de reg_devolucao
+    la $s0, comando                  # Carrega o endereco de comando em S0
+  	li $s2, 19                       # Define a quantidade de caracteres de comando que irao ser comparados
+  	jal comparar_strings             # Pula para a funcao que ira comparar as strings
+  	beq $v0, 1, registrar_devolucao  # se $v0 for 1, significa que o comando digitado foi o de reg_devolucao
+    
+    lw $ra, 0($sp) 		#resgata o $ra original do $sp
+    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    
+  	jr $ra	
+
 guardar_info_buffer:
 	# $t1: contem qual o buffer a ser usado
 	# $s0: contem o comando dado pelo usuario
@@ -855,7 +871,6 @@ remover_livro:
 	j escrever_com_sucesso_display
 
 listar_livro:
-		
 	la $t1, repo_livro             # Carrega o endereco de repo_livro
 	jal escrever_string_display    # Pula para a funcao que imprime strings (ele todo no caso)
 	la $s1, comando
@@ -1013,9 +1028,9 @@ salvar_dados:
     jal escrever_com_sucesso_display         
 
 repositorio_len:	
-	lb $t4, ($t3)            # carrega o byte de t3
-	addi $t3, $t3, 1 
-	addi $t2, $t2, 1
+	lb $t4, ($t3)             # carrega o byte de t3
+	addi $t3, $t3, 1          # Incrementa $t3
+	addi $t2, $t2, 1          # Incrementa $t2
 	bnez $t4, repositorio_len # se t4 eh diferente de 0 recomeca a funcao
 	subi $t2, $t2, 1          # subtrai 1 de t2 no final da funcao
 	jr $ra                    # volta para ra
@@ -1513,7 +1528,24 @@ ajustar_data:
 	
 	la $t1, msgC_data_hora_configurada   # Carrega o endereco de msgC_data_hora_configurada
 	j escrever_com_sucesso_display
+
+registrar_devolucao:
+	# Em construcao
 	
+	# Limpa os buffers de comando, matricula_usuario_ass e ISBN_livro_ass
+	la $s1, comando
+	jal clear_buffer
+	
+	la $s1, matricula_usuario_ass
+	jal clear_buffer
+	
+    la $s1, ISBN_livro_ass
+    jal clear_buffer    
+	
+	# Imprime uma mensagem de que a devolucao foi concluída no display
+	la $t1, msgC_devolucao_registrada
+	jal escrever_com_sucesso_display
+
 ler_dados:
     # Aloca espaco no $sp para salvar o endereco de $ra
     addi $sp, $sp, -4
@@ -1575,7 +1607,7 @@ ler_dados_do_arquivo:
     addi $sp, $sp, 12
     jr $ra
     
-	# funcao generica para mensagens de confirmacao
+# funcao generica para mensagens de confirmacao
 escrever_com_sucesso_display:
 	# $t1: reg possui a primeira parte da mensagem de confirmacao
 
