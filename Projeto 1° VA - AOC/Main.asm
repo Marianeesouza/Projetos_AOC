@@ -979,7 +979,83 @@ remover_usuario:
 	
 registrar_emprestimo:
 	# Em construcao
+	## ---------
 	
+    # Verifica o argumento "--matricula"
+    la $s1, arg_matricula      # Carrega o endereco da string "--matricula"  em $s1
+    addi $s0, $s0, 1           # Move o ponteiro para o proximo argumento
+    li $s2, 11                 # Tamanho esperado do argumento
+    jal comparar_strings       # funcao para comparar strings
+    beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
+
+    addi $s0, $s0, 1            # Move o ponteiro para a proxima info
+    la $t1, matricula           # Carrega o endereco do matricula em $t1
+    jal guardar_info_buffer     # Guarda o conteudo entre aspas no bufffer matricula
+    la $t2, virgula             # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
+    sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
+
+    # Verifica o argumento "--isbn"
+    la $s1, arg_ISBN			# Carrega o endereco da string "--matricula"  em $s1
+	addi $s0, $s0, 1           	# Move o ponteiro para o proximo argumento
+    li $s2, 6               	# Tamanho esperado do argumento
+    jal comparar_strings       	# funcao para comparar strings
+    beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
+	
+	addi $s0, $s0, 1            # Move o ponteiro para a proxima info
+    la $t1, ISBN           		# Carrega o endereco do matricula em $t1
+    jal guardar_info_buffer     # Guarda o conteudo entre aspas no bufffer ISBN
+    la $t2, virgula             # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
+    sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
+	
+	# Verifica o argumento --devolucao
+	la $s1, arg_devolucao 		# Carrega o endereco da string "--devolucao"  em $s1
+	addi $s0, $s0, 1			# Move o ponteiro para o proximo argumento
+	li $s2, 11					# Tamanho esperado do argumento
+	jal comparar_strings		# funcao para comparar strings
+	beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
+	
+	addi $s0, $s0, 1			# Move o ponteiro para a proxima info
+	la $t1, devolucao			# Carrega o endereco do matricula em $t1
+	jal guardar_info_buffer		# Guarda o conteudo entre aspas no bufffer ISBN
+	la $t2, virgula				# Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)				# Carrega o byte do caractere da virgula
+	sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
+	
+	## Verifica disponibilidade do livro
+	
+	# Verifica se livro com ISBN existe
+	
+	# Verifica se quantidade 
+	
+	## Salva emprestimo em buffer
+	
+	# Concatena as informacoes no repositorio de usuarios
+    la $s0, repo_emprestimo    # Carrega o endereco do repositorio de emprestimo em $s0.
+    
+    la $s1, matricula       # Carrega o endereco do buffer "matricula" em $s1.
+    jal str_concat          # Concatena o matricula ao repositario de emprestimo.
+    la $s1, matricula       # Recarrega o endereco de matricula novamente (para voltar ao 1� caractere)
+    jal clear_buffer        # Limpa o buffer "nome".
+
+    la $s1, ISBN       	# Carrega o endereco do buffer `ISBN` em $s1.
+    jal str_concat      # Concatena o curso ao repositorio de emprestimo.
+    la $s1, ISBN       	# Recarrega o endereco de curso novamente (para voltar ao 1� caractere)	
+    jal clear_buffer    # Limpa o buffer "ISBN".
+    
+    la $s1, devolucao       # Carrega o endereco do buffer `devolucao` em $s1.
+    jal str_concat      	# Concatena o curso ao repositorio de emprestimo.
+    la $s1, devolucao       # Recarrega o endereco de curso novamente (para voltar ao 1� caractere)	
+    jal clear_buffer    	# Limpa o buffer "devolucao".
+	
+	la $t1, repo_usuario            # Carrega o endereco do repositorio de usuarios em $t1.
+	jal escrever_string_display     # Exibe o conteudo do repositorio de usuarios.
+ 
+	
+	
+	
+	## ---------
 	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
@@ -1053,9 +1129,9 @@ salvar_dados_no_arquivo:
 	syscall          # chama syscall de escrita
 	
 	
-	li $v0, 16
+	li $v0, 16 
 	move $a0, $s0
-	syscall
+	syscall # chama o syscall 16 para fechar o descritor do arquivo
 	
 	
 	# Limpa o buffer de comando
