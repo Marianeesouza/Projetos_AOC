@@ -200,9 +200,9 @@ esperar_input_teclado:
 tratar_backspace:
 	la $s0, comando                       # Carrega o endereco de comando
 	lb $t0, 0($s0)                        # Carrega o primeiro byte de comando
-	beqz $t0, limpar_rescrever_display    # se o 1� byte for nulo, entao comando ta vazio, logo nao precisa remover
-  	addi $s7, $s7, -1    # Caso n�o seja, decrementa $s7 para apontar para o �ltimo caractere digitado
-  	li $t2, 0 			 # Reg auxiliar para loop
+	beqz $t0, limpar_rescrever_display    # se o primeiro byte for nulo, entao comando ta vazio, logo nao precisa remover
+  	addi $s7, $s7, -1                     # Caso nao seja, decrementa $s7 para apontar para o ultimo caractere digitado
+  	li $t2, 0 			                  # Reg auxiliar para loop
   	
  	loop_apagar_ultimo_caractere:
   		beq $t2, $s7, apagar_ultimo_caractere  # Quando $t2 e $s7 forem iguais entao estaremos posicionados no ultimo caractere digitado em comando
@@ -355,7 +355,7 @@ verificar_comando:
   	jal verificar_cmd_data_hora
 	jal verificar_ajustar_data
     
-    # Se n�o foi digitado nenhum dos comandos 
+    # Se nao foi digitado nenhum dos comandos 
     j escrever_comando_invalido_display
 
 verificar_cmd_cadastrar_livro:
@@ -369,8 +369,8 @@ verificar_cmd_cadastrar_livro:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, cadastrar_livro     # se $v0 for 1, significa que o comando digitado foi o de cadastrar_livro 
   	
-  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+  	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
   	jr $ra
 
@@ -385,8 +385,8 @@ verificar_cmd_cadastrar_usuario:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, cadastrar_usuario   # se $v0 for 1, significa que o comando digitado foi o de cadastrar_usuario
 	
-	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
 	
 	jr $ra
 	
@@ -401,8 +401,8 @@ verificar_cmd_listar_livro:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, listar_livro        # se $v0 for 1, significa que o comando digitado foi o de listar_livro
   	
-  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+  	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
   	jr $ra
   	
@@ -417,8 +417,8 @@ verificar_cmd_reg_emprestimo:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, listar_livro        # se $v0 for 1, significa que o comando digitado foi o de reg_emprestimo
 	
-	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
 	jr $ra
 	
@@ -433,8 +433,8 @@ verificar_cmd_gerar_relatorio:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, gerar_relatorio     # se $v0 for 1, significa que o comando digitado foi o de gerar_relatorio
 	
-	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
 	jr $ra
 	
@@ -449,8 +449,8 @@ verificar_cmd_remover_livro:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, remover_livro       # se $v0 for 1, significa que o comando digitado foi o de remover_livro
   	
-  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+  	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
   	jr $ra
   	
@@ -481,8 +481,8 @@ verificar_cmd_salvar_dados:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, salvar_dados        # se $v0 for 1, significa que o comando digitado foi o de savar_dados
   	
-  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+  	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
   	jr $ra
   	
@@ -527,7 +527,7 @@ verificar_ajustar_data:
     la $s0, comando                 # Carrega o endereco de comando em S0
   	li $s2, 12                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
-  	beq $v0, 1, ajustar_data           # se $v0 for 1, significa que o comando digitado foi o de ajustar_data
+  	beq $v0, 1, ajustar_data        # se $v0 for 1, significa que o comando digitado foi o de ajustar_data
   	
   	lw $ra, 0($sp) 		#resgata o $ra original do $sp
     addi $sp, $sp, 4	#devolve a pilha para a posicao original
@@ -547,7 +547,7 @@ guardar_info_buffer:
 	copy_loop:
     	lb $t0, 0($s0)            # Carrega o proximo caractere
     	beqz $t0, end             # Se for nulo (fim da string), encerra
-    	beq $t0, $t2, finalize    # Se for aspas duplas ('"'), finaliza a copia
+    	beq $t0, $t2, finalize    # Se for aspas duplas (""), finaliza a copia
     	sb $t0, 0($t1)            # Copia o caractere para o buffer do titulo
     	addi $s0, $s0, 1          # Avanca para o proximo caractere
     	addi $t1, $t1, 1          # Avanca no buffer do titulo
@@ -604,7 +604,7 @@ cadastrar_livro:
 	beqz $v0, escrever_falta_argumento_ISBN_display
 	
 	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaco entre os comandos
-	# Pega o que est�ver entre aspas e salva no buffer
+	# Pega o que estiver entre aspas e salva no buffer
 	la $t1, ISBN
 	jal guardar_info_buffer
 	la $t2, virgula          # Carrega o endereco da virgula (',')
@@ -632,22 +632,22 @@ cadastrar_livro:
 	la $s0, repo_livro  # Carrega o endereco de repo_livro
 	la $s1, ISBN        # Carrega o endereco de isbn
 	jal str_concat      # Pula para a funcao que vai concatenar os dados de isbn em repo_livro
-	la $s1, ISBN        # Recarrega o endereco de isbn novamente (para voltar ao 1� caractere)
+	la $s1, ISBN        # Recarrega o endereco de isbn novamente (para voltar ao primeiro caractere)
 	jal clear_buffer	# Limpa o buffer de ISBN
 	
 	la $s1, titulo		# Carrega o endereco de titulo
-	jal str_concat      # Pula para a funcao que vai concatenar os dados de t�tulo em repo_livro
-	la $s1, titulo      # Recarrega o endereco de titulo novamente (para voltar ao 1� caractere)
+	jal str_concat      # Pula para a funcao que vai concatenar os dados de titulo em repo_livro
+	la $s1, titulo      # Recarrega o endereco de titulo novamente (para voltar ao primeiro caractere)
 	jal clear_buffer	# Limpa o buffer de titulo
 	
 	la $s1, autor       # Carrega o endereco de autor
 	jal str_concat      # Pula para a funcao que vai concatenar os dados de autor em repo_livro
-	la $s1, autor       # Recarrega o endereco de autor novamente (para voltar ao 1� caractere)
+	la $s1, autor       # Recarrega o endereco de autor novamente (para voltar ao primeiro caractere)
 	jal clear_buffer	# Limpa o buffer de autor
 	
 	la $s1, quantidade  # Carrega o endereco de quantidade
 	jal str_concat      # Pula para a funcao que vai concatenar os dados de quantidade em repo_livro
-	la $s1, quantidade  # Recarrega o endereco de quantidade novamente (para voltar ao 1� caractere)
+	la $s1, quantidade  # Recarrega o endereco de quantidade novamente (para voltar ao primeiro caractere)
 	jal clear_buffer	# Limpa o buffer de quantidade
 	
 	# Limpa o buffer de comando
@@ -676,10 +676,10 @@ descobrir_qtd_caracteres_comparacao:
 	# $s1: reg que possui o endereco do repositiorio que estah sendo varrido
 	
 	la $t1, virgula  # Carrega o endereco de virgula
-	lb $t1, 0($t1)    # Carrega o byte que contem o valor do caractere virgula em ascii
+	lb $t1, 0($t1)   # Carrega o byte que contem o valor do caractere virgula em ascii
 	
-	li, $s7, 0       # Inicializa $s7 com 0 (reg que servir� como contador de digitos do isbn)
-	li, $s6, 0       # Inicializa $s6 com 0 (reg que tbm � um contador, a qual serve como condicao de parada em voltar_s1
+	li, $s7, 0       # Inicializa $s7 com 0 (reg que servira como contador de digitos do isbn)
+	li, $s6, 0       # Inicializa $s6 com 0 (reg que tbm eh um contador, a qual serve como condicao de parada em voltar_s1
 	
 	loop_qtd_digitos:
 		lb $t2, 0($s1)            # Carrega o caractere
@@ -693,7 +693,7 @@ descobrir_qtd_caracteres_comparacao:
 	voltar_s1:
 		beqz $s6, encerrar_loop    # Quando $s6 for igual a 0 encerra o loop
 		subi $s6, $s6, 1           # Decrementa $s6
-		subi $s1, $s1, 1            # retorna 1 caractere
+		subi $s1, $s1, 1           # retorna 1 caractere
 		j voltar_s1                # Entra em loop
 	
 	encerrar_loop:
@@ -720,7 +720,7 @@ fazer_busca_no_repositorio:
     	j loop_busca_repo_livro
     
     entidade_encontrada:
-    	jal decrementar_s1  # funcao que ajusta $s1 para o endereco do 1� byte da entidade encontrada 
+    	jal decrementar_s1  # funcao que ajusta $s1 para o endereco do primieiro byte da entidade encontrada 
     	
     fim_loop_busca:
     	lw $ra, 0($sp) 	    # Resgata o $ra original do $sp
@@ -728,7 +728,7 @@ fazer_busca_no_repositorio:
      	jr $ra
 		
 # Essa funcao decrementa $s1 para que ele contenha o apos a execucao 
-# dessa funcao o endereco exato do 1� byte do livro a ser removido
+# dessa funcao o endereco exato do primeiro byte do livro a ser removido
 decrementar_s1:
     # $s7: reg que possui a quantidade de caracteres que deve regredidos em $s1
     # $s1: reg que possui o endereco do repositorio que irah ser feita a busca
@@ -743,7 +743,7 @@ decrementar_s1:
 		jr $ra
 		
 limpar_bytes_entidade_removida:
-	# $s2: reg que possui o endereco do 1� byte a ser sobrescrito com byte nulo no repositorio
+	# $s2: reg que possui o endereco do primeiro byte a ser sobrescrito com byte nulo no repositorio
 
 	loop_limpar:
 		lb $s7, 0($s2)                  # Carrega o byte em $s2
@@ -757,23 +757,23 @@ limpar_bytes_entidade_removida:
 		
 # funcao generica que remove livro, usuario ou emprestimo em qualquer repositorio
 deletar_entidade_no_repositorio:
-	# $s1: reg que possui o endereco do 1� byte da entidade a ser removida no repositorio
+	# $s1: reg que possui o endereco do primeiro byte da entidade a ser removida no repositorio
 	
 	# Aloca espaco no $sp para salvar o endereco de $ra
     addi $sp, $sp, -4
     sw $ra, 0($sp)
     
 	move $s2, $s1             # Copia o endereco de s1 para $s2
-	jal avancar_ate_barra_n   # Avanca $s1 para at� o caractere de barra n '\n'
-	addi $s1, $s1 , 1         # avan�a mais um caractere
+	jal avancar_ate_barra_n   # Avanca $s1 para ate o caractere de barra n '\n'
+	addi $s1, $s1 , 1         # avanca mais um caractere
 	
-	# Agora neste ponto $s1 contem o 1� byte do livro posterior e 
-	# $s2 cont�m o 1� byte do livro a ser removido
+	# Agora neste ponto $s1 contem o primeiro byte do livro posterior 
+	# e $s2 contem o primeiro byte do livro a ser removido
 	
-	# O trecho abaixo verifica se o byte de $s1 � o caractere nulo '\0' Caso seja, significa 
-    # que a entidade a ser removida est� na ultima posi��o do reposit�rio
-    # OBS: ultima n�o sentido de ser a �nica entidade no repositorio, mas sim no sentido 
-    # de ser a �ltima entidade registrada
+	# O trecho abaixo verifica se o byte de $s1 eh o caractere nulo '\0' Caso seja, significa 
+    # que a entidade a ser removida estah na ultima posicao do repositorio
+    # OBS: ultima nao sentido de ser a unica entidade no repositorio, mas sim no sentido 
+    # de ser a ultima entidade registrada
     lb $t1, 0($s1)    
 	beqz $t1, preencher_entidade_com_byte_nulo 
 	# Caso nao seja, nos sobrescrevemos os dados de $s2 com dados das entidades posteriores $s1
@@ -786,21 +786,21 @@ deletar_entidade_no_repositorio:
    		addi $s2, $s2, 1                    # Avanca mais um caractere
    		j preencher_entidade_com_byte_nulo  # Entra em looping
    	
-# Move os dados subsequentes para preencher o espa�o deixado pela entidade removida
+# Move os dados subsequentes para preencher o espaco deixado pela entidade removida
     sobrescrever_com_as_entidades_posteriores:
     	lb $t2, 0($s2)
-    	lb $t0, 0($s1)            # Carrega o pr�ximo byte do reposit�rio
+    	lb $t0, 0($s1)            # Carrega o proximo byte do repositorio
     	beqz $t0, fim_sobrescrita # Se for fim de string, termina
-    	sb $t0, 0($s2)            # Sobrescreve o byte no endere�o indicado por $s2
+    	sb $t0, 0($s2)            # Sobrescreve o byte no endereco indicado por $s2
     	lb $t3, 0($s2)
-   		addi $s1, $s1, 1          # Avan�a $s1 para o pr�ximo byte
-    	addi $s2, $s2, 1          # Avan�a $s2 para o pr�ximo byte
+   		addi $s1, $s1, 1          # Avanca $s1 para o proximo byte
+    	addi $s2, $s2, 1          # Avanca $s2 para o proximo byte
     	j sobrescrever_com_as_entidades_posteriores   # Entra em loop
 
 	fim_sobrescrita:
     	sb $zero, 0($s2)                     # Coloca o caractere de fim de string no final do reposit�rio
     	jal limpar_bytes_entidade_removida   # pula para a funcao que vai fazer uma pequena correcao
-    	j finalizar_remocao                  # Finaliza a fun��o
+    	j finalizar_remocao                  # Finaliza a funcao
     	
     finalizar_remocao:
 		lw $ra, 0($sp) 		#resgata o $ra original do $sp
@@ -808,9 +808,9 @@ deletar_entidade_no_repositorio:
 		jr $ra
 	
 remover_livro:
-	# O trecho abaixo verifica se repo_livro est� vazio
+	# O trecho abaixo verifica se repo_livro estah vazio
 	la $s1, repo_livro    # Carrega o endereco de repo_livro
-	lb $s1, 0($s1)        # Carrega o 1� byte de repo livro
+	lb $s1, 0($s1)        # Carrega o primeiro byte de repo livro
 	beqz $s1, escrever_acervo_vazio_display    # Caso $s1, seja zero, pula para funcao que imprime a mensagem de acervo vazio
 	
 	addi $s0, $s0, 1 # Caso contr�rio, passa um caractere para frente, por conta do espaco entre os comandos
@@ -818,12 +818,12 @@ remover_livro:
 	# Verificamos se o argumento --isbn eh valido
 	la $s1, arg_ISBN
 	# $s0 ja tem o comando a ser passado
-	li $s2, 6              # Passa a quantidade de caracteres em $s0 que ser� comparada com $s1
-	jal comparar_strings   # Pula para a funcao que ir� comparar
-	beqz $v0, escrever_falta_argumento_ISBN_display  # se $v0 for igual a 0, significa que o argumento digitado n�o � o de --isbn 
+	li $s2, 6              # Passa a quantidade de caracteres em $s0 que sera comparada com $s1
+	jal comparar_strings   # Pula para a funcao que ira comparar
+	beqz $v0, escrever_falta_argumento_ISBN_display  # se $v0 for igual a 0, significa que o argumento digitado nao eh o de --isbn 
 	
 	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaco entre os comandos
-	# Pega o que est�ver entre aspas e salva no buffer
+	# Pega o que estiver entre aspas e salva no buffer
 	la $t1, ISBN
 	jal guardar_info_buffer
     
@@ -840,7 +840,7 @@ remover_livro:
     beqz $v0, escrever_livro_nao_encontrado_display   # Caso v0 seja 0 pula para a funcao que impre livro nao encontrado
 
     # Se $v0 for igual a 1, significa que o livro existe, e em $s1
-    # ir� conter o endereco do 1� byte do livro a ser removido
+    # ira conter o endereco do primeiro byte do livro a ser removido
     jal deletar_entidade_no_repositorio  
 	
 	# Limpa os buffers de comando e isbn
@@ -911,17 +911,17 @@ cadastrar_usuario:
     la $s0, repo_usuario    # Carrega o endereco do repositorio de usuarios em $s0.
     la $s1, nome            # Carrega o endereco do buffer "nome" em $s1.
     jal str_concat          # Concatena o nome ao repositario de usuarios.
-    la $s1, nome            # Recarrega o endereco de nome novamente (para voltar ao 1� caractere)
+    la $s1, nome            # Recarrega o endereco de nome novamente (para voltar ao primeiro caractere)
     jal clear_buffer        # Limpa o buffer "nome".
 
     la $s1, matricula   	# Carrega o endereco do buffer `matricula` em $s1.
     jal str_concat      	# Concatena a matricula ao repositorio de usuarios.
-	la $s1, matricula  		# Recarrega o endereco de matricula novamente (para voltar ao 1� caractere)
+	la $s1, matricula  		# Recarrega o endereco de matricula novamente (para voltar ao primeiro caractere)
 	jal clear_buffer    	# Limpa o buffer "matricula".
 
     la $s1, curso       	# Carrega o endereco do buffer `curso` em $s1.
     jal str_concat      	# Concatena o curso ao repositorio de usuarios.
-    la $s1, curso       	# Recarrega o endereco de curso novamente (para voltar ao 1� caractere)	
+    la $s1, curso       	# Recarrega o endereco de curso novamente (para voltar ao primeiro caractere)	
     jal clear_buffer    	# Limpa o buffer "curso".
 	
 	la $t1, repo_usuario            # Carrega o endereco do repositorio de usuarios em $t1.
@@ -941,12 +941,12 @@ remover_usuario:
 	# Verificamos se o argumento --matricula eh valido
 	la $s1, arg_matricula
 	# $s0 ja tem o comando a ser passado
-	li $s2, 11             # Passa a quantidade de caracteres em $s0 que ser� comparada com $s1
-	jal comparar_strings   # Pula para a funcao que ir� comparar
-	beqz $v0, escrever_falta_argumento_ISBN_display  # se $v0 for igual a 0, significa que o argumento digitado n�o � o de --isbn 
+	li $s2, 11             # Passa a quantidade de caracteres em $s0 que sera comparada com $s1
+	jal comparar_strings   # Pula para a funcao que irah comparar
+	beqz $v0, escrever_falta_argumento_ISBN_display  # se $v0 for igual a 0, significa que o argumento digitado nao eh o de --matricula
 	
 	addi $s0, $s0, 1 	# Passa um caractere para frente, por conta do espaco entre os comandos
-	# Pega o que est�ver entre aspas e salva no buffer
+	# Pega o que estiver entre aspas e salva no buffer
 	la $t1, matricula
 	jal guardar_info_buffer
     
@@ -963,7 +963,7 @@ remover_usuario:
     beqz $v0, escrever_usuario_nao_encontrado_display   # Caso v0 seja 0 pula para a funcao que imprime usuario nao encontrado
 
     # Se $v0 for igual a 1, significa que o livro existe, e em $s1
-    # ir� conter o endereco do 1� byte do livro a ser removido
+    # irah conter o endereco do primeiro byte do livro a ser removido
     jal deletar_entidade_no_repositorio  
 	
 	# Limpa os buffers de comando e matricula
@@ -1052,11 +1052,9 @@ salvar_dados_no_arquivo:
 	move $a2, $t2    # move tamanho do repositorio para a2
 	syscall          # chama syscall de escrita
 	
-	
 	li $v0, 16
 	move $a0, $s0
 	syscall
-	
 	
 	# Limpa o buffer de comando
 	la $s1, comando
@@ -1095,7 +1093,6 @@ gerar_e_imprimir_data_hora_atual:
     move $t2, $s2  # Copia o dia para $t2
     
 	la $t6, data_atual    # Carrega o endereco de data_atual 
-
 	li $t5, 10            # inicializa $t5 com 10
 	
 	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do codigo
@@ -1373,30 +1370,29 @@ imprimir_data_hora_usuario:
 	
 	# O trecho abaixo vai operar a subtracao do instante que o usuario configurou a data e hora pro instante atual
 	# o resultado dessa subtracao vai resultar na quantidade de millissegundos decorridos nesse intervalo de tempo
-	
-	sub $t1, $a1, $t1    # Subtrai a parte mais significativa 
-	sub $t0, $a0, $t0,   # Subtrai a parte menos significativa
+	subu $t1, $a1, $t1    # Subtrai a parte mais significativa 
+	subu $t0, $a0, $t0,   # Subtrai a parte menos significativa
 	
 	# Conversao da parte menos significativa dos milissegundos para minutos
-    li $t2, 60000      	 # Carrega em $t2 a quantidade de milissegundos em 1 minuto
-    div $t0, $t2         # Opera $t0 / 60000 (parte baixa para horas) 
-    mflo $t0             # Move para $t0 as horas decorridas da menos significativa
+    li $t2, 60000      	  # Carrega em $t2 a quantidade de milissegundos em 1 minuto
+    divu $t0, $t2         # Opera $t0 / 60000 (parte baixa para horas) 
+    mflo $t0              # Move para $t0 as horas decorridas da menos significativa
 	
     # Conversao da parte mais significativa de milissegundos para horas
     # A conversao eh feita com base na seguinte formula: $t1 * 2^32 / 60000
-    li $t2, 71582        # Carrega 71582 em $t2 que eh o resultado aproximado (2^32) / 60000
-    mul $t1, $t1, $t2    # Multiplica 71582 com $t1 para obter as minutos decorridos com a parte mais significativa
+    li $t2, 71582         # Carrega 71582 em $t2 que eh o resultado aproximado (2^32) / 60000
+    mulu $t1, $t1, $t2    # Multiplica 71582 com $t1 para obter as minutos decorridos com a parte mais significativa
 	
 	# Soma $t0 (quantidade de minutos decorridos da parte menos significativa)
     # com $t1 (quantidade de minutos decorridos da parte mais significativa)
-    add $t0, $t0, $t1
+    addu $t0, $t0, $t1
 	
 	blt $t0, 1, imprimir_data_tempo  # Se $t0, for menor que 1 minuto pula logo para a funcao que vai imprimir
 	
 	la $t1, hora_config_usuario  # Carrega o endereco de hora_config_usuario
 	lb $t1, 2($t1)               # Carrega o byte que contem o minuto
 
-	add $t0, $t0, $t1        # Soma os minutos configurados pelo usuario com os minutos decorridos
+	addu $t0, $t0, $t1           # Soma os minutos configurados pelo usuario com os minutos decorridos
 	
 	# A linha abaixo verifica se o tempo em $t0 eh maior que 60 minutos 
 	bge $t0, 60, ajustar_tempo   # Se o tempo em minutos for maior ou igual a 60 pula para a funcao que vai ajustar o tempo
@@ -1404,15 +1400,15 @@ imprimir_data_hora_usuario:
 	j imprimir_data_tempo        # Pula para a impressao da data e tempo
 	
 	ajustar_tempo:
-		li $t1, 60     # Carrega $t1 com 60
-		div $t0, $t1   # Opera o tempo de corrido em minutos / 60
-		mflo $t1       # Move para $t1 o quociente (horas decorridas)
-		mfhi $t2       # move para $t2 o resto     (minutos restantes)
+		li $t1, 60      # Carrega $t1 com 60
+		divu $t0, $t1   # Opera o tempo de corrido em minutos / 60
+		mflo $t1        # Move para $t1 o quociente (horas decorridas)
+		mfhi $t2        # move para $t2 o resto     (minutos restantes)
 		
 		la $t3, hora_config_usuario      # Carrega o endereco de hora_config_usuario
 		lb  $t4, 0($t3)                  # Carrega em $t4 o byte de hora em hora_config_usuario
 		
-		add $t0, $t4, $t1           # Soma a hora configurada pelo usuario com as horas decorridas
+		addu $t0, $t4, $t1          # Soma a hora configurada pelo usuario com as horas decorridas
 		bge $t0, 24, ajustar_hora   # Verifica se as horas decorridas eh maior que 24 horas
 		sb  $t0, 0($t3)    			# Sobrescreve o byte de horas em hora_config_usuario
 		sb  $t2, 2($t3)	   			# sobrescreve o byte de minutos em hora_config_usuario
@@ -1420,7 +1416,7 @@ imprimir_data_hora_usuario:
 		
 		ajustar_hora:
 			li $t1, 24     # Carrega $t1 com 24
-			div $t0, $t1   # Opera o tempo de corrido em horas / 24
+			divu $t0, $t1  # Opera o tempo de corrido em horas / 24
 			mflo $t5       # Move o quociente para $t5 (qtd de dias decorridos)
 			mfhi $t4       # Move o quociente para $t4 (horas restantes)
 			
@@ -1430,10 +1426,10 @@ imprimir_data_hora_usuario:
 			
 			la $t1, data_config_usuario  # Carrega o endereco de data_config_usuario
 			lb $t2, 0($t1)               # Carrega o byte de dias em data_config_usuario
-			add $t5, $t5, $t2            # Soma a quantidade de dias da data configurada com a quantidade de dias decorridos
+			addu $t5, $t5, $t2           # Soma a quantidade de dias da data configurada com a quantidade de dias decorridos
 			sb  $t5, 0($t1)    			 # Sobrescreve o byte de dias em data_config_usuario
 			
-			# N�o irei me dar ao trabalho de verificar se o dia, mes e ano s�o v�lidos, apos essa soma de dias , 
+			# Nao irei me dar ao trabalho de verificar se o dia, mes e ano sao validos, apos essa soma de dias, 
 			# somei e ja ta bom demais, seria muito custoso fazer tudo isso ja que os dados da data e hora 
 			# configurados pelo usuario nao sao salvos em arquivos .txt.
 			
@@ -1468,7 +1464,7 @@ ajustar_data:
 	# Caso os caractere em $s0 nao seja igual ao de $t1, imprime a mensagem de formato incorreto
 	bne  $t2, $t1, escrever_formato_data_hora_incorreto_display  
 	
-	addi $s0, $s0, 3   # Avanca 3 caracteres
+	addi $s0, $s0, 3    # Avanca 3 caracteres
 	lb $t2, 0($s0)      # Carrega o caractere
 	bne  $t2, $t1, escrever_formato_data_hora_incorreto_display  # verifica novamente
 	
@@ -1524,19 +1520,19 @@ ler_dados:
     sw $ra, 0($sp)
 	 
     la $a0, local_arquivo_livros       # Carrega o caminho do arquivo de livros
-    la $a1, repo_livro                 # Carrega o endere�o do reposit�rio onde os dados ser�o carregados
+    la $a1, repo_livro                 # Carrega o endereco do repositorio onde os dados serao carregados
     li $a2, 4500
-    jal ler_dados_do_arquivo           # Chama a fun��o gen�rica para leitura do arquivo
+    jal ler_dados_do_arquivo           # Chama a funcao generica para leitura do arquivo
 
-    la $a0, local_arquivo_usuario      # Carrega o caminho do arquivo de usu�rios
-    la $a1, repo_usuario               # Carrega o endere�o do reposit�rio onde os dados ser�o carregados
+    la $a0, local_arquivo_usuario      # Carrega o caminho do arquivo de usuarios
+    la $a1, repo_usuario               # Carrega o endereco do repositorio onde os dados serao carregados
     li $a2, 4500
-    jal ler_dados_do_arquivo           # Chama a fun��o gen�rica para leitura do arquivo
+    jal ler_dados_do_arquivo           # Chama a funcao generica para leitura do arquivo
 
-    la $a0, local_arquivo_emprestimo   # Carrega o caminho do arquivo de empr�stimos
-    la $a1, repo_emprestimo            # Carrega o endere�o do reposit�rio onde os dados ser�o carregados
+    la $a0, local_arquivo_emprestimo   # Carrega o caminho do arquivo de emprestimos
+    la $a1, repo_emprestimo            # Carrega o endereco do repositorio onde os dados serao carregados
     li $a2, 4500
-    jal ler_dados_do_arquivo           # Chama a fun��o gen�rica para leitura do arquivo
+    jal ler_dados_do_arquivo           # Chama a funcao generica para leitura do arquivo
 	
 	lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
     addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
@@ -1544,9 +1540,9 @@ ler_dados:
     jr $ra
 
 ler_dados_do_arquivo:
-	# $a0: Reg que possio o endere�o do nome do arquivo
-	# $a1: Reg que possio o endere�o do buffer de destino 
-	# $a2: Reg que possio o tamanho m�ximo do buffer
+	# $a0: Reg que possui o endereco do nome do arquivo
+	# $a1: Reg que possui o endereco do buffer de destino 
+	# $a2: Reg que possui o tamanho maximo do buffer
 	
     # Aloca espaco no $sp para salvar o endereco de $ra, $s0 e $s1
     addi $sp, $sp, -12
