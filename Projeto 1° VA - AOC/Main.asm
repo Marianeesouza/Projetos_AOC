@@ -109,6 +109,10 @@
 	msgE_parte1_falta_argumento_obrigatorio: .asciiz "O campo \"" 
 	msgE_parte2_falta_argumento_obrigatorio: .asciiz "\" e obrigatorio, certifique de usa-lo para que a operacao seja realizada"
 	msgE_data_hora_mal_formatada:            .asciiz "O formato da data ou hora esta incorreto."         
+	msgE_data_invalida:                      .asciiz "A data inserida eh invalida" 
+	msgE_operacao_cadastro_invalida:         .asciiz "Operacao de cadastro invalida"
+	msgE_livro_ja_cadastrado:                .asciiz " o isbn fornecido ja esta associada a um outro livro no acervo" 
+	msgE_usuario_ja_cadastrado:              .asciiz " a matricula fornecida ja esta associada a um outro usuario"
 	
 	# strings auxiliares para impressoes
 	string_data:     .asciiz "Data: "
@@ -355,6 +359,7 @@ verificar_comando:
   	jal verificar_cmd_data_hora
 	jal verificar_cmd_ajustar_data
     jal verificar_cmd_reg_devolucao
+    
     # Se nao foi digitado nenhum dos comandos 
     j escrever_comando_invalido_display
 
@@ -643,6 +648,13 @@ cadastrar_livro:
 	lb $t2, 0($t2)           # Carrega o byte do caractere de barra n ('\n') 
     sb $t2, 0($t1)           # Escreve o caractere \n
 	
+	# Vamos verificar agora se o isbn fornecido estah associado a algum outro livro no acervo
+    la $s1, repo_livro              # Carrega o endereco de repo_livro
+    la $s3, ISBN                    # Carrega o endereco de ISBN
+    la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
+    jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
+    beq $v0, 1, escrever_livro_ja_cadastrado_display  # Caso v0 seja 1, pula para a funcao que vai escrever livro ja cadastrado
+	
 	# Agora vamos salvar no repositorio (buffer) de livros
 	# Para isso, vamos concatenar todas as informacoes que obtivemos em uma unica string e coloca-la no repo_livro
 	la $s0, repo_livro  # Carrega o endereco de repo_livro
@@ -687,6 +699,22 @@ avancar_ate_barra_n:
 	
 	fim_loop_avancar:
 		jr $ra
+		
+avancar_ate_virgula:
+	# $s1: reg que possui o endereco do repositiorio que estah sendo varrido
+	
+	la $t1, virgula   # Carrega o endereco de virgula
+	lb $t1, 0($t1)    # Carrega o byte que carrega o byte do caractere  ','
+	 
+	loop_avancar_virgula:
+		lb $t2, 0($s1)                          # Carrega o caractere em repo_livro
+		beq $t2, $t1, fim_loop_avancar_virgula  # Caso $s1 seja tenha o caractere ',', o loop encerra
+		addi $s1, $s1, 1                        # Contrario avanca o caractere
+		j loop_avancar_virgula                  # Entra em loop
+	
+	fim_loop_avancar_virgula:
+		addi $s1, $s1, 1       # Avanca mais um caractere
+		jr $ra
 
 descobrir_qtd_caracteres_comparacao:
 	# $s1: reg que possui o endereco do repositiorio que estah sendo varrido
@@ -719,14 +747,16 @@ descobrir_qtd_caracteres_comparacao:
 fazer_busca_no_repositorio:
 	# $s1: reg que possui o endereco do repositorio que irah ser feita a busca
 	# $s3: reg que possui o endereco do atributo que contem os dados da busca (livro -> isbn, usuario -> matricula)
+	# $s4: reg que pusui um inteiro que indica se o atributo a ser avaliado eh o primeiro ou o segundo atributo
 	
 	# Aloca espaco no $sp para salvar o endereco de $ra
     addi $sp, $sp, -4
     sw $ra, 0($sp)
     
     loop_busca_repo_livro:
+    	beq $s4, 2, avancar_ate_virgula   # Verifica se eh o segundo atributo a ser avaliado, se sim pula para a funcao que avanca ate a virgula
     	jal descobrir_qtd_caracteres_comparacao    # Pula para a funcao que descobre a quantidade de digitos do isbn
-    	move $s0, $s3                     # copia o valor do endereco de $s3 para $s0                      
+    	move $s0, $s3                     # copia o valor do endereco de $s3 (o endereco do atributo a ser avaliado) para $s0                      
     	move $s2, $s7                     # Copia o valor de $s7, para $s2
     	jal comparar_strings              # pula para a funcao que vai comparar o ibsn do livro com o isbn digitado
     	beq $v0, 1, entidade_encontrada   # Se $v0 for igual a 1 a busca eh encerrada
@@ -846,12 +876,14 @@ remover_livro:
     # O trecho abaixo faz uma busca em repo_emprestimo para ver se o livro possui devolucoes pendentes
     #la $s1, repo_emprestimo            # Carrega o endereco de repo_emprestimo
     #la $s3, la $s3, ISBN               # Carrega o endereco de ISBN_livro_ass
-    #jal fazer_busca_no_repositorio     # Pula para a funcao que vai fazer uma busca do ISBN no reposit�rio
+    #la $s4, 1                          # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
+    #jal fazer_busca_no_repositorio     # Pula para a funcao que vai fazer uma busca do ISBN no repo_emprestimo
     #beq $v0, 1, escrever_livro_esta_emprestado_display   # Caso v0 seja 1 pula para a funcao que imprime livro possui devolucoes pendentes
     
     # O trecho abaixo faz uma busca em repo_livro para ver se o livro existe em repo_livro
     la $s1, repo_livro              # Carrega o endereco de repo_livro
     la $s3, ISBN                    # Carrega o endereco de ISBN
+    la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
     beqz $v0, escrever_livro_nao_encontrado_display   # Caso v0 seja 0 pula para a funcao que impre livro nao encontrado
 
@@ -921,7 +953,14 @@ cadastrar_usuario:
     la $t2, barra_n            # Carrega o endereco de barra_n
 	lb $t2, 0($t2)             # Carrega o byte do caractere de barra n ('\n') 
     sb $t2, 0($t1)             # Adiciona \n ao final do curso
-
+	
+	# Vamos verificar agora se a matricula fornecida estah associada a algum outro usuario
+    la $s1, repo_usuario            # Carrega o endereco de repo_usuario
+    la $s3, matricula               # Carrega o endereco de matricula
+    la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
+    jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
+    beq $v0, 1, escrever_usuario_ja_cadastrado_display  # Caso v0 seja 1, pula para a funcao que vai escrever usuario ja cadastrado
+	
     # Concatena as informacoes no repositorio de usuarios
     la $s0, repo_usuario    # Carrega o endereco do repositorio de usuarios em $s0.
     la $s1, nome            # Carrega o endereco do buffer "nome" em $s1.
@@ -974,6 +1013,7 @@ remover_usuario:
     # O trecho abaixo faz uma busca em repo_usuario para ver se o usuario existe
     la $s1, repo_usuario            # Carrega o endereco de repo_usuario
     la $s3, matricula               # Carrega o endereco de matricula
+    la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_usuario
     beqz $v0, escrever_usuario_nao_encontrado_display   # Caso v0 seja 0 pula para a funcao que imprime usuario nao encontrado
 
@@ -1032,7 +1072,7 @@ registrar_emprestimo:
 	beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
 	
 	addi $s0, $s0, 1			# Move o ponteiro para a proxima info
-	la $t1, devolucao			# Carrega o endereco do matricula em $t1
+	la $t1, data_devolucao			# Carrega o endereco do matricula em $t1
 	jal guardar_info_buffer		# Guarda o conteudo entre aspas no bufffer ISBN
 	la $t2, virgula				# Carrega o endereco da virgula (',')
 	lb $t2, 0($t2)				# Carrega o byte do caractere da virgula
@@ -1059,9 +1099,9 @@ registrar_emprestimo:
     la $s1, ISBN       	# Recarrega o endereco de curso novamente (para voltar ao 1� caractere)	
     jal clear_buffer    # Limpa o buffer "ISBN".
     
-    la $s1, devolucao       # Carrega o endereco do buffer `devolucao` em $s1.
+    la $s1, data_devolucao       # Carrega o endereco do buffer `devolucao` em $s1.
     jal str_concat      	# Concatena o curso ao repositorio de emprestimo.
-    la $s1, devolucao       # Recarrega o endereco de curso novamente (para voltar ao 1� caractere)	
+    la $s1, data_devolucao       # Recarrega o endereco de curso novamente (para voltar ao 1� caractere)	
     jal clear_buffer    	# Limpa o buffer "devolucao".
 	
 	la $t1, repo_usuario            # Carrega o endereco do repositorio de usuarios em $t1.
@@ -1797,7 +1837,28 @@ escrever_formato_data_hora_incorreto_display:
     jal escrever_string_display           # Pula para a funcao generica que ira imprimir a string armazenada em $t1
     jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
     j main   
+escrever_livro_ja_cadastrado_display:
+	la $t1, msgE_operacao_cadastro_invalida    # Carrega o endereco de operacao_cadastro_invalida
+	jal escrever_string_display                # Pula para a funcao generica que ira imprimir a string armazenada em $t1
+	la $t1, msgE_livro_ja_cadastrado           # Carrega o endereco de livro_ja_cadastrado 
+	jal escrever_string_display
+	jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+	j main
 
+escrever_usuario_ja_cadastrado_display:
+	la $t1, msgE_operacao_cadastro_invalida    # Carrega o endereco de operacao_cadastro_invalida
+	jal escrever_string_display                # Pula para a funcao generica que ira imprimir a string armazenada em $t1
+	la $t1, msgE_usuario_ja_cadastrado         # Carrega o endereco de usuario_ja_cadastrado 
+	jal escrever_string_display
+	jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+	j main
+	
+escrever_data_invalida_display_display:
+    la $t1, msgE_data_invalida       # Carrega o endereco de msgE_data_invalida
+    jal escrever_string_display      # Pula para a funcao generica que ira imprimir a string armazenada em $t1
+    jal escrever_barra_n_display     # pula para a funcao que ira imprimir uma quebra de linha no display
+    j main 
+    
 # Funcao generica que imprime a mensagem de falta de qualquer argumento no display
 escrever_falta_argumento_obrigatorio_display:
 	# $s1: reg que possui o endereco do argumento faltante
