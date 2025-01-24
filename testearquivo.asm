@@ -26,15 +26,27 @@ main:
 #la $t1, teste_repositorio
 #jal salvar_dados
 
-li $t0, 5
-li $t2, 1
-jal calcular_inteiro 
+jal converter_quantidade_para_inteiro
 move $s0, $v0
 
 
 li $v0, 10
 syscall
 
+contar_bytes: #salva numero de bytes de um buffer em $s0
+ 	#$t1 e o endereco buffer
+ 	#$t2 e contador
+	lb $t3, ($t1)
+	addi $t1, $t1, 1
+	addi $t2, $t2, 1
+	bnez $t3, contar_bytes
+	fim_contar_bytes:
+	sub $t2, $t2, 1
+	move $s0, $t2
+	jr $ra
+
+
+	
 calcular_inteiro:
 # $t0 número de bytes de quantidade
 # $t1 endereço de quantidade
@@ -53,6 +65,21 @@ calcular_inteiro:
 	move $v0, $t3 # move o acumulador para $v0
 	jr $ra
 	
+	
+	
+converter_quantidade_para_inteiro:	
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	li $t2, 0
+	la $t1, quantidade
+	jal contar_bytes # salva o numero de bytes de quantidade em $s0
+	move $t0, $s0
+	li $t2, 1
+	jal calcular_inteiro 
+	move $s1, $v0 # salva o valor inteiro de quantidade em $s1
+	#beqz $s1, escrever_livro_esta_emprestado_display
+	lw $ra, 0($sp)
+	jr $ra
 
 cadastrar_livro:
 	# abre o arquivo com no modo leitura+append
