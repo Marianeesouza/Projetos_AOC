@@ -12,6 +12,9 @@ tamanho_arquivo:	.word 0 # variavel para contar tamanho do arquivo
 
 teste_repositorio:	.asciiz "Teste,Teste,123456789,10"
 
+quantidade:			.asciiz "12345"
+
+
 .text 	
 .globl main
 
@@ -19,12 +22,36 @@ main:
 #jal cadastrar_livro
 #jal aloca_rep
 #jal imprime_rep_livro
-la $t0, filelivro
-la $t1, teste_repositorio
-jal salvar_dados
+#la $t0, filelivro
+#la $t1, teste_repositorio
+#jal salvar_dados
+
+li $t0, 5
+li $t2, 1
+jal calcular_inteiro 
+move $s0, $v0
+
 
 li $v0, 10
 syscall
+
+calcular_inteiro:
+# $t0 número de bytes de quantidade
+# $t1 endereço de quantidade
+# $t2, multiplicador
+# $t3 acumulador
+	subi $t0, $t0, 1 # subtrai 1 de t0
+	la $t1, quantidade
+	add $t1, $t1, $t0 
+	lb $t1, ($t1) # carrega o byte de t1
+	subi $t1, $t1, 48
+	mul $t1, $t1, $t2 #multiplica t1 pela respectiva casa decimal 
+	add $t3, $t1, $t3 # soma ao acumulador
+	mul $t2, $t2, 10
+	bnez $t0, calcular_inteiro # se numero de bytes != 0 recomeçar funcao
+	
+	move $v0, $t3 # move o acumulador para $v0
+	jr $ra
 	
 
 cadastrar_livro:
@@ -174,7 +201,6 @@ salvar_dados:
  #   addi $sp, $sp, 4	#devolve a pilha para a posicao original
 	
 	jr $ra
-
 
 
 

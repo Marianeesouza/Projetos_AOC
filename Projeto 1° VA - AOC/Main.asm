@@ -16,13 +16,14 @@
 	comando: 		.space 100    # Espaco reservado para o comando digitado pelo usuario
 	
 	# Variaveis:
-	data_config_usuario:       .space 20   # Variavel reservada para armazenar a data do sistema configurada pelo usuario
-	hora_config_usuario:       .space 20   # Variavel reservada para armazenar a hora do sistema configurado pelo usuario
-	data_atual: 	           .space 20   # Variavel reservada para armazenar a data atual 
-	hora_atual:                .space 20   # Variavel reservada para armazenar a data atual
-	tempo_hora_configurada0:   .word  0    # Variavel reservada para armazenar o tempo em que o usuario configurou a hora no sistema (os bits menos signficativos)
-    tempo_hora_configurada1:   .word  0    # Variavel reservada para armazenar o tempo em que o usuario configurou a hora no sistema (os bits mais signficativos)
-
+	data_config_usuario:       	.space 20   # Variavel reservada para armazenar a data do sistema configurada pelo usuario
+	hora_config_usuario:       	.space 20   # Variavel reservada para armazenar a hora do sistema configurado pelo usuario
+	data_atual: 	           	.space 20   # Variavel reservada para armazenar a data atual 
+	hora_atual:                	.space 20   # Variavel reservada para armazenar a data atual
+	tempo_hora_configurada0:   	.word  0    # Variavel reservada para armazenar o tempo em que o usuario configurou a hora no sistema (os bits menos signficativos)
+    tempo_hora_configurada1:   	.word  0    # Variavel reservada para armazenar o valor inteiro de string de número
+ 
+	
 	# Caracteres
 	barra_n:   		.byte 10      # Valor em ASCII do caractere de quebra de linha '\n'
 	espaco:			.byte 32      # Valor em ASCII do caractere de espaco ' '       
@@ -1156,11 +1157,59 @@ verifica_quantidade_livros:
 	sub $a2, $s1, $t1 # subtrai o endereço de s1 com t1 e salva em a2
 	subi $a2, $a2, 1 # subtrai um para desconsiderar o \n
 	move $a1, $t1
-	move $a0, quantidade
-	jal memcpy
+	la $a0, quantidade
+	jal memcpy # copia a string de quantidade de livros com isbn especificado do repositorio para o buffer
+	jal converter_quantidade_para_inteiro
 	
 	lw $ra, ($sp)
 	jr $ra
+
+contar_bytes: #salva numero de bytes de um buffer em $s0
+ 	#$t1 e o endereco buffer
+ 	#$t2 e contador
+	#$v0 vai estar o numero de bytes
+	lb $t3, $t1
+	beqz $t3, fim_contar_bytes
+	addi $t1, $t1, 1
+	addi $t2, $t2, 1
+	fim_contar_bytes:
+	move $s0, $t2
+	jr $ra
+
+
+	
+calcular_inteiro:
+# $t0 número de bytes de quantidade
+# $t1 endereço de quantidade
+# $t2, multiplicador
+# $t3 acumulador
+	subi $t0, $t0, 1 # subtrai 1 de t0
+	la $t1, quantidade
+	add $t1, $t1, $t0 
+	lb $t1, ($t1) # carrega o byte de t1
+	subi $t1, $t1, 48
+	mul $t1, $t1, $t2 #multiplica t1 pela respectiva casa decimal 
+	add $t3, $t1, $t3 # soma ao acumulador
+	mul $t2, $t2, 10
+	bnez $t0, calcular_inteiro # se numero de bytes != 0 recomeçar funcao
+	
+	move $v0, $t3 # move o acumulador para $v0
+	jr $ra
+	
+	
+	
+converter_quantidade_para_inteiro:	
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	li $t2, 0
+	la $t1, quantidade
+	jal contar_bytes # salva o numero de bytes de quantidade em $s0
+	move $t0, $s0
+	li $t2, 1
+	jal calcular_inteiro
+	move $s1, $v0 # salva o valor inteiro de quantidade em $s1
+	beqz $s1, escrever_livro_esta_emprestado_display
+	
 	
 
 gerar_relatorio:
