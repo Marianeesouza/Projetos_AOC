@@ -7,10 +7,10 @@
 .data
 
 	# Constantes
-.eqv	keyboard_status 0xFFFF0000  # endereco do status do teclado
-.eqv	display_status  0xFFFF0008  # endereco do status do display
-.eqv	keyboard_buffer 0xFFFF0004  # endereco do buffer do teclado
-.eqv	display_buffer  0xFFFF000C  # endereco do buffer do display
+.eqv	keyboard_status 0xFFFF0000  # Endereco do status do teclado
+.eqv	display_status  0xFFFF0008  # Endereco do status do display
+.eqv	keyboard_buffer 0xFFFF0004  # Endereco do buffer do teclado
+.eqv	display_buffer  0xFFFF000C  # Endereco do buffer do display
 
 	banner:  		.asciiz "MIPShelf-shell>>"
 	comando: 		.space 100    # Espaco reservado para o comando digitado pelo usuario
@@ -51,9 +51,10 @@
 	data_devolucao: 		.space 10   # Espaco reservado para a data de devolucao do emprestimo
 	
 	# Repositorios Temporarios
-	repo_livro:      .space 4500 # Espaco reservado para a gravacao temporaria dos livros cadastrados
-	repo_usuario:    .space 4500 # Espaco reservado para a gravacao temporaria dos usuarios cadastrados
-	repo_emprestimo: .space 4000 # Espaco reservado para a gravacao temporaria dos emprestimos cadastrados
+	repo_livro:           .space 4500 # Espaco reservado para a gravacao temporaria dos livros cadastrados
+	repo_usuario:         .space 4500 # Espaco reservado para a gravacao temporaria dos usuarios cadastrados
+	repo_emprestimo:      .space 4500 # Espaco reservado para a gravacao temporaria dos emprestimos cadastrados
+	buffer_aux_conversao: .space 20   # Espaco reservado para um buffer que auxilia no processo de conversao de string para int
 	
 	# Locais dos arquivos salvos
 	local_arquivo_livros:      .asciiz  "repo_livros.txt"
@@ -110,11 +111,12 @@
 	msgE_parte1_falta_argumento_obrigatorio: .asciiz "O campo \"" 
 	msgE_parte2_falta_argumento_obrigatorio: .asciiz "\" e obrigatorio, certifique de usa-lo para que a operacao seja realizada"
 	msgE_data_hora_mal_formatada:            .asciiz "O formato da data ou hora esta incorreto."         
-	msgE_data_invalida:                      .asciiz "A data inserida eh invalida" 
+	msgE_data_invalida:                      .asciiz "A data inserida e invalida" 
+	msgE_hora_invalida:                      .asciiz "A hora inserida e invalida" 
 	msgE_operacao_cadastro_invalida:         .asciiz "Operacao de cadastro invalida"
 	msgE_livro_ja_cadastrado:                .asciiz " o isbn fornecido ja esta associada a um outro livro no acervo" 
 	msgE_usuario_ja_cadastrado:              .asciiz " a matricula fornecida ja esta associada a um outro usuario"
-	
+
 	# strings auxiliares para impressoes
 	string_data:     .asciiz "Data: "
     string_hora:     .asciiz "Hora: "
@@ -132,7 +134,7 @@ main:
 	j main 
 	        
 esperar_display_carregar:
-	li $t0, 0xFFFF0008   		   		  # Endereco do status do display
+	li $t0, display_status   		   		  # Endereco do status do display
     lw $t0, 0($t0)        				  # Carrega o status do display diretamente em $t0
     beqz $t0, esperar_display_carregar    # Se status for 0, entra em loop
     
@@ -147,10 +149,10 @@ escrever_string_display:
     
     jal esperar_display_carregar 	# Pula para a funcao que espera o display carregar
     
-    lw $ra, 0($sp) 			   		# resgata o $ra original do $sp
+    lw $ra, 0($sp) 			   		#  Resgata o $ra original do $sp
     addi $sp, $sp, 4		  		# devolve a pilha para a posicao original
     
-    li $t0, 0xFFFF000C         		# Endereco do Transmiter data do display
+    li $t0, display_buffer         		# Endereco do Transmiter data do display
 	loop_string_display:
 		lb $t2, 0($t1)   			# Carrega um caractere da string de $t1 para $t2
     	beqz $t2, fim    			# Se o caractere em $t2 for o caractere de fim de string, sai do loop
@@ -164,11 +166,11 @@ escrever_string_display:
 esperar_input_teclado:
 	# $s7: reg que serve como um apontador para a proxima posicao do caractere a ser inserido em comando 
 	
-    li $t0, 0xFFFF0000   			 # Endereco do status do teclado
+    li $t0, keyboard_status   			 # Endereco do status do teclado
     lw $t0, 0($t0)        			 # Carrega o status do teclado diretamente em $t0
     beqz $t0, esperar_input_teclado  # Se status for 0, entra em loop
 	
-	li $t0, 0xFFFF0004       # Endereco do Receiver data do teclado
+	li $t0, keyboard_buffer       # Endereco do Receiver data do teclado
    	lw $t1, 0($t0)           # Carrega o caractere digitado em $t1
 	
 	# Verifica se o caractere digitado eh o de backspace, caso seja pula para a funcao que trata isso
@@ -226,7 +228,7 @@ tratar_backspace:
 		j esperar_input_teclado         # volta a esperar um proximo caractere
 
 limpar_display:
-  li $t0, 0xFFFF000C   # Endere�o do Receiver data do display
+  li $t0, display_buffer   # Endere�o do Receiver data do display
   li $t1, 12           # Caractere de controle para limpar o display (c�digo ASCII 12)
   sw $t1, 0($t0)       # Escreve o caractere de controle no display
   jr $ra
@@ -241,7 +243,7 @@ escrever_caractere_digitado_display:
     lw $ra, 0($sp) 		  # Resgata o $ra original do $sp
     addi $sp, $sp, 4      # Devolve a pilha para a posicao original
 	
-    li $t0, 0xFFFF000C    # Endereco do Receiver data do display
+    li $t0, display_buffer    # Endereco do Receiver data do display
 	sw $t1, 0($t0)        # Escreve o caractere no display
 
 	jr $ra	
@@ -259,11 +261,11 @@ escrever_barra_n_display:
     la $t1, barra_n            # Carrega o endereco de barra_n
     lb $t1, 0($t1)             # Carrega o valor de barra_n diretamente em $t1
 
-    li $t0, 0xFFFF000C         # Endereco do Transmitter data do display
+    li $t0, display_buffer         # Endereco do Transmitter data do display
     sw $t1, 0($t0)             # Escreve o caractere \n no display
 
     jr $ra
-    
+
 escrever_banner_display:
 	la $t1, banner      # Carrega o endereco do inicio da string do banner
 	
@@ -273,8 +275,8 @@ escrever_banner_display:
     
     jal escrever_string_display
     
-    lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
 
     jr $ra
 
@@ -471,10 +473,11 @@ verificar_cmd_remover_usuario:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, remover_usuario     # se $v0 for 1, significa que o comando digitado foi o de remover_usuario
 	
-	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
 	jr $ra
+
 
 verificar_cmd_salvar_dados:
 	# Aloca espaco no $sp para salvar o endereco de $ra
@@ -503,8 +506,8 @@ verificar_cmd_formatar_dados:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, formatar_dados      # se $v0 for 1, significa que o comando digitado foi o de formatar_dados
   	
-  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+  	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
 	jr $ra
 	
@@ -519,8 +522,8 @@ verificar_cmd_data_hora:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, data_hora           # se $v0 for 1, significa que o comando digitado foi o de data_hora
   	
-  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+  	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
   	jr $ra
   	
@@ -535,8 +538,8 @@ verificar_cmd_ajustar_data:
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, ajustar_data        # se $v0 for 1, significa que o comando digitado foi o de ajustar_data
   	
-  	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+  	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
   	jr $ra
   	
@@ -551,8 +554,8 @@ verificar_cmd_reg_devolucao:
   	jal comparar_strings             # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, registrar_devolucao  # se $v0 for 1, significa que o comando digitado foi o de reg_devolucao
     
-    lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+    lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
     
   	jr $ra	
 
@@ -726,13 +729,13 @@ descobrir_qtd_caracteres_comparacao:
 	li, $s7, 0       # Inicializa $s7 com 0 (reg que servira como contador de digitos do isbn)
 	li, $s6, 0       # Inicializa $s6 com 0 (reg que tbm eh um contador, a qual serve como condicao de parada em voltar_s1
 	
-	loop_qtd_digitos:
+	loop_qtd_caracteres:
 		lb $t2, 0($s1)            # Carrega o caractere
 		beq $t2, $t1, voltar_s1   # Caso o caractere em $s1, seja  virgula pula para funcao que volta o $s1 para o comeco da linha
 		addi $s1, $s1, 1          # Avanca para o proximo caractere
 		addi $s6, $s6, 1          # Incrementa $s6
 		addi $s7, $s7, 1          # Incrementa $s7
-		j loop_qtd_digitos        # Entra em loop
+		j loop_qtd_caracteres     # Entra em loop
 	
 	# loop que retorna a quantidade de caracteres avancados em $s1 pelo loop_qtd_digitos
 	voltar_s1:
@@ -755,6 +758,7 @@ fazer_busca_no_repositorio:
     sw $ra, 0($sp)
     
     loop_busca_repo_livro:
+    	subi $ra, $ra, 288                # Decrementa o $ra caso a condicao abaixo seja verdadeira, para que ele volte para a 2 linhas abaixo por meio do jr $ra
     	beq $s4, 2, avancar_ate_virgula   # Verifica se eh o segundo atributo a ser avaliado, se sim pula para a funcao que avanca ate a virgula
     	jal descobrir_qtd_caracteres_comparacao    # Pula para a funcao que descobre a quantidade de digitos do isbn
     	move $s0, $s3                     # copia o valor do endereco de $s3 (o endereco do atributo a ser avaliado) para $s0                      
@@ -789,7 +793,7 @@ decrementar_s1:
 	fim_loop_decrementar:
 		jr $ra
 		
-limpar_bytes_entidade_removida:
+limpar_bytes_ultima_linha:
 	# $s2: reg que possui o endereco do primeiro byte a ser sobrescrito com byte nulo no repositorio
 
 	loop_limpar:
@@ -819,8 +823,6 @@ deletar_entidade_no_repositorio:
 	
 	# O trecho abaixo verifica se o byte de $s1 eh o caractere nulo '\0' Caso seja, significa 
     # que a entidade a ser removida estah na ultima posicao do repositorio
-    # OBS: ultima nao sentido de ser a unica entidade no repositorio, mas sim no sentido 
-    # de ser a ultima entidade registrada
     lb $t1, 0($s1)    
 	beqz $t1, preencher_entidade_com_byte_nulo 
 	# Caso nao seja, nos sobrescrevemos os dados de $s2 com dados das entidades posteriores $s1
@@ -835,23 +837,21 @@ deletar_entidade_no_repositorio:
    	
 # Move os dados subsequentes para preencher o espaco deixado pela entidade removida
     sobrescrever_com_as_entidades_posteriores:
-    	lb $t2, 0($s2)
     	lb $t0, 0($s1)            # Carrega o proximo byte do repositorio
     	beqz $t0, fim_sobrescrita # Se for fim de string, termina
     	sb $t0, 0($s2)            # Sobrescreve o byte no endereco indicado por $s2
-    	lb $t3, 0($s2)
    		addi $s1, $s1, 1          # Avanca $s1 para o proximo byte
     	addi $s2, $s2, 1          # Avanca $s2 para o proximo byte
     	j sobrescrever_com_as_entidades_posteriores   # Entra em loop
 
 	fim_sobrescrita:
-    	sb $zero, 0($s2)                     # Coloca o caractere de fim de string no final do reposit�rio
-    	jal limpar_bytes_entidade_removida   # pula para a funcao que vai fazer uma pequena correcao
+    	sb $zero, 0($s2)                     # Coloca o caractere de fim de string no final do repositorio
+    	jal limpar_bytes_ultima_linha        # pula para a funcao que vai sobrescrever a ultima linha com byte nulo
     	j finalizar_remocao                  # Finaliza a funcao
     	
     finalizar_remocao:
-		lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    	addi $sp, $sp, 4	#devolve a pilha para a posicao original
+		lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    	addi $sp, $sp, 4	# Devolve a pilha para a posicao original
 		jr $ra
 	
 remover_livro:
@@ -860,7 +860,7 @@ remover_livro:
 	lb $s1, 0($s1)        # Carrega o primeiro byte de repo livro
 	beqz $s1, escrever_acervo_vazio_display    # Caso $s1, seja zero, pula para funcao que imprime a mensagem de acervo vazio
 	
-	addi $s0, $s0, 1 # Caso contr�rio, passa um caractere para frente, por conta do espaco entre os comandos
+	addi $s0, $s0, 1 # Caso contrario, passa um caractere para frente, por conta do espaco entre os comandos
 	
 	# Verificamos se o argumento --isbn eh valido
 	la $s1, arg_ISBN
@@ -875,18 +875,18 @@ remover_livro:
 	jal guardar_info_buffer
     
     # O trecho abaixo faz uma busca em repo_emprestimo para ver se o livro possui devolucoes pendentes
-    #la $s1, repo_emprestimo            # Carrega o endereco de repo_emprestimo
-    #la $s3, la $s3, ISBN               # Carrega o endereco de ISBN_livro_ass
-    #la $s4, 1                          # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
-    #jal fazer_busca_no_repositorio     # Pula para a funcao que vai fazer uma busca do ISBN no repo_emprestimo
-    #beq $v0, 1, escrever_livro_esta_emprestado_display   # Caso v0 seja 1 pula para a funcao que imprime livro possui devolucoes pendentes
+    la $s1, repo_emprestimo            # Carrega o endereco de repo_emprestimo
+    la $s3, ISBN               # Carrega o endereco de ISBN_livro_ass
+    la $s4, 2                          # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
+    jal fazer_busca_no_repositorio     # Pula para a funcao que vai fazer uma busca do ISBN no repo_emprestimo
+    beq $v0, 1, escrever_livro_esta_emprestado_display   # Caso v0 seja 1 pula para a funcao que imprime livro possui devolucoes pendentes
     
     # O trecho abaixo faz uma busca em repo_livro para ver se o livro existe em repo_livro
     la $s1, repo_livro              # Carrega o endereco de repo_livro
     la $s3, ISBN                    # Carrega o endereco de ISBN
     la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
-    beqz $v0, escrever_livro_nao_encontrado_display   # Caso v0 seja 0 pula para a funcao que impre livro nao encontrado
+    beqz $v0, escrever_livro_nao_encontrado_display   # Caso v0 seja 0 pula para a funcao que escreve livro nao encontrado
 
     # Se $v0 for igual a 1, significa que o livro existe, e em $s1
     # ira conter o endereco do primeiro byte do livro a ser removido
@@ -959,7 +959,7 @@ cadastrar_usuario:
     la $s1, repo_usuario            # Carrega o endereco de repo_usuario
     la $s3, matricula               # Carrega o endereco de matricula
     la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
-    jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
+    jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca da matricula em repo_usuario
     beq $v0, 1, escrever_usuario_ja_cadastrado_display  # Caso v0 seja 1, pula para a funcao que vai escrever usuario ja cadastrado
 	
     # Concatena as informacoes no repositorio de usuarios
@@ -1005,11 +1005,12 @@ remover_usuario:
 	la $t1, matricula
 	jal guardar_info_buffer
     
-    # O trecho abaixo faz uma busca em repo_emprestimo para ver se o livro possui devolucoes pendentes
-    #la $s1, repo_emprestimo            # Carrega o endereco de repo_emprestimo
-    #la $s3, la $s3, matricula          # Carrega o endereco de ISBN_livro_ass
-    #jal fazer_busca_no_repositorio     # Pula para a funcao que vai fazer uma busca do ISBN no reposit�rio
-    #beq $v0, 1, escrever_livro_esta_emprestado_display   # Caso v0 seja 1 pula para a funcao que imprime livro possui devolucoes pendentes
+    # O trecho abaixo faz uma busca em repo_emprestimo para ver se o usuario possui devolucoes pendentes
+    la $s1, repo_emprestimo            # Carrega o endereco de repo_emprestimo
+    la $s3, matricula                  # Carrega o endereco de ISBN_livro_ass
+    la $s4, 1                          # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
+    jal fazer_busca_no_repositorio     # Pula para a funcao que vai fazer uma busca do ISBN no reposit�rio
+    beq $v0, 1, escrever_livro_esta_emprestado_display   # Caso v0 seja 1 pula para a funcao que imprime livro possui devolucoes pendentes
     
     # O trecho abaixo faz uma busca em repo_usuario para ver se o usuario existe
     la $s1, repo_usuario            # Carrega o endereco de repo_usuario
@@ -1160,6 +1161,7 @@ verifica_quantidade_livros:
 	la $a0, quantidade
 	jal memcpy # copia a string de quantidade de livros com isbn especificado do repositorio para o buffer
 	jal converter_quantidade_para_inteiro
+
 	
 	lw $ra, ($sp)
 	jr $ra
@@ -1211,7 +1213,6 @@ converter_quantidade_para_inteiro:
 	beqz $s1, escrever_livro_esta_emprestado_display
 	
 	
-
 gerar_relatorio:
 	# Em construcao
 	
@@ -1285,8 +1286,8 @@ salvar_dados_no_arquivo:
 	la $s1, comando
 	jal clear_buffer
 	
-	lw $ra, 0($sp) 		#resgata o $ra original do $sp
-    addi $sp, $sp, 4	#devolve a pilha para a posicao original
+	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
 	
 	jr $ra
 	
@@ -1699,6 +1700,10 @@ ajustar_data:
 	la $t1, data_config_usuario   # Carrega o endereco de data_config_usuario  
 	jal guardar_info_buffer  	  # Pula para a funcao que pega o que estah entre aspas e salva no data_config_usuario
 	
+	# Vamos por fim verificar se a data armazenada eh uma data valida
+	la $t1, data_config_usuario   # Carrega o endereco de data_config_usuario
+	jal validar_data              # Funcao que vai validar a data digitada 
+	
 	# O trecho abaixo compara se o usuario escreveu o argumento "--hora"
 	addi $s0, $s0, 1 	  # Passa um caractere para frente, por conta do espaco entre os comandos
 	la $s1, arg_hora      # Carrega o endereco do argumento para comparar
@@ -1723,6 +1728,10 @@ ajustar_data:
 	la $t1, hora_config_usuario  # Carrega o endereco de data_config_usuario
 	jal guardar_info_buffer  	 # Pula para a funcao que pega o que estah entre aspas e salva no data_config_usuario
 	
+	# Vamos agora verifica se a data eh uma hora valida
+	la $t1, hora_config_usuario   # Carrega o endereco de hora_config_usuario
+	jal validar_hora              # Funcao que vai validar a hora digitada
+	
 	li $v0, 30   # Chama o syscall 30 para obter o instante que o usu�rio configurou o sistema
     syscall
     
@@ -1738,6 +1747,233 @@ ajustar_data:
 	
 	la $t1, msgC_data_hora_configurada   # Carrega o endereco de msgC_data_hora_configurada
 	j escrever_com_sucesso_display
+
+descobrir_qtd_digitos:
+	# $t2: reg que possui o endereco do buffer a ser analizado: 
+	move $t3, $t2
+	
+	li $s7, 0   # Inicializa $s7 com 0 (reg que servirah como contador de digitos)
+	  
+	loop_qtd_digitos:
+		lb $t4 0($t3)   # Carrega o byte em $t4
+		beq $t4, 0, fim_loop_qtd_digitos   # se o byte em $t4 seja o nulo o loop eh encerrado
+		addi $t3, $t3, 1      # Avanca para o proximo caractere 
+		addi $s7, $s7, 1      # Incrementa $s7
+		j loop_qtd_digitos    # Entra em loop
+		
+	fim_loop_qtd_digitos:
+		jr $ra
+		
+mult_por_10_x_vezes:
+	# $s6: reg que possui a quantidade de vezes que o loop abaixo tem que repetir 
+	# $t3: reg que possui o inteiro a ser multiplicado por 10
+	
+	move $t0, $s6   # Caso contrario copia a quantidade de $s6 para $t0
+	li $t8, 10      # Inicializa $t2 com 10
+	 
+	loop_multi_10_x_vezes: 
+		beqz $t0, fim_loop_multi_10_x_vezes  # Quando $t0 for 0, o loop e encerrado 
+		mult $t3, $t8                        # Opera a multiplicacao
+		mflo $t3                             # Move o resultado da multiplicacao para $t3
+		subi $t0, $t0, 1                     # Decrementa $t0
+		j loop_multi_10_x_vezes              # Entra em loop
+		
+	fim_loop_multi_10_x_vezes:
+		jr $ra  
+	
+converter_string_para_int:
+	# $t2: reg que possui o endereco de buffer_aux_conversao contendo a string a ser convertida para inteiro
+	
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+	jal descobrir_qtd_digitos     # Pula para a funcao que varre $t2 para decobrir a quantidade de digitos que o seu valor inteiro deve ter
+	move $s6, $s7                 # Copia a quantidade de digitos a string para $s6
+	subi $s6, $s6, 1              # Decrementa $s6 com 1 
+	li $a0, 0                     # Inicializa $s0 com 0  
+	addi $ra, $ra, 36             # Incrementa o $ra para que por meio do jr $ra de mult_por_10_x_vezes volte para a linha add $s0, $s0, $t3
+	
+	loop_conversao_string_int:
+		lb $t3, 0($t2)           # Carrega o byte de $t2
+		subi $t3, $t3, 48       # Converte o byte de char para int
+		bnez $s6, mult_por_10_x_vezes    # Se $s6 for diferente de 0 chama a funcao que multiplica o valor de $t3 por 10 pela qtd em $s6
+		add $a0, $a0, $t3       # Soma o valor de $s0 com $t3
+		addi $t2, $t2, 1        # Avanca para o proximo byte a ser convertido
+		subi $s6, $s6, 1        # Decrementa o valor de $s6 
+		subi $s7, $s7, 1        # Decrementa o valor de $s7
+		beqz $s7, fim_conversao_string_int   # Se $s7, seja 0 o loop encerra
+		j loop_conversao_string_int         # Caso contrario, entra em loop
+	
+	fim_conversao_string_int:
+		# Apos o fim da conversao $s0 contera o valor da string de $t2 convertido para int 
+		lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
+    	addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
+		jr $ra
+
+validar_data:
+	# $t1: reg que possui o endereco da data configurada pelo usuario
+	
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+	
+	# O trecho abaixo carrega e armazena os bytes correspondente ao dia e armazena em buffer_aux_conversao
+	la $t2, buffer_aux_conversao  # Carrega o endereco de buffer_aux_conversao
+	lb $t3, 0($t1)     # Carrega o byte de $t1 
+	sb $t3, 0($t2)     # Armazena o byte em $t2
+	
+	addi $t1, $t1, 1   # Avanca um caractere
+	addi $t2, $t2, 1   # Avanca um caractere
+	
+	lb $t3, 0($t1)     # Carrega o byte de $t1 
+	sb $t3, 0($t2)     # Armazena o byte em $t2
+	subi $t2, $t2, 1   # retorna um caractere
+	
+	jal converter_string_para_int   # Pula para a funcao que converte os caracteres do dia para int
+	move $s1, $a0          # Copia o valor inteiro convertido de $s0 para $s1
+	
+	# Verifica se o valor do dia eh maior do que 31 e menor que 0
+	bgt $s1, 31, escrever_data_invalida_display_display    # Se for maior que 31 escreve data invalida
+	bltz $s1, escrever_data_invalida_display_display       # se for menor que 0 tambem escreve data invalida
+	
+	# Agora vamos validar o valor digitado para o mes
+	addi $t1, $t1, 2   # Avanca 2 caracteres em t1 (para ignorar o caractere de barra)
+	subi $t2, $t2, 2   # Retorna dois caracteres em $t2 (para que os valores do mes sobrescrevam os valores do dias)
+	
+	lb $t3, 0($t1)     # Carrega o byte de $t1 
+	sb $t3, 0($t2)     # Armazena o byte em $t2
+	
+	addi $t1, $t1, 1   # Avanca um caractere
+	addi $t2, $t2, 1   # Avanca um caractere
+	
+	lb $t3, 0($t1)     # Carrega o byte de $t1 
+	sb $t3, 0($t2)     # Armazena o byte em $t2
+	subi $t2, $t2, 1   # retorna um caractere
+	
+	jal converter_string_para_int   # Pula para a funcao que converte os caracteres do mes para int
+	move $s2, $a0          # Copia o valor inteiro convertido de $s0 para $s2
+	
+	# Verifica se o valor do mes eh maior do que 12 e menor que 0
+	bgt $s2, 12, escrever_data_invalida_display_display    # Se for maior que 12 escreve data invalida
+	bltz $s2, escrever_data_invalida_display_display       # se for menor que 0 tambem escreve data invalida
+	
+	# Agora vamos converter o valor digitado para o ano
+	addi $t1, $t1, 2   # Avanca um caractere em t1 (para ignorar o caractere de barra)
+	subi $t2, $t2, 2   # Retorna dois caracteres em $t2 (para que os valores do ano sobrescrevam os valores do mes)
+	li $t8, 0          # Inicializa $t8 com 0
+	
+	loop_armazenar_ano:
+		lb $t3, 0($t1)        # Carrega o byte de $t1 
+		beqz $t3, fim_loop_armazenar_ano   # se o valor de $t3 for o byte nulo o loop eh encerrado 
+		sb $t3, 0($t2)        # Armazena o byte em $t2
+		addi $t1, $t1, 1      # Avanca um caractere
+		addi $t2, $t2, 1      # Avanca um caractere
+		j loop_armazenar_ano  # Entra em loop
+	
+	fim_loop_armazenar_ano:
+	la $t2, buffer_aux_conversao     # Recarrega o endereco inicial de data_config_usuario em $t2
+	jal converter_string_para_int   # Pula para a funcao que converte os caracteres do ano para int
+	move $s3, $a0          # Copia o valor inteiro convertido de $s0 para $s2
+	
+	# Vamos agora verificar se o usuario colocou a data dia 29 de fevereiro em um ano nao bissexto
+	jal verificar_29_fevereiro   # Funcao que faz essa verificacao
+	
+	# Vamos verificar agr se o valor digitado para o dia foi 31 em um mes que tem somente 30 dias
+	jal verificar_mes_com_31 
+	
+	# Limpa o buffer auxiliar
+	la $s1, buffer_aux_conversao
+	jal clear_buffer
+	
+	lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
+    addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
+	
+	jr $ra
+
+verificar_29_fevereiro:
+	li $t9, 29       # Inicializa $t9 com 29
+	beq $s1, $t9, continuar_verificacao_fevereiro1   # Verifica se o dia eh 29
+	j encerrar_verificacao_fevereiro    # Caso nao seja nos pulamos a verificacao
+	
+	continuar_verificacao_fevereiro1:
+		li $t9, 2      # Inicializa $t9 com 2
+		beq $s2, 2, continuar_verificacao_fevereiro2   # Verifica se o mes eh feveireiro
+		j encerrar_verificacao_fevereiro    # Caso nao seja nos pulamos a verificacao
+	
+	continuar_verificacao_fevereiro2:	
+		li $t7, 4            # Inicializa $t2 com 4
+    	rem $t3, $s3, $t7    # Armazena o resto da divisao de $s0 com $t7 
+		bnez $t3, escrever_data_invalida_display_display   # Se o resto da divisao nao for 0 significa que o ano nao eh bisexto
+	
+	encerrar_verificacao_fevereiro:
+		jr $ra
+		
+verificar_mes_com_31:
+	beq $s1, 31, continuar_verificacao_31   # Verifica se o dia eh 31
+	j encerrar_verificacao_mes_31    # Caso nao seja nos pulamos a verificacao
+	
+	continuar_verificacao_31:
+		beq $s2, 2, escrever_data_invalida_display_display    # Verifica se o mes eh feveireiro
+		beq $s2, 4, escrever_data_invalida_display_display    # Verifica se o mes eh abril
+		beq $s2, 6, escrever_data_invalida_display_display    # Verifica se o mes eh junho
+		beq $s2, 9, escrever_data_invalida_display_display    # Verifica se o mes eh setembro
+		beq $s2, 11, escrever_data_invalida_display_display   # Verifica se o mes eh novembro
+	
+	encerrar_verificacao_mes_31:
+		jr $ra
+	jr $ra
+	
+validar_hora:
+	# $t1: reg que possui o endereco da hors configurada pelo usuario
+	
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    # O trecho abaixo carrega e armazena os bytes correspondente a hora e armazena em buffer_aux_conversao
+	la $t2, buffer_aux_conversao  # Carrega o endereco de buffer_aux_conversao
+	lb $t3, 0($t1)     # Carrega o byte de $t1 
+	sb $t3, 0($t2)     # Armazena o byte em $t2
+	
+	addi $t1, $t1, 1   # Avanca um caractere
+	addi $t2, $t2, 1   # Avanca um caractere
+	
+	lb $t3, 0($t1)     # Carrega o byte de $t1 
+	sb $t3, 0($t2)     # Armazena o byte em $t2
+	subi $t2, $t2, 1   # retorna um caractere
+	
+	jal converter_string_para_int   # Pula para a funcao que converte os caracteres da hora para int
+	move $s1, $a0                   # Copia o valor inteiro convertido de $s0 para $s1
+	
+	# Verifica se o valor da hora eh maior do que 23 e menor que 0
+	bgt $s1, 23, escrever_hora_invalida_display_display    # Se for maior que 23 escreve hora invalida
+	bltz $s1, escrever_hora_invalida_display_display       # se for menor que 0 tambem escreve hora invalida
+	
+	# Agora vamos validar o valor digitado para minutos
+	addi $t1, $t1, 2   # Avanca um caractere em t1 (para ignorar o caractere de barra)
+	subi $t2, $t2, 2   # Retorna dois caracteres em $t2 (para que os valores do mes sobrescrevam os valores das horas)
+	
+	lb $t3, 0($t1)     # Carrega o byte de $t1 
+	sb $t3, 0($t2)     # Armazena o byte em $t2
+	
+	addi $t1, $t1, 1   # Avanca um caractere
+	addi $t2, $t2, 1   # Avanca um caractere
+	
+	lb $t3, 0($t1)     # Carrega o byte de $t1 
+	sb $t3, 0($t2)     # Armazena o byte em $t2
+	subi $t2, $t2, 1   # retorna um caractere
+	
+	jal converter_string_para_int   # Pula para a funcao que converte os caracteres dos minutos para int
+	move $s2, $a0                   # Copia o valor inteiro convertido de $s0 para $s2
+	
+	# Verifica se o valor do minuto eh maior do que 59 e menor que 0
+	bgt $s2, 59, escrever_hora_invalida_display_display    # Se for maior que 59 escreve hora invalida
+	bltz $s2, escrever_hora_invalida_display_display       # se for menor que 0 tambem escreve hora invalida
+    
+    lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
+    addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
+	jr $ra
 
 registrar_devolucao:
 	# Em construcao
@@ -1799,7 +2035,7 @@ ler_dados_do_arquivo:
     syscall
     move $s1, $v0           # Salva o descritor do arquivo em $s1
 
-    # L� o conte�do do arquivo
+    # Le o conteudo do arquivo
     li $v0, 14              # Codigo de syscall para ler de arquivo
     move $a0, $s1           # Descritor do arquivo
     move $a1, $s0           # Endereco do buffer (recuperado de $s0)
@@ -1874,69 +2110,69 @@ limpar_todos_buffers_das_entidades:
 escrever_comando_invalido_display:
 	la $t1, msgE_comando_invalido   # Carrega o endereco de msgE_comando_invalido
     jal escrever_string_display     # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display   
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display   
     jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_acervo_vazio_display:
     la $t1, msgE_acervo_vazio       # Carrega o endereco de msgE_acervo_vazio
     jal escrever_string_display     # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
 
 escrever_esprestimo_indisponivel_display:
     la $t1, msgE_esprestimo_indisponivel   # Carrega o endereco de msgE_comando_invalido
     jal escrever_string_display            # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display           # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display           # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades 
     j main   
 
 escrever_relatorio_indisponivel_display:
     la $t1, msgE_relatorio_indisponivel   # Carrega o endereco de msgE_relatorio_indisponivel
     jal escrever_string_display           # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    	  # Pula para a funcao que ira imprimir uma quebra de linha no display
     j main   
     
 escrever_livro_nao_encontrado_display:
     la $t1, msgE_livro_nao_encontrado   # Carrega o endereco de msgE_livro_nao_encontrado 
     jal escrever_string_display         # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    	# pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    	# Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
 
 escrever_livro_esta_emprestado_display:
     la $t1, msgE_livro_esta_emprestado   # Carrega o endereco de msgE_livro_esta_emprestado
     jal escrever_string_display          # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    	 # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    	 # Pula para a funcao que ira imprimir uma quebra de linha no display
 	jal limpar_todos_buffers_das_entidades   
     j main   
     
 escrever_usuario_nao_encontrado_display:
     la $t1, msgE_usuario_nao_encontrado   # Carrega o endereco de msgE_usuario_nao_encontrado
     jal escrever_string_display           # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    	  # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
     
 escrever_usuario_tem_pendencias_display:
     la $t1, msgE_usuario_tem_pendencias   # Carrega o endereco de msgE_usuario_tem_pendencias
     jal escrever_string_display           # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    	  # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
     
 escrever_formato_data_hora_incorreto_display:
     la $t1, msgE_data_hora_mal_formatada  # Carrega o endereco de msgE_data_hora_mal_formatada
     jal escrever_string_display           # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    	  # Pula para a funcao que ira imprimir uma quebra de linha no display
     j main   
 escrever_livro_ja_cadastrado_display:
 	la $t1, msgE_operacao_cadastro_invalida    # Carrega o endereco de operacao_cadastro_invalida
 	jal escrever_string_display                # Pula para a funcao generica que ira imprimir a string armazenada em $t1
 	la $t1, msgE_livro_ja_cadastrado           # Carrega o endereco de livro_ja_cadastrado 
 	jal escrever_string_display
-	jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+	jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
 	j main
 
 escrever_usuario_ja_cadastrado_display:
@@ -1944,15 +2180,26 @@ escrever_usuario_ja_cadastrado_display:
 	jal escrever_string_display                # Pula para a funcao generica que ira imprimir a string armazenada em $t1
 	la $t1, msgE_usuario_ja_cadastrado         # Carrega o endereco de usuario_ja_cadastrado 
 	jal escrever_string_display
-	jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+	jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
 	j main
 	
 escrever_data_invalida_display_display:
     la $t1, msgE_data_invalida       # Carrega o endereco de msgE_data_invalida
     jal escrever_string_display      # Pula para a funcao generica que ira imprimir a string armazenada em $t1
-    jal escrever_barra_n_display     # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display     # Pula para a funcao que ira imprimir uma quebra de linha no display
+    la $s1, data_config_usuario      # Limpa o buffer de data
+    jal clear_buffer
+
     j main 
     
+escrever_hora_invalida_display_display:
+    la $t1, msgE_hora_invalida       # Carrega o endereco de msgE_hora_invalida
+    jal escrever_string_display      # Pula para a funcao generica que ira imprimir a string armazenada em $t1
+    jal escrever_barra_n_display     # Pula para a funcao que ira imprimir uma quebra de linha no display
+    la $s1, data_config_usuario      # Limpa o buffer de hora
+    jal clear_buffer
+    j main 
+
 # Funcao generica que imprime a mensagem de falta de qualquer argumento no display
 escrever_falta_argumento_obrigatorio_display:
 	# $s1: reg que possui o endereco do argumento faltante
@@ -1978,70 +2225,70 @@ escrever_falta_argumento_obrigatorio_display:
 escrever_falta_argumento_titulo_display:
 	la $s1, arg_titulo  # Carrega o endereco arg_titulo
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    	  # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_autor_display:
 	la $s1, arg_autor  # Carrega o endereco arg_autor
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    	  # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    	  # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_ISBN_display:
 	la $s1, arg_ISBN  # Carrega o endereco arg_ISBN
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_quantidade_display:
 	la $s1, arg_quantidade  # Carrega o endereco arg_quantidade 
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_nome_display:
 	la $s1, arg_nome  # Carrega o endereco arg_nome
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_matricula_display:
 	la $s1, arg_matricula  # Carrega o endereco arg_matricula
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_curso_display:
 	la $s1, arg_curso  # Carrega o endereco arg_curso
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main   
 	
 escrever_falta_argumento_devolucao_display:
 	la $s1, arg_devolucao  # Carrega o endereco arg_devolucao
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
     jal limpar_todos_buffers_das_entidades
     j main  
     
 escrever_falta_argumento_data_display:
 	la $s1, arg_data  # Carrega o endereco arg_data
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
     j main   
 	 	     	            
 escrever_falta_argumento_hora_display:
 	la $s1, arg_hora  # Carrega o endereco arg_hora
 	jal escrever_falta_argumento_obrigatorio_display
-    jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
-    j main  
+    jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
+    j main    
 
 	memcpy: # Copia uma quantidade num (a2) de caracteres de uma string do source (a1) para o destination (a0) 
         
