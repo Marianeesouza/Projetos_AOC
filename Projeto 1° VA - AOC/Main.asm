@@ -1055,7 +1055,7 @@ registrar_emprestimo:
 	addi $s0, $s0, 1           	# Move o ponteiro para o proximo argumento
     li $s2, 6               	# Tamanho esperado do argumento
     jal comparar_strings       	# funcao para comparar strings
-    beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
+    beqz $v0, escrever_falta_argumento_ISBN_display # Se as strings nao forem iguais, exibe erro
 	
 	addi $s0, $s0, 1            # Move o ponteiro para a proxima info
     la $t1, ISBN           		# Carrega o endereco do matricula em $t1
@@ -1069,20 +1069,33 @@ registrar_emprestimo:
 	addi $s0, $s0, 1			# Move o ponteiro para o proximo argumento
 	li $s2, 11					# Tamanho esperado do argumento
 	jal comparar_strings		# funcao para comparar strings
-	beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
+	beqz $v0, escrever_falta_argumento_devolucao_display # Se as strings nao forem iguais, exibe erro
 	
 	addi $s0, $s0, 1			# Move o ponteiro para a proxima info
 	la $t1, data_devolucao			# Carrega o endereco do matricula em $t1
-	jal guardar_info_buffer		# Guarda o conteudo entre aspas no bufffer ISBN
+	jal guardar_info_buffer		# Guarda o conteudo entre aspas no bufffer data_devolucao
 	la $t2, virgula				# Carrega o endereco da virgula (',')
 	lb $t2, 0($t2)				# Carrega o byte do caractere da virgula
 	sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
 	
-	## Verifica disponibilidade do livro
+	## Verificações nos repositorios
 	
 	# Verifica se livro com ISBN existe
+	la $s1, repo_livro
+	la $s3, ISBN
+	li $s4, 1
+	jal fazer_busca_no_repositorio
+	beqz $v0, escrever_livro_nao_encontrado_display
 	
-	# Verifica se quantidade 
+	# Verifica se matricula esta cadastrada
+	la $s1, repo_usuario
+	la $s3, matricula
+	li $s4, 2
+	jal fazer_busca_no_repositorio
+	beqz $v0, escrever_usuario_nao_encontrado_display
+	# Verifica se ha livros disponiveis
+	jal verifica_quantidade_livros # no final coloca a quantidade de livros encontrada no buffer quantidade 
+	
 	
 	## Salva emprestimo em buffer
 	
@@ -1117,6 +1130,38 @@ registrar_emprestimo:
 	
 	la $t1, msgC_emprestimo_realizado  # Carrega o endereco de msgC_emprestimo_realizado
 	j escrever_com_sucesso_display
+	
+verifica_quantidade_livros:
+	# $s1: reg que possui o endereco do repositorio que irah ser feita a busca
+	# $s3: reg que possui o endereco do atributo que contem os dados da busca (livro -> isbn, usuario -> matricula)
+
+	# Aloca espaco no $sp para salvar o endereco de $ra
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+    loop_quantidade_livros:
+		jal descobrir_qtd_caracteres_comparacao    # Pula para a funcao que descobre a quantidade de digitos do isbn
+    	move $s0, $s3                     # copia o valor do endereco de $s3 (o endereco do atributo a ser avaliado) para $s0                      
+    	move $s2, $s7                     # Copia o valor de $s7, para $s2
+    	jal comparar_strings              # pula para a funcao que vai comparar o ibsn do livro com o isbn digitado
+    	beq $v0, 1, pega_qtd   			  # Se $v0 for igual a 1 pula para contagem do livro
+    	jal avancar_ate_barra_n           # Caso contrario, pula para a funcao que avanca ate o barra n
+    	addi $s1, $s1, 1                  # Avanca para o proximo caractere apos o \n
+    	j loop_quantidade_livros
+	pega_qtd: 
+	jal avancar_ate_virgula # pula ate a virgula que esta qtd
+	jal avancar_ate_virgula
+	addi $s1, $s1, 1 # adiciobna mais 1 ao endereço para desconsiderar a virgula
+	move $t1, $s1 #move s1 para t1
+	jal avancar_ate_barra_n #encontra a posicao de \n
+	sub $a2, $s1, $t1 # subtrai o endereço de s1 com t1 e salva em a2
+	subi $a2, $a2, 1 # subtrai um para desconsiderar o \n
+	move $a1, $t1
+	move $a0, quantidade
+	jal memcpy
+	
+	lw $ra, ($sp)
+	jr $ra
+	
 
 gerar_relatorio:
 	# Em construcao
@@ -1948,3 +1993,32 @@ escrever_falta_argumento_hora_display:
 	jal escrever_falta_argumento_obrigatorio_display
     jal escrever_barra_n_display    # pula para a funcao que ira imprimir uma quebra de linha no display
     j main  
+
+	memcpy: # Copia uma quantidade num (a2) de caracteres de uma string do source (a1) para o destination (a0) 
+        
+        # Salvar os valores originais de $a0 e $a1 na pilha
+		sub $sp, $sp, 8          # Cria espa�o para dois valores de 4 bytes
+    	sw $a0, 0($sp)           # Salva $a0 na pilha
+		sw $a1, 4($sp)           # Salva $a1 na pilha
+		
+		copia_memcpy:
+        	beqz $a2, fim_copia_memcpy # Se o contador chegar a 0, finaliza
+        	lb $t0, 0($a1) # Carrega o caractere atual para o t0
+			sb $t0, 0($a0) # Guarda o caractere atual do t0 para o a0
+			
+			# Passa para o proximo byte da string
+			addi $a1, $a1, 1 
+			addi $a0, $a0, 1
+			
+			addi $a2, $a2, -1 # subtrai em 1 o contador
+			j copia_memcpy
+			
+		fim_copia_memcpy:		
+        	move $v0, $a0         # Retorna o endere�o do destino atualizado
+			# Restaurar os valores originais de $a0 e $a1
+        	lw $a0, 0($sp)        # Restaura $a0 da pilha
+        	lw $a1, 4($sp)        # Restaura $a1 da pilha
+        	addi $sp, $sp, 8      # Desaloca o espa�o usado na pilha
+             		
+			# Retorna da funcao
+			jr $ra
