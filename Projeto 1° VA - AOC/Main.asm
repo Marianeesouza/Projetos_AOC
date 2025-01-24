@@ -1160,8 +1160,16 @@ verifica_quantidade_livros:
 	move $a1, $t1
 	la $a0, quantidade
 	jal memcpy # copia a string de quantidade de livros com isbn especificado do repositorio para o buffer
+<<<<<<< HEAD
 	j converter_quantidade_para_inteiro
 
+=======
+	jal converter_quantidade_para_inteiro
+
+	
+	lw $ra, ($sp)
+	jr $ra
+>>>>>>> 4766da2dbc689f7708bfcad53846c6406287bd59
 
 contar_bytes: #salva numero de bytes de um buffer em $s0
  	#$t1 e o endereco buffer
