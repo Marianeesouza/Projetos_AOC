@@ -1066,6 +1066,10 @@ registrar_emprestimo:
 	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
     sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
 	
+	# verifica o argumento --data
+	jal verifica_data_registro
+	
+
 	# Verifica o argumento --devolucao
 	la $s1, arg_devolucao 		# Carrega o endereco da string "--devolucao"  em $s1
 	addi $s0, $s0, 1			# Move o ponteiro para o proximo argumento
@@ -1074,11 +1078,11 @@ registrar_emprestimo:
 	beqz $v0, escrever_falta_argumento_devolucao_display # Se as strings nao forem iguais, exibe erro
 	
 	addi $s0, $s0, 1			# Move o ponteiro para a proxima info
-	la $t1, data_devolucao			# Carrega o endereco do matricula em $t1
+	la $t1, data_devolucao		# Carrega o endereco do matricula em $t1
 	jal guardar_info_buffer		# Guarda o conteudo entre aspas no bufffer data_devolucao
-	la $t2, virgula				# Carrega o endereco da virgula (',')
-	lb $t2, 0($t2)				# Carrega o byte do caractere da virgula
-	sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
+	la $t2, barra_n				# Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)				# Carrega o byte do caractere \n
+	sb $t2, 0($t1)              # Adiciona \n ao final do emprestimo
 	
 	## Verificações nos repositorios
 	
@@ -1133,6 +1137,44 @@ registrar_emprestimo:
 	la $t1, msgC_emprestimo_realizado  # Carrega o endereco de msgC_emprestimo_realizado
 	j escrever_com_sucesso_display
 	
+verificar_data_registro:
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	
+	la $s1, arg_data 			# Carrega o endereco da string "--data"  em $s1
+	addi $s0, $s0, 1			# Move o ponteiro para o proximo argumento
+	li $s2, 11					# Tamanho esperado do argumento
+	jal comparar_strings		# funcao para comparar strings
+	beqz $v0, pegar_data_usuario # se o comando nao tem argumento --data, entao pegar data gerada pelo usuario 
+	
+	# se comando tem o argumento --data copia o conteudo entre aspas duplas para o buffer data_registro
+	addi $s0, $s0, 1			
+	la $t1, data_registro		
+	jal guardar_info_buffer		
+	la $t2, virgula				
+	lb $t2, 0($t2)				
+	sb $t2, 0($t1) 
+	j fim_verificar_data_registro
+	
+	pegar_data_usuario:
+	la $t0, data_config_usuario # verifica se usuario configurou data
+	lb $t0, ($t0)
+	beqz $t1, gerar_data # se nao configurou,entao gerar_data
+	li $a2, 11 # num de bytes a ser copiados 
+	la $a1, data_config_usuario # origem
+	la $a0, data_registro # destino
+	jal memcpy
+	j fim_verificar_data_registro
+	
+	# se configurou esse codigo copia e cola o que esta no configurado para data_registro
+             
+
+	gerar_data:
+	jal gerar_data_atual
+	
+	fim_verificar_data_registro:
+	lw $ra, ($sp)
+	jr $ra
 verifica_quantidade_livros:
 	# $s1: reg que possui o endereco do repositorio que irah ser feita a busca
 	# $s3: reg que possui o endereco do atributo que contem os dados da busca (livro -> isbn, usuario -> matricula)
@@ -1160,16 +1202,8 @@ verifica_quantidade_livros:
 	move $a1, $t1
 	la $a0, quantidade
 	jal memcpy # copia a string de quantidade de livros com isbn especificado do repositorio para o buffer
-<<<<<<< HEAD
 	j converter_quantidade_para_inteiro
 
-=======
-	jal converter_quantidade_para_inteiro
-
-	
-	lw $ra, ($sp)
-	jr $ra
->>>>>>> 4766da2dbc689f7708bfcad53846c6406287bd59
 
 contar_bytes: #salva numero de bytes de um buffer em $s0
  	#$t1 e o endereco buffer
@@ -2296,7 +2330,7 @@ escrever_falta_argumento_hora_display:
     jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
     j main    
 
-	memcpy: # Copia uma quantidade num (a2) de caracteres de uma string do source (a1) para o destination (a0) 
+memcpy: # Copia uma quantidade num (a2) de caracteres de uma string do source (a1) para o destination (a0) 
         
         # Salvar os valores originais de $a0 e $a1 na pilha
 		sub $sp, $sp, 8          # Cria espa�o para dois valores de 4 bytes
