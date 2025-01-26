@@ -33,12 +33,12 @@
 	backspace:      .byte 8       # Valor em ASCII do caractere de backspace (botao de apagar)
 	
 	# Livro:
-	titulo:  	      			   .space 35     # Espaco reservado para o titulo do livro
-	autor:    	      			   .space 35     # Espaco reservado para o nome do autor do livro
-	ISBN:             			   .space 15     # Espaco reservado para o codigo de ISBN do livro
-	quantidade_total: 			   .space 10  	 # Espaco reservado para a quantidade_total de livros 
-	quantidade_disponivel: 		   .space 10     # Espaco reservado para a quantidade de livros disponiveis
-	quantidade_emprestados: .space 10     # Espaco reservado para a quantidade de livros emprestados
+	titulo:  	      		   .space 35     # Espaco reservado para o titulo do livro
+	autor:    	      		   .space 35     # Espaco reservado para o nome do autor do livro
+	ISBN:             		   .space 15     # Espaco reservado para o codigo de ISBN do livro
+	quantidade_total: 		   .space 10  	 # Espaco reservado para a quantidade_total de livros 
+	quantidade_disponivel: 	   .space 10     # Espaco reservado para a quantidade de livros disponiveis
+	quantidade_emprestados:    .space 10     # Espaco reservado para a quantidade de livros emprestados
 	
 	# Usuario:
 	nome:   	.space 35     # Espaco reservado para o nome do usuario
@@ -74,6 +74,7 @@
 	cmd_data_hora: 			.asciiz "data_hora"
 	cmd_ajustar_data: 	    .asciiz "ajustar_data"
 	cmd_reg_devolucao:      .asciiz "registrar_devolucao"
+	cmd_listar_usuarios:    .asciiz "listar_usuarios"
 	
 	# Argumentos
 	arg_titulo:      	.asciiz "--titulo"
@@ -150,7 +151,7 @@ escrever_string_display:
     jal esperar_display_carregar 	# Pula para a funcao que espera o display carregar
     
     lw $ra, 0($sp) 			   		#  Resgata o $ra original do $sp
-    addi $sp, $sp, 4		  		# devolve a pilha para a posicao original
+    addi $sp, $sp, 4		  		# Devolve a pilha para a posicao original
     
     li $t0, display_buffer         		# Endereco do Transmiter data do display
 	loop_string_display:
@@ -166,11 +167,11 @@ escrever_string_display:
 esperar_input_teclado:
 	# $s7: reg que serve como um apontador para a proxima posicao do caractere a ser inserido em comando 
 	
-    li $t0, keyboard_status   			 # Endereco do status do teclado
+    li $t0, keyboard_status   	     # Endereco do status do teclado
     lw $t0, 0($t0)        			 # Carrega o status do teclado diretamente em $t0
     beqz $t0, esperar_input_teclado  # Se status for 0, entra em loop
 	
-	li $t0, keyboard_buffer       # Endereco do Receiver data do teclado
+	li $t0, keyboard_buffer  # Endereco do Receiver data do teclado
    	lw $t1, 0($t0)           # Carrega o caractere digitado em $t1
 	
 	# Verifica se o caractere digitado eh o de backspace, caso seja pula para a funcao que trata isso
@@ -362,6 +363,7 @@ verificar_comando:
   	jal verificar_cmd_data_hora
 	jal verificar_cmd_ajustar_data
     jal verificar_cmd_reg_devolucao
+    jal verificar_cmd_listar_usuarios
     
     # Se nao foi digitado nenhum dos comandos 
     j escrever_comando_invalido_display
@@ -553,6 +555,22 @@ verificar_cmd_reg_devolucao:
   	li $s2, 19                       # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings             # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, registrar_devolucao  # se $v0 for 1, significa que o comando digitado foi o de reg_devolucao
+    
+    lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+    addi $sp, $sp, 4	# Devolve a pilha para a posicao original
+    
+  	jr $ra	
+  	
+verificar_cmd_listar_usuarios:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    la $s1, cmd_listar_usuarios      # Carrega o endereco de reg_devolucao
+    la $s0, comando                  # Carrega o endereco de comando em S0
+  	li $s2, 15                       # Define a quantidade de caracteres de comando que irao ser comparados
+  	jal comparar_strings             # Pula para a funcao que ira comparar as strings
+  	beq $v0, 1, listar_usuarios      # se $v0 for 1, significa que o comando digitado foi o de reg_devolucao
     
     lw $ra, 0($sp) 		# Resgata o $ra original do $sp
     addi $sp, $sp, 4	# Devolve a pilha para a posicao original
@@ -1081,6 +1099,14 @@ remover_usuario:
 	la $t1, msgC_usuario_removido   # Carrega o endereco de msgC_usuario_removido
 	j escrever_com_sucesso_display
 	
+listar_usuarios:
+	la $t1, repo_usuario           # Carrega o endereco de repo_usuario
+	jal escrever_string_display    # Pula para a funcao que imprime strings (ele todo no caso)
+	la $s1, comando
+	jal clear_buffer
+	
+	j main
+
 registrar_emprestimo:
     # Verifica o argumento "--matricula"
     la $s1, arg_matricula      # Carrega o endereco da string "--matricula"  em $s1
