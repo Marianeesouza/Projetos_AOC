@@ -679,10 +679,10 @@ cadastrar_livro:
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
     beq $v0, 1, escrever_livro_ja_cadastrado_display  # Caso v0 seja 1, pula para a funcao que vai escrever livro ja cadastrado
 	
-	# Agora vamos copiar a quantidade_total digitada e armazenar em quantidade_dispon�vel
+	# Agora vamos copiar a quantidade_total digitada e armazenar em quantidade_dispon�vel
 	move $s0, $t9     # Recupera o endereco que contem os bytes da quantidade digitada
 	la $t1, quantidade_disponivel   # Carrega o endereco de quantidade_disponivel
-	jal guardar_info_buffer  # Adiciona os bytes da quantidade em quantidade_dispon�vel 
+	jal guardar_info_buffer  # Adiciona os bytes da quantidade em quantidade_dispon�vel 
 
 	la $t2, quantidade_disponivel  # Recarrega o endereco de quantidade_disponivel
 	jal descobrir_qtd_digitos      # Chama a funcao que varre quantidade_disponivel e retorna em $s7 qtd de digitos (bytes)
@@ -1239,7 +1239,7 @@ verificar_data_registro:
 	beqz $v0, pegar_data_usuario   # se o comando nao tem argumento --data, entao pegar data gerada pelo usuario 
 	
 	# Se comando tem o argumento --data copia o conteudo entre aspas duplas para o buffer data_registro
-	addi $s0, $s0, 1		# Avanca um caractere (por conta do espa�o)
+	addi $s0, $s0, 1		# Avanca um caractere (por conta do espa�o)
 	li $s5, 1                      # Inicializa $s5 com 1 (flag para indicar que o usuario forneceu --data)	
 	la $t1, data_registro		
 	jal guardar_info_buffer	
@@ -1263,7 +1263,7 @@ verificar_data_registro:
 	lb $t0, 0($t0)                 # Carrega o primeiro byte de data_config_usuario
 	beqz $t0, gerar_data           # Se o byte for nulo, entao nao configurou nenhua data. logo, pula pro gerar_data
 	
-	# Caso contr�rio, se for diferente de 0 esse trecho de c�digo abaixo copia e cola data que ta configurado
+	# Caso contr�rio, se for diferente de 0 esse trecho de c�digo abaixo copia e cola data que ta configurado
 	# de data_config_usuario para data_registro
 	li $a2, 11                      # Define a quantidade de bytes a ser copiados 
 	la $a1, data_config_usuario     # Define o reg de origem dos bytes a ser copiados
@@ -1281,7 +1281,7 @@ verificar_data_registro:
 	jr $ra
 
 obter_qtd:
-	# $s1 reg que possui o endereco dos bytes que cont�m a quantidade do livro
+	# $s1 reg que possui o endereco dos bytes que cont�m a quantidade do livro
 	# $s2 reg que possui buffer onde serao armazenadas os bytes da quantidade
 	
 	la $t1, virgula     # Carrega o endereco de virgula
@@ -2217,6 +2217,44 @@ validar_hora:
 registrar_devolucao:
 	# Em construcao
 	
+	## Verifica argumentos obrigatórios
+	# Verifica o argumento "--matricula"
+    la $s1, arg_matricula      # Carrega o endereco da string "--matricula"  em $s1
+    addi $s0, $s0, 1           # Move o ponteiro para o proximo argumento
+    li $s2, 11                 # Tamanho esperado do argumento
+    jal comparar_strings       # funcao para comparar strings
+    beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
+
+    addi $s0, $s0, 1            # Move o ponteiro para a proxima info
+    la $t1, matricula           # Carrega o endereco do matricula em $t1
+    jal guardar_info_buffer     # Guarda o conteudo entre aspas no bufffer matricula
+    la $t2, virgula             # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
+    sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
+
+    # Verifica o argumento "--isbn"
+    la $s1, arg_ISBN			# Carrega o endereco da string "--matricula"  em $s1
+	addi $s0, $s0, 1           	# Move o ponteiro para o proximo argumento
+    li $s2, 6               	# Tamanho esperado do argumento
+    jal comparar_strings       	# funcao para comparar strings
+    beqz $v0, escrever_falta_argumento_ISBN_display # Se as strings nao forem iguais, exibe erro
+	
+	addi $s0, $s0, 1            # Move o ponteiro para a proxima info
+    la $t1, ISBN           		# Carrega o endereco do matricula em $t1
+    jal guardar_info_buffer     # Guarda o conteudo entre aspas no bufffer ISBN
+    la $t2, virgula             # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
+    sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
+
+	
+	
+	## Verifica se usuário pediu o livro emprestado
+	jal buscar_emprestimo
+	
+	
+	
+	
+	
 	# Limpa os buffers de comando, matricula e ISBN
 	la $s1, comando
 	jal clear_buffer
@@ -2230,6 +2268,78 @@ registrar_devolucao:
 	# Imprime uma mensagem de que a devolucao foi concluida no display
 	la $t1, msgC_devolucao_registrada
 	jal escrever_com_sucesso_display	
+	
+	
+buscar_emprestimo: # busca se tem algum registro no repo_emprestimo que com matricula e ISBN desejados
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    ## Contabiliza o tamanho dos buffers matricula e ISBN
+    
+    # tamanho de matricula
+    la $t0, matricula
+    jal buffer_tamanho 	# salva o numero de bytes do buffer matricula
+    move $s5, $v0 		# salva o tamanho do buffer matricula em $s5
+    
+    # tamanho de isbn
+    la $t0, ISBN
+    jal buffer_tamanho 	# salva o numero de bytes do buffer isbn
+    move $s6, $v0 		# salva o tamanho do buffer isbn em $s6
+    
+  	# verifica se ha alguma matricula e isbn na mesma linha
+  	
+  	
+  	la $s1, repo_emprestimo # inicializa s1 com endereço do repo_emprestimo para comparaçoes
+  	loop_busca_matricula: # busca primeiro por matricula
+  		# verifica se esta no final do arquivo
+  		lb $t0, 0($s1)
+  		bnez $t0, escrever_emprestimo_nao_encontrado
+  		
+  		# verifica se matricula foi encontrada
+  		la $t0, matricula # carrega t0 com o buffer matricula
+  		la $t1, $s1 # carrega t1 com o atual endereço de t1
+  		move $t5, $s5 # t5 recebe o numero de bytes de matricula
+  		jal strncmp # #compara se a matricula dessa linha e o procurada
+  		beqz $v0, loop_busca_isbn # se encontrou a matricula naquela linha faz busca do isbn
+  		
+  		# pula ate a proxima linha
+  		jal avancar_ate_barra_n
+  		addi $s1, $s1, 1 # avança para a proxima linha do registro
+  		j loop_busca_matricula # recomeca o loop
+  		loop_busca_isbn:
+  			jal avancar_ate_virgula # pula ate a virgula
+  			addi $s1, $s1, 1 # soma 1 a s1
+  			
+  			# verifica se isbn foi encontrado
+  			la $t0, ISBN 	# carrega o endereço de isbn em t0
+  			la $t1, $s1 	# carrega o atual endereço de s1 em t1
+  			move $t5, $s6 	# carrega o tamanho de isbn em t5
+  			jal strncmp # compara se o isbn dessa linha é o procurado
+  			beqz $v0, fim_busca_emprestimo # se v0 é 0, emprestimo encotrado
+  			
+  			# pula para a proxima linha
+  			jal avancar_ate_barra_n
+  			addi $s1, $s1, 1 # avança para a proxima linha do registro
+  			j loop_busca_matricula # recomeca o loop
+  			
+    
+
+    lw $ra, 0($sp)
+    addi $sp, $sp, 4
+    jr $ra
+
+buffer_tamanho: # conta quantos bytes o buffer tem ate o \0
+	# $t0 endereço do buffer
+	# retorna em $v0 o tamanho do buffer
+	li $v0, 0		# contador de bytes
+	loop_buffer_tamanho
+	lb $t1, ($t0)             # carrega o byte do endereço t0 em t1
+	addi $t0, $t0, 1          # Incrementa $t0
+	addi $v0, $v0, 1          # Incrementa $t2
+	bnez $t1, loop_buffer_tamanho # se t1 eh diferente de 0 recomeca a funcao
+	subi $v0, $v0, 1          # subtrai 1 de v0 no final da funcao para desconsiderar o \0
+	jr $ra                    # volta para ra
+
 
 ler_dados:
     # Aloca espaco no $sp para salvar o endereco de $ra
@@ -2566,3 +2676,25 @@ memcpy: # Copia uma quantidade num (a2) de caracteres de uma string do source (a
              		
 			# Retorna da funcao
 			jr $ra
+strncmp:
+	# t0 e t1 são os endereços das strings a serem comparadas
+	# t5 o numero de bytes a serem comparados
+	j strncmp_loop
+
+	
+strncmp_loop:
+	lb $t2, ($t0)
+	lb $t3, ($t1)
+	addi $t0, $t0, 1
+	addi $t1, $t1, 1
+	subi $t5, $t5 1
+	sub $t4, $t2, $t3 # t4 = t2 - t3
+	bnez $t4, strncmp_done # se t4 é diferente de 0
+	beqz $t5, strncmp_done # se t5 = 0
+	beqz $t4, strncmp_loop # se t4 = 0
+	
+
+
+strncmp_done:
+	move $v0, $t4
+	jr $ra

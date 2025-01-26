@@ -1,21 +1,21 @@
 
-# Projeto 1 VA Arquitetura e Organização de Computadores - 2024.2
+# Projeto 1 VA Arquitetura e Organizaï¿½ï¿½o de Computadores - 2024.2
 # Alunos: Heitor Leander Feitosa da silva
-#         João victor Morais Barreto da silva
+#         Joï¿½o victor Morais Barreto da silva
 #         Mariane Elisa dos Santos Souza
 #         Samuel Roberto de Carvalho Bezerra
 
 .data
 	source:    .asciiz "Hello, MIPS!"    # String de origem
-	source2:	.asciiz "Olá, MIPS!" 
-	destination: .space 100              # Espaço reservado para a string destino
+	source2:	.asciiz "Olï¿½, MIPS!" 
+	destination: .space 100              # Espaï¿½o reservado para a string destino
 
 .text
 	main:
-		# Configuração inicial
-    	la $a0, destination   # Endereço do destino (deve apontar para uma área válida de memória)
-    	la $a1, source        # Endereço da origem (deve apontar para a string "Hello, MIPS!")
-    	jal strcpy            # Chama a função strcpy
+		# Configuraï¿½ï¿½o inicial
+    	la $a0, destination   # Endereï¿½o do destino (deve apontar para uma ï¿½rea vï¿½lida de memï¿½ria)
+    	la $a1, source        # Endereï¿½o da origem (deve apontar para a string "Hello, MIPS!")
+    	jal strcpy            # Chama a funï¿½ï¿½o strcpy
 		
     	# Exibe a string copiada
     	li $v0, 4             # Chamada de sistema para imprimir string
@@ -40,15 +40,15 @@
 
 	strcpy: # Copia uma string do source (a1) para o destination (a0)
 		# Salvar os valores originais de $a0 e $a1 na pilha
-		sub $sp, $sp, 8          # Cria espaço para dois valores de 4 bytes
+		sub $sp, $sp, 8          # Cria espaï¿½o para dois valores de 4 bytes
     	sw $a0, 0($sp)           # Salva $a0 na pilha
 		sw $a1, 4($sp)           # Salva $a1 na pilha
 
-    	# Início da cópia
+    	# Inï¿½cio da cï¿½pia
 		copia_strcpy:
 			lb $t0, 0($a1) # Carrega o caractere atual para o t0
 			sb $t0, 0($a0) # Guarda o caractere atual do t0 para o a0
-			beq $t0, $zero, fim_copia_strcpy # Se o caractere for nulo, então a string terminou
+			beq $t0, $zero, fim_copia_strcpy # Se o caractere for nulo, entï¿½o a string terminou
 			
 			# Passa para o proximo byte da string
 			addi $a1, $a1, 1 
@@ -57,26 +57,26 @@
 			
 		fim_copia_strcpy:
 			# adicionando uma quebra de linha ao fim da string
-			li $t0, 10            # Caractere '\n' em ASCII é 10
+			li $t0, 10            # Caractere '\n' em ASCII ï¿½ 10
        		sb $t0, 0($a0)        # Adiciona '\n' ao final da string copiada
        				
        		# Colocando o caractere nulo no lugar
-        	addi $a0, $a0, 1      # Incrementa o destino para o próximo byte
-        	sb $zero, 0($a0)      # Adiciona o caractere NULL (\0) após a quebra de linha
+        	addi $a0, $a0, 1      # Incrementa o destino para o prï¿½ximo byte
+        	sb $zero, 0($a0)      # Adiciona o caractere NULL (\0) apï¿½s a quebra de linha
         			
-        	move $v0, $a0         # Retorna o endereço do destino atualizado
+        	move $v0, $a0         # Retorna o endereï¿½o do destino atualizado
         	# Restaurar os valores originais de $a0 e $a1
         	lw $a0, 0($sp)        # Restaura $a0 da pilha
         	lw $a1, 4($sp)        # Restaura $a1 da pilha
-        	addi $sp, $sp, 8      # Desaloca o espaço usado na pilha
+        	addi $sp, $sp, 8      # Desaloca o espaï¿½o usado na pilha
              		
-			# Retorna da função
+			# Retorna da funï¿½ï¿½o
 			jr $ra
         
 	memcpy: # Copia uma quantidade num (a2) de caracteres de uma string do source (a1) para o destination (a0) 
         
         # Salvar os valores originais de $a0 e $a1 na pilha
-		sub $sp, $sp, 8          # Cria espaço para dois valores de 4 bytes
+		sub $sp, $sp, 8          # Cria espaï¿½o para dois valores de 4 bytes
     	sw $a0, 0($sp)           # Salva $a0 na pilha
 		sw $a1, 4($sp)           # Salva $a1 na pilha
 		
@@ -94,27 +94,27 @@
 			
 		fim_copia_memcpy:
 			# adicionando uma quebra de linha ao fim da string
-			li $t0, 10            # Caractere '\n' em ASCII é 10
+			li $t0, 10            # Caractere '\n' em ASCII ï¿½ 10
        		sb $t0, 0($a0)        # Adiciona '\n' ao final da string copiada
        				
        		# Colocando o caractere nulo no lugar
-        	addi $a0, $a0, 1      # Incrementa o destino para o próximo byte
-        	sb $zero, 0($a0)      # Adiciona o caractere NULL (\0) após a quebra de linha
+        	addi $a0, $a0, 1      # Incrementa o destino para o prï¿½ximo byte
+        	sb $zero, 0($a0)      # Adiciona o caractere NULL (\0) apï¿½s a quebra de linha
         			
-        	move $v0, $a0         # Retorna o endereço do destino atualizado
+        	move $v0, $a0         # Retorna o endereï¿½o do destino atualizado
 			# Restaurar os valores originais de $a0 e $a1
         	lw $a0, 0($sp)        # Restaura $a0 da pilha
         	lw $a1, 4($sp)        # Restaura $a1 da pilha
-        	addi $sp, $sp, 8      # Desaloca o espaço usado na pilha
+        	addi $sp, $sp, 8      # Desaloca o espaï¿½o usado na pilha
              		
-			# Retorna da função
+			# Retorna da funï¿½ï¿½o
 			jr $ra
 	
 	strcmp: 
     	li $v0, 0             # Inicializa o valor de v0 como 0 (presumimos strings iguais inicialmente)
 
     	# Salvar os valores originais de $a0 e $a1 na pilha
-    	sub $sp, $sp, 8        # Cria espaço para dois valores de 4 bytes
+    	sub $sp, $sp, 8        # Cria espaï¿½o para dois valores de 4 bytes
     	sw $a0, 0($sp)         # Salva $a0 na pilha
     	sw $a1, 4($sp)         # Salva $a1 na pilha
 
@@ -123,14 +123,14 @@
         		lb $t0, 0($a0)     # Carrega o caractere atual de a0 (str1)
         		beq $t0, $t1, verifica_zero_strcmp  # Se os caracteres forem iguais, vai verificar se acabou
 
-        		# Se não forem iguais, calcula a diferença
-        		sub $v0, $t0, $t1  # Calcula a diferença t0 - t1
+        		# Se nï¿½o forem iguais, calcula a diferenï¿½a
+        		sub $v0, $t0, $t1  # Calcula a diferenï¿½a t0 - t1
         		j fim_strcmp
 
     		verifica_zero_strcmp:
         		beq $t0, $zero, fim_strcmp  # Se o caractere for nulo, as strings acabaram
 
-        		# Passa para o próximo caractere
+        		# Passa para o prï¿½ximo caractere
         		addi $a1, $a1, 1
         		addi $a0, $a0, 1
         		j verifica_strcmp
@@ -144,12 +144,12 @@
         		# Restaura os valores originais de $a0 e $a1
         		lw $a0, 0($sp)       # Restaura $a0 da pilha
         		lw $a1, 4($sp)       # Restaura $a1 da pilha
-        		addi $sp, $sp, 8     # Desaloca o espaço usado na pilha
-        		jr $ra               # Retorna da função
+        		addi $sp, $sp, 8     # Desaloca o espaï¿½o usado na pilha
+        		jr $ra               # Retorna da funï¿½ï¿½o
 
 	strncmp: # strcmp com contagem de caracteres
         # Salvar os valores originais de $a0 e $a1 na pilha
-		sub $sp, $sp, 8          # Cria espaço para dois valores de 4 bytes
+		sub $sp, $sp, 8          # Cria espaï¿½o para dois valores de 4 bytes
     	sw $a0, 0($sp)           # Salva $a0 na pilha
 		sw $a1, 4($sp)           # Salva $a1 na pilha
 		
@@ -164,13 +164,13 @@
         	beq $t0, $zero, fim_strcmp  # Se o caractere for nulo, as strings acabaram
         	subi $a2, $a2, 1
 
-        	# Passa para o próximo caractere
+        	# Passa para o prï¿½ximo caractere
         	addi $a1, $a1, 1
         	addi $a0, $a0, 1
         	j verifica_strcmp
 
     	fim_strncmp:
-    		sub $v0, $t0, $t1  # Calcula a diferença t0 - t1
+    		sub $v0, $t0, $t1  # Calcula a diferenï¿½a t0 - t1
         	# Se as strings forem iguais, imprime 0
         	move $a0, $v0        # Move o valor de v0 para $a0
         	li $v0, 1            # Syscall para imprimir inteiro
@@ -179,37 +179,62 @@
         	# Restaura os valores originais de $a0 e $a1
         	lw $a0, 0($sp)       # Restaura $a0 da pilha
         	lw $a1, 4($sp)       # Restaura $a1 da pilha
-        	addi $sp, $sp, 8     # Desaloca o espaço usado na pilha
-        	jr $ra               # Retorna da função
+        	addi $sp, $sp, 8     # Desaloca o espaï¿½o usado na pilha
+        	jr $ra               # Retorna da funï¿½ï¿½o
 
 	strcat:
         # Salvar os valores originais de $a0 e $a1 na pilha
-		sub $sp, $sp, 8          # Cria espaço para dois valores de 4 bytes
+		sub $sp, $sp, 8          # Cria espaï¿½o para dois valores de 4 bytes
     	sw $a0, 0($sp)           # Salva $a0 na pilha
 		sw $a1, 4($sp)           # Salva $a1 na pilha
 		
 		acha_final_strcat:
 			lb $t0, 0($a0)        # Carrega o primeiro caractere de destination
 			beq $t0, $zero, copia_final_strcat  # Se for NULL (\0), encontrou o final
-        	addi $a0, $a0, 1       # Move para o próximo caractere em destination
+        	addi $a0, $a0, 1       # Move para o prï¿½ximo caractere em destination
         	j acha_final_strcat
         	
         copia_final_strcat:
         	lb $t1, 0($a1)         # Carrega o caractere de source
         	beq $t1, $zero, fim_strcat  # Se for NULL (\0), fim da string source
         	sb $t1, 0($a0)         # Coloca o caractere de source em destination
-        	addi $a0, $a0, 1       # Move para o próximo caractere em destination
-        	addi $a1, $a1, 1       # Move para o próximo caractere em source
+        	addi $a0, $a0, 1       # Move para o prï¿½ximo caractere em destination
+        	addi $a1, $a1, 1       # Move para o prï¿½ximo caractere em source
         	j copia_final_strcat
         
         fim_strcat:
         	# Adicionar o caractere NULL (\0) no final da string concatenada
         	sb $zero, 0($a0)       # Coloca \0 no final de destination
 
-    		# Retorna o endereço de destination
-    		move $v0, $a0            # Retorna o endereço de destination
+    		# Retorna o endereï¿½o de destination
+    		move $v0, $a0            # Retorna o endereï¿½o de destination
     		# Restaura os valores originais de $a0 e $a1
         	lw $a0, 0($sp)       # Restaura $a0 da pilha
         	lw $a1, 4($sp)       # Restaura $a1 da pilha
-        	addi $sp, $sp, 8     # Desaloca o espaço usado na pilha
-        	jr $ra               # Retorna da função
+        	addi $sp, $sp, 8     # Desaloca o espaï¿½o usado na pilha
+        	jr $ra               # Retorna da funï¿½ï¿½o
+
+
+strncmp:
+	la $t0, ($a0)
+	la $t1, ($a1)
+	move $t5, $a3
+	j strncmp_loop
+
+	
+strncmp_loop:
+	lb $t2, ($t0)
+	lb $t3, ($t1)
+	addi $t0, $t0, 1
+	addi $t1, $t1, 1
+	subi $t5, $t5 1
+	sub $t4, $t2, $t3 # t4 = t2 - t3
+	bnez $t4, strncmp_done # se t4 Ã© diferente de 0
+	beqz $t5, strncmp_done # se t5 = 0
+	beqz $t4, strncmp_loop # se t4 = 0
+	
+
+
+strncmp_done:
+	move $v0, $t4
+	jr $ra
