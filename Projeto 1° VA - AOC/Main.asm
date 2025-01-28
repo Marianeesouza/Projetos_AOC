@@ -2252,10 +2252,12 @@ registrar_devolucao:
 	jal buscar_emprestimo
 	
 	
+	## Registra a devolucao do livro
+	jal fazer_devolucao
 	
 	
-	
-	# Limpa os buffers de comando, matricula e ISBN
+
+	# Limpa os buffers de comando, matricula e ISBN, quantidade_disponivel e quantidade_emprestado
 	la $s1, comando
 	jal clear_buffer
 	
@@ -2263,7 +2265,13 @@ registrar_devolucao:
 	jal clear_buffer
 	
     la $s1, ISBN
-    jal clear_buffer    
+    jal clear_buffer  
+    
+    la $s1, quantidade_disponivel
+    jal clear_buffer  
+    
+    la $s1, quantidade_emprestado
+    jal clear_buffer
 	
 	# Imprime uma mensagem de que a devolucao foi concluida no display
 	la $t1, msgC_devolucao_registrada
@@ -2323,7 +2331,9 @@ buscar_emprestimo: # busca se tem algum registro no repo_emprestimo que com matr
   			j loop_busca_matricula # recomeca o loop
   			
     
-
+	fim_busca_emprestimo:
+	## s1 vai ter o endereço do primeiro byte de ISBN do repositorio_emprestimo do registro desejado
+	
     lw $ra, 0($sp)
     addi $sp, $sp, 4
     jr $ra
@@ -2365,7 +2375,118 @@ ler_dados:
     addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
 	
     jr $ra
+fazer_devolucao:
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+	# Marca a flag do emprestimo em 1
+	jal avancar_ate_virgula # avanca ate virgula antes data registro
+	jal avancar_ate_virgula # avanca ate virgula antes data devolucao
+	jal avancar_ate_virgula # avanca ate a virgula antes flag
+	li $t1, 49
+	sb $t1, 1($s1) # armazena o caracter "1", 1 endereço a frente de s1
+	
+	## Faz a busca no repo_livro, soma 1 das quantias disponiveis, subtrai 1 das quantias emprestadas
+	
+	# busca o registro do livro no repositorio livro
+	la $s1, repo_livro
+	la $s3, ISBN
+	li $s4, 1
+ 	jal fazer_busca_no_repositorio
+ 	
+ 	#Avança s1 ate qtd_disp
+ 	jal avancar_ate_virgula
+ 	jal avancar_ate_virgula
+ 	jal avancar_ate_virgula
+ 	jal avancar_ate_virgula
+ 	addi $s1, $s1, 1
+ 	
+ 	#move o valor de s1 para t1
+ 	move $t1, $s1
+ 	
+ 	jal avancar_virgula 
+ 	sub $a2, $s1, $t1 # subtrai o final do endereço de qtd_disp com o inicio
+ 	subi $a2, $a2, 1 # desconsidera a virgula
+ 	move $a1, $t1 # source é t1
+ 	la $a0, quantidade_disponivel # destination
+ 	jal memcpy # copia a quantidade disponivel para o buffer
+ 	
+ 	la $t2, quantidade_disponivel
+ 	jal converter_string_para_int # Pega o valor de quantidade_disponivel e transforma em inteiro e salva em s0
+ 	addi $s0, $s0, 1 # soma 1 a s0
+ 	
+ 	move $t0, $t1 #copia t1 para t0
+ 	move $t2, $a2 # copia a2, para t2
+ 	jal preencher_com_0 # preenche o espaco de qtd_disp com 0
+ 	
+	# converte o inteiro em string para quantidade_disponivel
+	la $t6, quantidade_disponivel
+	move $t7, $s0 
+	jal converter_int_para_string
+ 	
+ 	la $t0, quantidade_disponivel 
+ 	jal tamanho_buffer # conta quantos bytes quantidades_disponiveis esta usando e salva em v0
+ 	move $t0, $v0 # move v0 para t0
+ 	
+ 	sub $a2, $a2, $t0 #subtrai do tamanho do registro de qtd_dispo o tamanho do buffer quantidade_disponivel
+ 	add $t1, $t1, $a2 # o valor da subtracao eh o numero de bytes que t1 deve avancar
+ 	la $a1, quantidade_disponivel # carrega source com quantidade_disponivel
+ 	move $a0, $t1 # copia o endereço de t1 para a0 (destination)
+ 	move $a2, $t0 # carrega a2 com o tamanho do quantidade_disponivel
+ 	jal memcpy # copia o conteudo de quantidade_disponivel nos ultimos 0 de qtd_dispo do repositirio
+ 	
+ 	## atualiza agora o valor de qtd_emprest 
+ 	addi $s1, $s1, 1
+ 	move $t1, $s1
+ 	jal avancar_ate_barra_n
+ 	
+ 	sub $a2, $s1, $t1 # subtrai o final do endereço de qtd_disp com o inicio
+ 	subi $a2, $a2, 1 # desconsidera \n
+ 	move $a1, $t1 # source é t1
+ 	la $a0, quantidade_emprestados # destination
+ 	jal memcpy # copia a quantidade emprestada para o buffer
+ 	
+ 	la $t2, quantidade_emprestados
+ 	jal converter_string_para_int # Pega o valor de quantidade_emprestados e transforma em inteiro e salva em s0
+ 	subi $s0, $s0, 1 # subtrai 1 a s0
+ 	
+ 	move $t0, $t1 #copia t1 para t0
+ 	move $t2, $a2 # copia a2, para t2
+ 	jal preencher_com_0 # preenche o espaco de qtd_emprest com 0
+ 
+	
+	# converte o inteiro em string para quantidade_emprestados
+	la $t6, quantidade_emprestados
+	move $t7, $s0 
+	jal converter_int_para_string
+ 	
+ 	la $t0, quantidade_emprestados
+ 	jal tamanho_buffer # conta quantos bytes quantidade_emprestados esta usando e salva em v0
+ 	move $t0, $v0 # move v0 para t0
+ 	
+ 	sub $a2, $a2, $t0 # subtrai do tamanho do registro de qtd_dispo o tamanho do buffer quantidade_emprestados
+ 	add $t1, $t1, $a2 # o valor da subtracao eh o numero de bytes que t1 deve avancar
+ 	la $a1, quantidade_emprestados # carrega source com quantidade_emprestados
+ 	move $a0, $t1 # copia o endereço de t1 para a0 (destination)
+ 	move $a2, $t0 # carrega a2 com o tamanho do quantidade_emprestados
+ 	jal memcpy # copia o conteudo de quantidade_emprestados nos ultimos 0 de qtd_empre do repositirio
 
+
+	lw $ra, 0($sp)
+    addi $sp, $sp, 4
+    jr $ra
+	
+	
+preencher_com_0:
+# t0 endereço de origem
+# t2 numero bytes a preencher com "0"
+lb $t3, 48
+sb $t3, ($t0)
+addi $t0, $t0, 1
+subi $t2, $t2, 1
+bnez $t2, preencher_com_0
+jr $ra
+		
 ler_dados_do_arquivo:
 	# $a0: Reg que possui o endereco do nome do arquivo
 	# $a1: Reg que possui o endereco do buffer de destino 
