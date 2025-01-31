@@ -48,7 +48,7 @@
 	# Emprestimo:
 	data_registro:  		.space 15    # Espaco reservado para a data em que foi registrado o emprestimo
 	data_devolucao: 		.space 15    # Espaco reservado para a data de devolucao do empr�stimo
-	flag_foi_devolvido:      .space 1    # Espaco reservado para uma flag que serve para indicar se a devolucao foi feita ou nao
+	flag_foi_devolvido:      .space 3    # Espaco reservado para uma flag que serve para indicar se a devolucao foi feita ou nao
 	
 	# Repositorios Temporarios
 	repo_livro:           .space 4500 # Espaco reservado para a gravacao temporaria dos livros cadastrados
@@ -117,7 +117,8 @@
 	msgE_operacao_cadastro_invalida:         .asciiz "Operacao de cadastro invalida"
 	msgE_livro_ja_cadastrado:                .asciiz " o isbn fornecido ja esta associada a um outro livro no acervo" 
 	msgE_usuario_ja_cadastrado:              .asciiz " a matricula fornecida ja esta associada a um outro usuario"
-
+	msgE_emprestimo_nao_encontrado:          .asciiz "Nao existe nenhum emprestimo associado ao usuaro fornecido"
+	
 	# strings auxiliares para impressoes
 	string_data:     .asciiz "Data: "
     string_hora:     .asciiz "Hora: "
@@ -1234,21 +1235,25 @@ registrar_emprestimo:
     jal clear_buffer        # Limpa o buffer matricula.
 	
     la $s1, ISBN       	    # Carrega o endereco do buffer `ISBN` em $s1.
-    jal str_concat          # Concatena o curso ao repositorio de emprestimo.
+    jal str_concat          # Concatena o ISBN ao repositorio de emprestimo.
     la $s1, ISBN       	    # Recarrega o endereco de curso novamente (para voltar ao 1e caractere)	
     jal clear_buffer        # Limpa o buffer "ISBN".
     
     la $s1, data_registro   # Carrega o endereco do buffer `registro` em $s1.
-    jal str_concat      	# Concatena o curso ao repositorio de emprestimo.
+    jal str_concat      	# Concatena o data_registro ao repositorio de emprestimo.
     la $s1, data_registro   # Recarrega o endereco de curso novamente (para voltar ao 1e caractere)	
     jal clear_buffer    	# Limpa o buffer "registro".
     
     la $s1, data_devolucao  # Carrega o endereco do buffer `devolucao` em $s1.
-    jal str_concat      	# Concatena o curso ao repositorio de emprestimo.
+    jal str_concat      	# Concatena o data_devolucao ao repositorio de emprestimo.
     la $s1, data_devolucao  # Recarrega o endereco de curso novamente (para voltar ao 1ecaractere)	
     jal clear_buffer    	# Limpa o buffer "devolucao".
     
-  
+    la $s1, flag_foi_devolvido # Carrega o endereco do buffer `flag_foi_devolvido` em $s1.
+  	jal str_concat      	    # Concatena o flag_foi_devolvido ao repositorio de emprestimo.
+  	la $s1, flag_foi_devolvido # Recarrega o endereco do buffer `flag_foi_devolvido` em $s1.
+  	jal clear_buffer    	    # Limpa o buffer "flag_foi_devolvido".
+
 	# Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
@@ -1274,7 +1279,7 @@ verificar_data_registro:
 	beqz $v0, pegar_data_usuario   # se o comando nao tem argumento --data, entao pegar data gerada pelo usuario 
 	
 	# Se comando tem o argumento --data copia o conteudo entre aspas duplas para o buffer data_registro
-	addi $s0, $s0, 1		# Avanca um caractere (por conta do espa�o)
+	addi $s0, $s0, 1			   # Avanca um caractere (por conta do espa�o)
 	li $s5, 1                      # Inicializa $s5 com 1 (flag para indicar que o usuario forneceu --data)	
 	la $t1, data_registro		
 	jal guardar_info_buffer	
@@ -1366,8 +1371,8 @@ verifica_qtd_disponivel:
 	
 	jr $ra
 
-obter_conveter_qtd_emprestados_para_int:
-	# $s1: reg que possui o endereco exato qtd_emprestados
+obter_conveter_qtd_disponivel_para_int:
+	# $s1: reg que possui o endereco exato quantidade_disponivel
 	
 	# Aloca espaco no $sp para salvar o endereco de $ra
     addi $sp, $sp, -8
@@ -1378,27 +1383,39 @@ obter_conveter_qtd_emprestados_para_int:
 	la $s1, buffer_aux_conversao   # Carrega o endereco do buffer_aux_conversao
 	jal clear_buffer
 	
-    lw $s1, 4($sp)    # Resgata o endereco de $s1
+    lw $s1, 4($sp)                 # Resgata o endereco de $s1
     la $t2, buffer_aux_conversao   # Recarrega o endereco do buffer_aux_conversao
-	la $t0, barra_n   # Carrega o endereco de barra_n
-	lb $t0, 0($t0)    # Carrega o byte correspondente ao caractere de \n
+	jal copiar_ate_virgula         # Pula para a funcao que vai copiar os dados e armazenar em buffer_aux_conversao
+	la $t2, buffer_aux_conversao   # Recarrega o endereco do buffer_aux_conversao (Para voltar para o primeiro byte)
+	jal converter_string_para_int  # Pula para a funcao que vai converter os dados obtidos para inteiro 
+		
+	lw $s1, 4($sp)      # Resgata o endereco de $s1
+	lw $ra, 0($sp)      # Resgata o $ra original do $sp
+   	addi $sp, $sp, 8    # Devolve a pilha para a posicao original
+	jr $ra
+
+obter_conveter_qtd_emprestados_para_int:
+	# $s1: reg que possui o endereco exato de quantidade_emprestado
 	
-	loop_copiar_qtd_emprestados:
-		lb $s2, 0($s1)      # Carrega o byte de $s1
-		beq $s2, $t0, fim_loop_copiar_qtd_emprestados    # se o byte de $s1 for igual ao caractere de \n o loop encerra  
-		sb $s2, 0($t2)      # Caso contrario, escreve o byte lido em $t6
-		addi $s1, $s1, 1    # Avanca para o proximo byte
-		addi $t2, $t2, 1    # Avanca para o proximo byte a ser inserido
-		j loop_copiar_qtd_emprestados # Entra em loop
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -8
+    sw $ra, 0($sp)
+    sw $s1, 4($sp)   # Salva o endereco de $s1
+    
+    # Primeiro vamos limpar o buffer_aux_conversao
+	la $s1, buffer_aux_conversao   # Carrega o endereco do buffer_aux_conversao
+	jal clear_buffer
+	
+    lw $s1, 4($sp)                 # Resgata o endereco de $s1
+    la $t2, buffer_aux_conversao   # Recarrega o endereco do buffer_aux_conversao
+	jal copiar_ate_barra_n         # Pula para a funcao que vai copiar os dados e armazenar em buffer_aux_conversao
+	la $t2, buffer_aux_conversao   # Recarrega o endereco do buffer_aux_conversao (Para voltar para o primeiro byte)
+	jal converter_string_para_int  # Pula para a funcao que vai converter os dados obtidos para inteiro 
 		
-	fim_loop_copiar_qtd_emprestados:
-		la $t2, buffer_aux_conversao   # Recarrega o endereco do buffer_aux_conversao (Para voltar para o primeiro byte)
-		jal converter_string_para_int  # Pula para a funcao que vai converter para inteiro 
-		
-		lw $s1, 4($sp)      # Resgata o endereco de $s1
-		lw $ra, 0($sp)      # Resgata o $ra original do $sp
-   		addi $sp, $sp, 8    # Devolve a pilha para a posicao original
-		jr $ra
+	lw $s1, 4($sp)      # Resgata o endereco de $s1
+	lw $ra, 0($sp)      # Resgata o $ra original do $sp
+   	addi $sp, $sp, 8    # Devolve a pilha para a posicao original
+	jr $ra
 	
 atualizar_qtd_disponivel_para_menos:
 	# $s1: reg que possui o endereco dos bytes da quantidade disponivel do livro que iremos atualizar
@@ -1677,6 +1694,42 @@ escrever_ate_barra_n:
 	fim_loop_escrita_ate_barra_n:
 		jr $ra
 		
+copiar_ate_virgula:
+	# $s1: reg que contem o endereco exato dos bytes que iremos copiar
+	# $t2: reg que iremos armazenar os bytes copiados
+	
+	la $t0, virgula     # Carrega o endereco de virgula
+	lb $t0, 0($t0)      # Carrega o byte correspondente ao caractere de virgula em ascII
+	
+	loop_copiar_ate_virgula:
+		lb $s2, 0($s1)      # Carrega o byte de $s1
+		beq $s2, $t0, fim_loop_copiar_ate_virgula    # se o byte de $s1 for igual ao caractere de virgula o loop encerra  
+		sb $s2, 0($t2)      # Caso contrario, escreve o byte lido em $t2
+		addi $s1, $s1, 1    # Avanca para o proximo byte
+		addi $t2, $t2, 1    # Avanca para o proximo byte a ser inserido
+		j loop_copiar_ate_virgula # Entra em loop
+		
+	fim_loop_copiar_ate_virgula:
+		jr $ra
+		
+copiar_ate_barra_n:
+	# $s1: reg que contem o endereco exato dos bytes que iremos copiar
+	# $t2: reg que iremos armazenar os bytes copiados
+
+	la $t0, barra_n   # Carrega o endereco de barra_n
+	lb $t0, 0($t0)    # Carrega o byte correspondente ao caractere de \n
+	
+	loop_copiar_ate_barra_n:
+		lb $s2, 0($s1)      # Carrega o byte de $s1
+		beq $s2, $t0, fim_loop_copiar_ate_barra_n    # se o byte de $s1 for igual ao caractere de \n o loop encerra  
+		sb $s2, 0($t2)      # Caso contrario, escreve o byte lido em $t2
+		addi $s1, $s1, 1    # Avanca para o proximo byte
+		addi $t2, $t2, 1    # Avanca para o proximo byte a ser inserido
+		j loop_copiar_ate_barra_n # Entra em loop
+		
+	fim_loop_copiar_ate_barra_n:
+		jr $ra
+		
 gerar_relatorio:
 	# Em construcao
 	
@@ -1685,6 +1738,166 @@ gerar_relatorio:
 	jal clear_buffer
 	
 	j main
+	
+registrar_devolucao:
+	## Verifica argumentos obrigaorios
+	# Verifica o argumento "--matricula"
+	
+    la $s1, arg_matricula      # Carrega o endereco da string "--matricula"  em $s1
+    addi $s0, $s0, 1           # Move o ponteiro para o proximo argumento
+    li $s2, 11                 # Tamanho esperado do argumento
+    jal comparar_strings       # funcao para comparar strings
+    beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
+
+    addi $s0, $s0, 1            # Move o ponteiro para a proxima info
+    la $t1, matricula           # Carrega o endereco do matricula em $t1
+    jal guardar_info_buffer     # Guarda o conteudo entre aspas no bufffer matricula
+    la $t2, virgula             # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
+    sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
+
+    # Verifica o argumento "--isbn"
+    la $s1, arg_ISBN			# Carrega o endereco da string "--matricula"  em $s1
+	addi $s0, $s0, 1           	# Move o ponteiro para o proximo argumento
+    li $s2, 6               	# Tamanho esperado do argumento
+    jal comparar_strings       	# funcao para comparar strings
+    beqz $v0, escrever_falta_argumento_ISBN_display # Se as strings nao forem iguais, exibe erro
+	
+	addi $s0, $s0, 1            # Move o ponteiro para a proxima info
+    la $t1, ISBN           		# Carrega o endereco do matricula em $t1
+    jal guardar_info_buffer     # Guarda o conteudo entre aspas no bufffer ISBN
+    la $t2, virgula             # Carrega o endereco da virgula (',')
+	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
+    sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
+
+	## Agora verificamos se o emprestimo com a matricula e ISBN fornecidos existe 
+	jal buscar_emprestimo
+	
+	# Se existir, vamos para a funcao que atualiza o status para devolvido
+	# e atualizamos os atributos quantidade_disponivel e quantidade_emprestado
+	jal fazer_devolucao
+	
+	# Limpa os buffers de comando, matricula e ISBN, quantidade_disponivel e quantidade_emprestado
+	la $s1, comando
+	jal clear_buffer
+	
+	la $s1, matricula
+	jal clear_buffer
+	
+    la $s1, ISBN
+    jal clear_buffer  
+    
+    la $s1, quantidade_disponivel
+    jal clear_buffer  
+    
+    la $s1, quantidade_emprestado
+    jal clear_buffer
+	
+	# Imprime uma mensagem de que a devolucao foi concluida no display
+	la $t1, msgC_devolucao_registrada
+	jal escrever_com_sucesso_display	
+	
+buscar_emprestimo:
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    # Obtendo a quantidade de bytes de matricula
+    la $t2, matricula
+    jal descobrir_qtd_digitos 	# Pula para a funcao que calcula a qtd de bytes do buffer matricula
+    move $s5, $s7 		        # Copia a quantidade de bytes de $s7 para $s5
+    
+    # Obtendo a quantidade de bytes de isbn
+    la $t2, ISBN
+    jal descobrir_qtd_digitos 	# Pula para a funcao que calcula a qtd de de bytes do buffer isbn
+    move $s6, $s7 		        # Copia a quantidade de bytes de $s7 para $s5
+    
+  	# Vamos agora verificar se ha alguma matricula e isbn na mesma linha
+  	la $s0, repo_emprestimo # inicializa s1 com endereco do repo_emprestimo para comparacoes
+  	
+  	loop_busca_matricula:     # busca primeiro por matricula
+  		# verifica se esta no final de repo_livro
+  		lb $t0, 0($s0)
+  		beqz $t0, escrever_emprestimo_nao_encontrado_display
+  		
+  		# Verifica se matricula foi encontrada
+  		la $s1, matricula            # Carrega t0 com o buffer matricula
+  		move $s2, $s5                # s2 recebe o numero de bytes de matricula para fazer a comparacao
+  		jal comparar_strings         # Compara se a matricula dessa linha e o procurada
+  		beq $v0, 1, loop_busca_isbn  # Se encontrou a matricula naquela linha faz busca do isbn
+  		
+  		# pula ate a proxima linha
+  		move $s1, $s0            # copia o endereco de $s0 em $s1 
+  		jal avancar_ate_barra_n  # pula para a funcao que avanca ateh o caractere de \n
+  		addi $s1, $s1, 1         # avanca para a proxima linha do registro
+  		move $s0, $s1            # atualiza $s0 com o novo endereco de $s1 obtido pela chamada da funcao acima
+  		j loop_busca_matricula   # Recomeca o loop
+  		
+  		loop_busca_isbn:
+  			move $s1, $s0            # copia o endereco de $s0 em $s1 
+  			jal avancar_ate_virgula  # avanca ate a virgula
+  			move $s0, $s1            # atualiza $s0 com o novo endereco de $s1 obtido pela chamada da funcao acima
+  			
+  			# Verifica se isbn foi encontrado
+  			la $s1, ISBN 	                   # Carrega o endereco de isbn em t0
+  			move $s2, $s6 	                   # Carrega o tamanho de isbn em t5
+  			jal comparar_strings               # Compara se a matricula dessa linha e o procurada
+  			beq $v0, 1, fim_busca_emprestimo   # Se v0 eh igual 1 o emprestimo foi encotrado
+  			
+  			# Caso nao seja pula para a proxima linha
+  			move $s1, $s0            # copia o endereco de $s0 em $s1 
+  			jal avancar_ate_barra_n
+  			addi $s1, $s1, 1         # avanca para a proxima linha do registro
+  			move $s0, $s1            # atualiza $s0 com o novo endereco de $s1 obtido pela chamada da funcao acima
+  			j loop_busca_matricula   # recomeca o loop
+  			
+	fim_busca_emprestimo:
+	move $s1, $s0  # copia o endereco de $s0 em $s1 (reg a qual iremos usar a partir desse ponto)
+	## s1 vai ter o endereco do primeiro byte de ISBN do repositorio_emprestimo do registro desejado
+	
+    lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
+    addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
+    jr $ra
+
+fazer_devolucao:
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+	# Marca a flag do emprestimo em 1
+	jal avancar_ate_virgula    # Avanca ate virgula antes data registro
+	jal avancar_ate_virgula    # Avanca ate virgula antes data devolucao
+	jal avancar_ate_virgula    # Avanca ate a virgula antes flag
+	subi $s1, $s1, 1           # retorna 1 byte do endereco de $s1
+	li $t1, 49                 # Inicializa $t1 com o byte 49 (caractere 1)
+	sb $t1, 1($s1)             # Escreve o caractere 1 
+	
+	## Faz a busca no repo_livro, soma 1 das quantias disponiveis, subtrai 1 das quantias emprestadas
+	
+	# busca o registro do livro no repositorio livro
+	la $s1, repo_livro
+	la $s3, ISBN
+	li $s4, 1
+ 	jal fazer_busca_no_repositorio
+ 	
+ 	# Avancamos ate quantidade_disponivel
+ 	jal avancar_ate_virgula    # Avanca os bytes que contem o isbn
+ 	jal avancar_ate_virgula    # Avanca os byte que contem o titulo
+ 	jal avancar_ate_virgula    # Avanca os bytes que contem o autor
+ 	jal avancar_ate_virgula    # Avanca os byts que contem quantidade_total
+ 	
+ 	# pula para a funcao que obtem e converte quantidade_disponivel para 
+ 	# inteiro, para que logo em seguida o seu valor seja atualizado 
+ 	jal obter_conveter_qtd_disponivel_para_int
+ 	jal atualizar_qtd_disponivel_para_mais
+	addi $s1, $s1, 1      # Avanca para o proximo endereco (por causa da virgula entre os atributos)
+	
+	# Agora vamos obter o valor inteiro de quantidade_emprestado e atualizar ele em repo_livro
+	jal obter_conveter_qtd_emprestados_para_int
+	jal atualizar_qtd_emprestados_para_menos
+	
+	lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
+    addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
+    jr $ra
 
 salvar_dados:
   	la $t0, local_arquivo_livros      # Carrega o endereco do caminho do arquivo txt de livros
@@ -2013,7 +2226,7 @@ gerar_data_atual:
     	j mes_com_28_diasU  # Se o ano nao eh bissexto pula para a funcao que ajusta a qtd de dias para 28
 
 	verificar_dias_restantes_mesU:
-    	bltu $t0, $t1, dia_do_mesU  # Se $t0 < $t1, pula para a funcao que calcula o dia do mes
+    	bleu $t0, $t1, dia_do_mesU  # Se $t0 <= $t1, pula para a funcao que calcula o dia do mes 
     	subu $t0, $t0, $t1          # Remove os dias do mes de $s1 do total de dias decorridos
     	addiu $s1, $s1, 1           # Incrementa o mes
     	j mes_loopU
@@ -2454,144 +2667,7 @@ validar_hora:
     lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
     addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
 	jr $ra
-
-registrar_devolucao:
-	# Em construcao
 	
-	## Verifica argumentos obrigatórios
-	# Verifica o argumento "--matricula"
-    la $s1, arg_matricula      # Carrega o endereco da string "--matricula"  em $s1
-    addi $s0, $s0, 1           # Move o ponteiro para o proximo argumento
-    li $s2, 11                 # Tamanho esperado do argumento
-    jal comparar_strings       # funcao para comparar strings
-    beqz $v0, escrever_falta_argumento_matricula_display # Se as strings nao forem iguais, exibe erro
-
-    addi $s0, $s0, 1            # Move o ponteiro para a proxima info
-    la $t1, matricula           # Carrega o endereco do matricula em $t1
-    jal guardar_info_buffer     # Guarda o conteudo entre aspas no bufffer matricula
-    la $t2, virgula             # Carrega o endereco da virgula (',')
-	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
-    sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
-
-    # Verifica o argumento "--isbn"
-    la $s1, arg_ISBN			# Carrega o endereco da string "--matricula"  em $s1
-	addi $s0, $s0, 1           	# Move o ponteiro para o proximo argumento
-    li $s2, 6               	# Tamanho esperado do argumento
-    jal comparar_strings       	# funcao para comparar strings
-    beqz $v0, escrever_falta_argumento_ISBN_display # Se as strings nao forem iguais, exibe erro
-	
-	addi $s0, $s0, 1            # Move o ponteiro para a proxima info
-    la $t1, ISBN           		# Carrega o endereco do matricula em $t1
-    jal guardar_info_buffer     # Guarda o conteudo entre aspas no bufffer ISBN
-    la $t2, virgula             # Carrega o endereco da virgula (',')
-	lb $t2, 0($t2)              # Carrega o byte do caractere da virgula
-    sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
-
-	
-	
-	## Verifica se usuário pediu o livro emprestado
-	jal buscar_emprestimo
-	
-	
-	## Registra a devolucao do livro
-	jal fazer_devolucao
-	
-	
-
-	# Limpa os buffers de comando, matricula e ISBN, quantidade_disponivel e quantidade_emprestado
-	la $s1, comando
-	jal clear_buffer
-	
-	la $s1, matricula
-	jal clear_buffer
-	
-    la $s1, ISBN
-    jal clear_buffer  
-    
-    la $s1, quantidade_disponivel
-    jal clear_buffer  
-    
-    la $s1, quantidade_emprestado
-    jal clear_buffer
-	
-	# Imprime uma mensagem de que a devolucao foi concluida no display
-	la $t1, msgC_devolucao_registrada
-	jal escrever_com_sucesso_display	
-	
-	
-buscar_emprestimo: # busca se tem algum registro no repo_emprestimo que com matricula e ISBN desejados
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-    ## Contabiliza o tamanho dos buffers matricula e ISBN
-    
-    # tamanho de matricula
-    la $t0, matricula
-    jal buffer_tamanho 	# salva o numero de bytes do buffer matricula
-    move $s5, $v0 		# salva o tamanho do buffer matricula em $s5
-    
-    # tamanho de isbn
-    la $t0, ISBN
-    jal buffer_tamanho 	# salva o numero de bytes do buffer isbn
-    move $s6, $v0 		# salva o tamanho do buffer isbn em $s6
-    
-  	# verifica se ha alguma matricula e isbn na mesma linha
-  	
-  	
-  	la $s1, repo_emprestimo # inicializa s1 com endereço do repo_emprestimo para comparaçoes
-  	loop_busca_matricula: # busca primeiro por matricula
-  		# verifica se esta no final do arquivo
-  		lb $t0, 0($s1)
-  		#bnez $t0, escrever_emprestimo_nao_encontrado
-  		
-  		# verifica se matricula foi encontrada
-  		la $t0, matricula # carrega t0 com o buffer matricula
-  		#la $t1, $s1 # carrega t1 com o atual endereço de t1
-  		move $t5, $s5 # t5 recebe o numero de bytes de matricula
-  		jal strncmp # #compara se a matricula dessa linha e o procurada
-  		beqz $v0, loop_busca_isbn # se encontrou a matricula naquela linha faz busca do isbn
-  		
-  		# pula ate a proxima linha
-  		jal avancar_ate_barra_n
-  		addi $s1, $s1, 1 # avança para a proxima linha do registro
-  		j loop_busca_matricula # recomeca o loop
-  		loop_busca_isbn:
-  			jal avancar_ate_virgula # pula ate a virgula
-  			addi $s1, $s1, 1 # soma 1 a s1
-  			
-  			# verifica se isbn foi encontrado
-  			la $t0, ISBN 	# carrega o endereço de isbn em t0
-  			#la $t1, $s1 	# carrega o atual endereço de s1 em t1
-  			move $t5, $s6 	# carrega o tamanho de isbn em t5
-  			jal strncmp # compara se o isbn dessa linha é o procurado
-  			beqz $v0, fim_busca_emprestimo # se v0 é 0, emprestimo encotrado
-  			
-  			# pula para a proxima linha
-  			jal avancar_ate_barra_n
-  			addi $s1, $s1, 1 # avança para a proxima linha do registro
-  			j loop_busca_matricula # recomeca o loop
-  			
-    
-	fim_busca_emprestimo:
-	## s1 vai ter o endereço do primeiro byte de ISBN do repositorio_emprestimo do registro desejado
-	
-    lw $ra, 0($sp)
-    addi $sp, $sp, 4
-    jr $ra
-
-buffer_tamanho: # conta quantos bytes o buffer tem ate o \0
-	# $t0 endereço do buffer
-	# retorna em $v0 o tamanho do buffer
-	li $v0, 0		# contador de bytes
-	loop_buffer_tamanho:
-	lb $t1, ($t0)             # carrega o byte do endereço t0 em t1
-	addi $t0, $t0, 1          # Incrementa $t0
-	addi $v0, $v0, 1          # Incrementa $t2
-	bnez $t1, loop_buffer_tamanho # se t1 eh diferente de 0 recomeca a funcao
-	subi $v0, $v0, 1          # subtrai 1 de v0 no final da funcao para desconsiderar o \0
-	jr $ra                    # volta para ra
-
-
 ler_dados:
     # Aloca espaco no $sp para salvar o endereco de $ra
     addi $sp, $sp, -4
@@ -2616,118 +2692,7 @@ ler_dados:
     addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
 	
     jr $ra
-fazer_devolucao:
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
-    
-	# Marca a flag do emprestimo em 1
-	jal avancar_ate_virgula # avanca ate virgula antes data registro
-	jal avancar_ate_virgula # avanca ate virgula antes data devolucao
-	jal avancar_ate_virgula # avanca ate a virgula antes flag
-	li $t1, 49
-	sb $t1, 1($s1) # armazena o caracter "1", 1 endereço a frente de s1
-	
-	## Faz a busca no repo_livro, soma 1 das quantias disponiveis, subtrai 1 das quantias emprestadas
-	
-	# busca o registro do livro no repositorio livro
-	la $s1, repo_livro
-	la $s3, ISBN
-	li $s4, 1
- 	jal fazer_busca_no_repositorio
- 	
- 	#Avança s1 ate qtd_disp
- 	jal avancar_ate_virgula
- 	jal avancar_ate_virgula
- 	jal avancar_ate_virgula
- 	jal avancar_ate_virgula
- 	addi $s1, $s1, 1
- 	
- 	#move o valor de s1 para t1
- 	move $t1, $s1
- 	
- 	#jal avancar_virgula 
- 	sub $a2, $s1, $t1 # subtrai o final do endereço de qtd_disp com o inicio
- 	subi $a2, $a2, 1 # desconsidera a virgula
- 	move $a1, $t1 # source é t1
- 	la $a0, quantidade_disponivel # destination
- 	jal memcpy # copia a quantidade disponivel para o buffer
- 	
- 	la $t2, quantidade_disponivel
- 	jal converter_string_para_int # Pega o valor de quantidade_disponivel e transforma em inteiro e salva em s0
- 	addi $s0, $s0, 1 # soma 1 a s0
- 	
- 	move $t0, $t1 #copia t1 para t0
- 	move $t2, $a2 # copia a2, para t2
- 	jal preencher_com_0 # preenche o espaco de qtd_disp com 0
- 	
-	# converte o inteiro em string para quantidade_disponivel
-	la $t6, quantidade_disponivel
-	move $t7, $s0 
-	jal converter_int_para_string
- 	
- 	la $t0, quantidade_disponivel 
- 	#jal tamanho_buffer # conta quantos bytes quantidades_disponiveis esta usando e salva em v0
- 	move $t0, $v0 # move v0 para t0
- 	
- 	sub $a2, $a2, $t0 #subtrai do tamanho do registro de qtd_dispo o tamanho do buffer quantidade_disponivel
- 	add $t1, $t1, $a2 # o valor da subtracao eh o numero de bytes que t1 deve avancar
- 	la $a1, quantidade_disponivel # carrega source com quantidade_disponivel
- 	move $a0, $t1 # copia o endereço de t1 para a0 (destination)
- 	move $a2, $t0 # carrega a2 com o tamanho do quantidade_disponivel
- 	jal memcpy # copia o conteudo de quantidade_disponivel nos ultimos 0 de qtd_dispo do repositirio
- 	
- 	## atualiza agora o valor de qtd_emprest 
- 	addi $s1, $s1, 1
- 	move $t1, $s1
- 	jal avancar_ate_barra_n
- 	
- 	sub $a2, $s1, $t1 # subtrai o final do endereço de qtd_disp com o inicio
- 	subi $a2, $a2, 1 # desconsidera \n
- 	move $a1, $t1 # source é t1
- 	la $a0, quantidade_emprestado # destination
- 	jal memcpy # copia a quantidade emprestada para o buffer
- 	
- 	la $t2, quantidade_emprestado
- 	jal converter_string_para_int # Pega o valor de quantidade_emprestado e transforma em inteiro e salva em s0
- 	subi $s0, $s0, 1 # subtrai 1 a s0
- 	
- 	move $t0, $t1 #copia t1 para t0
- 	move $t2, $a2 # copia a2, para t2
- 	jal preencher_com_0 # preenche o espaco de qtd_emprest com 0
- 
-	
-	# converte o inteiro em string para quantidade_emprestado
-	la $t6, quantidade_emprestado
-	move $t7, $s0 
-	jal converter_int_para_string
- 	
- 	la $t0, quantidade_emprestado
- 	#jal tamanho_buffer # conta quantos bytes quantidade_emprestado esta usando e salva em v0
- 	move $t0, $v0 # move v0 para t0
- 	
- 	sub $a2, $a2, $t0 # subtrai do tamanho do registro de qtd_dispo o tamanho do buffer quantidade_emprestado
- 	add $t1, $t1, $a2 # o valor da subtracao eh o numero de bytes que t1 deve avancar
- 	la $a1, quantidade_emprestado # carrega source com quantidade_emprestado
- 	move $a0, $t1 # copia o endereço de t1 para a0 (destination)
- 	move $a2, $t0 # carrega a2 com o tamanho do quantidade_emprestado
- 	jal memcpy # copia o conteudo de quantidade_emprestado nos ultimos 0 de qtd_empre do repositirio
 
-
-	lw $ra, 0($sp)
-    addi $sp, $sp, 4
-    jr $ra
-	
-	
-preencher_com_0:
-# t0 endereço de origem
-# t2 numero bytes a preencher com "0"
-lb $t3, 48
-sb $t3, ($t0)
-addi $t0, $t0, 1
-subi $t2, $t2, 1
-bnez $t2, preencher_com_0
-jr $ra
-		
 ler_dados_do_arquivo:
 	# $a0: Reg que possui o endereco do nome do arquivo
 	# $a1: Reg que possui o endereco do buffer de destino 
@@ -2920,6 +2885,13 @@ escrever_hora_invalida_display_display:
 	jal clear_buffer
     j main 
 
+escrever_emprestimo_nao_encontrado_display:
+    la $t1, msgE_emprestimo_nao_encontrado  # Carrega o endereco de msgE_hora_invalida
+    jal escrever_string_display      		# Pula para a funcao generica que ira imprimir a string armazenada em $t1
+    jal escrever_barra_n_display    	    # Pula para a funcao que ira imprimir uma quebra de linha no display
+    jal limpar_todos_buffers_das_entidades
+    j main 
+
 # Funcao generica que imprime a mensagem de falta de qualquer argumento no display
 escrever_falta_argumento_obrigatorio_display:
 	# $s1: reg que possui o endereco do argumento faltante
@@ -3037,26 +3009,3 @@ memcpy: # Copia uma quantidade num (a2) de caracteres de uma string do source (a
              		
 		# Retorna da funcao
 		jr $ra
-
-strncmp:
-	# t0 e t1 são os endereços das strings a serem comparadas
-	# t5 o numero de bytes a serem comparados
-	j strncmp_loop
-
-	
-strncmp_loop:
-	lb $t2, ($t0)
-	lb $t3, ($t1)
-	addi $t0, $t0, 1
-	addi $t1, $t1, 1
-	subi $t5, $t5 1
-	sub $t4, $t2, $t3 # t4 = t2 - t3
-	bnez $t4, strncmp_done # se t4 é diferente de 0
-	beqz $t5, strncmp_done # se t5 = 0
-	beqz $t4, strncmp_loop # se t4 = 0
-	
-
-
-strncmp_done:
-	move $v0, $t4
-	jr $ra
