@@ -47,7 +47,7 @@
 	
 	# Emprestimo:
 	data_registro:  		.space 15    # Espaco reservado para a data em que foi registrado o emprestimo
-	data_devolucao: 		.space 15    # Espaco reservado para a data de devolucao do empréstimo
+	data_devolucao: 		.space 15    # Espaco reservado para a data de devolucao do emprï¿½stimo
 	flag_foi_devolvido:      .space 3    # Espaco reservado para uma flag que serve para indicar se a devolucao foi feita ou nao
 	
 	# Repositorios Temporarios
@@ -680,10 +680,10 @@ cadastrar_livro:
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
     beq $v0, 1, escrever_livro_ja_cadastrado_display  # Caso v0 seja 1, pula para a funcao que vai escrever livro ja cadastrado
 	
-	# Agora vamos copiar a quantidade_total digitada e armazenar em quantidade_disponível
+	# Agora vamos copiar a quantidade_total digitada e armazenar em quantidade_disponï¿½vel
 	move $s0, $t9     # Recupera o endereco que contem os bytes da quantidade digitada
 	la $t1, quantidade_disponivel   # Carrega o endereco de quantidade_disponivel
-	jal guardar_info_buffer  # Adiciona os bytes da quantidade em quantidade_disponível 
+	jal guardar_info_buffer  # Adiciona os bytes da quantidade em quantidade_disponï¿½vel 
 
 	la $t2, quantidade_disponivel  # Recarrega o endereco de quantidade_disponivel
 	jal descobrir_qtd_digitos      # Chama a funcao que varre quantidade_disponivel e retorna em $s7 qtd de digitos (bytes)
@@ -1279,7 +1279,7 @@ verificar_data_registro:
 	beqz $v0, pegar_data_usuario   # se o comando nao tem argumento --data, entao pegar data gerada pelo usuario 
 	
 	# Se comando tem o argumento --data copia o conteudo entre aspas duplas para o buffer data_registro
-	addi $s0, $s0, 1			   # Avanca um caractere (por conta do espaço)
+	addi $s0, $s0, 1			   # Avanca um caractere (por conta do espaï¿½o)
 	li $s5, 1                      # Inicializa $s5 com 1 (flag para indicar que o usuario forneceu --data)	
 	la $t1, data_registro		
 	jal guardar_info_buffer	
@@ -1303,7 +1303,7 @@ verificar_data_registro:
 	lb $t0, 0($t0)                 # Carrega o primeiro byte de data_config_usuario
 	beqz $t0, gerar_data           # Se o byte for nulo, entao nao configurou nenhua data. logo, pula pro gerar_data
 	
-	# Caso contrário, se for diferente de 0 esse trecho de código abaixo copia e cola data que ta configurado
+	# Caso contrï¿½rio, se for diferente de 0 esse trecho de cï¿½digo abaixo copia e cola data que ta configurado
 	# de data_config_usuario para data_registro
 	li $a2, 11                      # Define a quantidade de bytes a ser copiados 
 	la $a1, data_config_usuario     # Define o reg de origem dos bytes a ser copiados
@@ -1330,7 +1330,7 @@ verificar_data_registro:
 		jr $ra
 
 obter_qtd:
-	# $s1 reg que possui o endereco dos bytes que contém a quantidade do livro
+	# $s1 reg que possui o endereco dos bytes que contï¿½m a quantidade do livro
 	# $s2 reg que possui buffer onde serao armazenadas os bytes da quantidade
 	
 	la $t1, virgula     # Carrega o endereco de virgula
@@ -1622,7 +1622,7 @@ guardar_bytes_strings_no_sp:
 	move $t2, $t1    # Copia o endereco de $t1 em $t2
 	
 	avancar_ate_byte_nulo:
-		addi $t2, $t2, 1                 # Avança para o proximo byte
+		addi $t2, $t2, 1                 # Avanï¿½a para o proximo byte
 		lb $t3, 0($t2)                   # Carrega o byte de $t2
 		bnez $t3, avancar_ate_byte_nulo  # Se nao for o byte nulo entra em loop
 		
@@ -2551,7 +2551,7 @@ descobrir_qtd_digitos:
 	loop_qtd_digitos:
 		lb $t4 0($t3)   # Carrega o byte em $t4
 		beqz  $t4, fim_loop_qtd_digitos    # se o byte em $t4 for o byte o nulo o loop eh encerrado
-		beq $t4, 44, fim_loop_qtd_digitos  # se o byte em $t4 for o byte 44 (caractere de virgula) o loop também eh encerrado
+		beq $t4, 44, fim_loop_qtd_digitos  # se o byte em $t4 for o byte 44 (caractere de virgula) o loop tambï¿½m eh encerrado
 		addi $t3, $t3, 1      # Avanca para o proximo caractere 
 		addi $s7, $s7, 1      # Incrementa $s7
 		j loop_qtd_digitos    # Entra em loop
@@ -3111,3 +3111,143 @@ memcpy: # Copia uma quantidade num (a2) de caracteres de uma string do source (a
              		
 		# Retorna da funcao
 		jr $ra
+
+calcula_entre_datas:
+		# Recebe duas datas armazenadas nos registradores a seguir e calcula a quantidade
+		# de dias que se passaram entre essas duas datas
+		# $s2: dia inicial / $s1: mes inicial / $s0: ano inicial
+		# $s5: dia final / $s4: mes final / $s3: ano final
+		# Armazena em $t7 a diferenÃ§a de dias entre as datas
+		
+		addi $sp, $sp, -4
+    		sw $ra, 0($sp)
+    		
+    		move $t0, $s0
+    		move $t1, $s1
+    		move $t2, $s2
+    		jal calcula_dias_de_data
+    		
+    		# Resgata a quantidade de dias adicionada no acumulador
+    		la $t6, acumulador
+    		lw $s6, 0($t6)		# Guarda a quantidade de dias calculado em $s6
+    		sw $zero, 0($t6)	# Zera o conteÃºdo do acumulador
+    		
+    		move $t0, $s3
+    		move $t1, $s4
+    		move $t2, $s5
+    		jal calcula_dias_de_data
+    		
+    		# Calcula a diferenÃ§a em dias das duas datas
+    		la $t6, acumulador
+    		lw $t7, 0($t6)		# Pega a quantidade de dias que estava em $t7
+    		subu $t7, $t7, $s6
+    		
+    		jal calcula_valor_absoluto
+    		
+    		lw $ra, 0($sp)         # Resgata o $ra original do $sp
+    		addi $sp, $sp, 4    # Devolve a pilha para a posicao original
+    		jr $ra
+    		
+    		calcula_valor_absoluto:
+    		# Recebe um valor em $t7 e calcula |$s6|
+    		bgez $t7, valor_absoluto
+		sub $t7, $zero, $t7
+			valor_absoluto:
+				jr $ra
+		     		
+    		calcula_dias_de_data:
+    		# Transforma uma data em dia usando como base 01/01/0000
+    		# Usa $t0: ano, $t1: mes, $t2: dia
+    		# Salva o resultado temporariamente em $s6
+    		
+    			addi $sp, $sp, -4
+    			sw $ra, 0($sp)
+    			
+    			move $t4, $t0	# Coloca em $t4 o ano da data atual para poder calcular em cima dele
+    			
+    			loop_quantos_dias_anos_completos:
+    			# Acumula os dias passados no anos que se passaram de 0 ate o que esta em $t4
+    				subi $t4, $t4, 1				# Usa $t4 como contagem regressiva, do ano anterior ao atual ate 1970
+    				beq $t4, 1969, loop_dias_passados_ano_atual
+    				li $t5, 365				# Considera 365 a quantidade padrao de dias
+    				li $t6, 4 				# Para fazer a divisao para calcular se o ano Ã© bissexto
+    				remu $t7, $t4, $t6  			# Armazena o resto da divisao de $s0 com $t2 como unsigned
+    				beqz $t7, ano_bissexto_dias_anos_completos
+    				
+    				# Adiciona a quantidade de dias no acumulador
+    				la $t6, acumulador
+    				lw $t7, 0($t6)
+    				add $t7, $t7, $t5
+    				sw $t7, 0($t6)
+    				j loop_quantos_dias_anos_completos
+    				
+    				ano_bissexto_dias_anos_completos:
+    					li $t5, 366	# Anos bissextos tem 366 dias
+    					# Adiciona a quantidade de dias no acumulador
+    					la $t6, acumulador
+    					lw $t7, 0($t6)
+    					add $t7, $t7, $t5
+    					sw $t7, 0($t6)
+    					j loop_quantos_dias_anos_completos
+    			
+    			loop_dias_passados_ano_atual:
+    			# Em t1 esta o mes atual, vamos calcular quantos dias de passaram no ano atual
+    			move $t4, $t1		# Coloca o que esta em $t1 em $t4 para calcular em cima de $t4
+    				
+    				loop_meses_ano_atual:
+    				# Calcula quantos dias de passaram nos meses anteriores ao atual
+    				subi $t4, $t4, 1					# Usa $t4 como uma contagem regressiva, do mes atual ate 0
+    				beqz $t4, dias_mes_atual
+    				li $t5, 30						# Considera 30 a quantidade padrao de dias
+    				beq $t4, 1, mes_com_31_dias_mes_atual   		# Se o mes em $t4 for 1, pula para a funcao que ajusta pra 31 dias       
+    				beq $t4, 2, verificar_dias_fevereiro_mes_atual		# Se o mes em $t4 for 2, pula para a funcao que verifica a quantidade de dias
+    				beq $t4, 3, mes_com_31_dias_mes_atual   		# Se o mes em $t4 for 3, pula para a funcao que ajusta pra 31 dias
+    				beq $t4, 5, mes_com_31_dias_mes_atual   		# Se o mes em $t4 for 5, pula para a funcao que ajusta pra 31 dias
+    				beq $t4, 7, mes_com_31_dias_mes_atual  		# Se o mes em $t4 for 7, pula para a funcao que ajusta pra 31 dias
+    				beq $t4, 8, mes_com_31_dias_mes_atual   		# Se o mes em $t4 for 8, pula para a funcao que ajusta pra 31 dias
+    				beq $t4, 10, mes_com_31_dias_mes_atual  		# Se o mes em $t4 for 10, pula para a funcao que ajusta pra 31 dias
+    				beq $t4, 12, mes_com_31_dias_mes_atual			# Se o mes em $t4 for 12, pula para a funcao que ajusta pra 31 dias
+    				
+    				la $t6, acumulador
+    				lw $t7, 0($t6)
+    				add $t7, $t7, $t5
+    				sw $t7, 0($t6)
+    				j loop_meses_ano_atual
+    			
+				mes_com_31_dias_mes_atual:
+					addi $t5, $t5, 1
+					la $t6, acumulador
+    					lw $t7, 0($t6)
+    					add $t7, $t7, $t5
+    					sw $t7, 0($t6)
+    					j loop_meses_ano_atual
+				
+				verificar_dias_fevereiro_mes_atual:
+					li $t7, 4 
+    					remu $t6, $t0, $t2   				# Armazena o resto da divisao de $s0 com $t2 como unsigned
+    					beqz $t6, mes_com_29_dias_mes_atual  		# Se resto de $t3 for 0, significa que o ano eh bissexto 
+    					subi $t5, $t5, 2  				# Se o ano nao eh bissexto ajusta a qtd de dias para 28
+    					la $t6, acumulador
+    					lw $t7, 0($t6)
+    					add $t7, $t7, $t5
+    					sw $t7, 0($t6)
+    					j loop_meses_ano_atual
+    				
+    				mes_com_29_dias_mes_atual:
+    					subi $t5, $t5, 1  				# Se o ano nao eh bissexto ajusta a qtd de dias para 28
+    					la $t6, acumulador
+    					lw $t7, 0($t6)
+    					add $t7, $t7, $t5
+    					sw $t7, 0($t6)
+    					j loop_meses_ano_atual
+    					
+    			dias_mes_atual:
+    			# Pega o dia, que eh a quantidade de dias passados no mes atual e acumula
+    				la $t6, acumulador
+    				lw $t7, 0($t6)
+    				add $t7, $t7, $t2
+    				sw $t7, 0($t6)  			
+    			
+    			lw $ra, 0($sp)         # Resgata o $ra original do $sp
+    			addi $sp, $sp, 4    	# Devolve a pilha para a posicao original
+    			jr $ra
