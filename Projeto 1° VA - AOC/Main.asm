@@ -125,7 +125,7 @@
 .text
 .globl main
 
-carragar_dados:
+carregar_dados:
 	jal ler_dados  # pula para a funcao que vai ler os dados em arquivo
 	
 main:
@@ -793,12 +793,29 @@ voltar_ate_virgula:
 	 
 	loop_voltar_virgula:
 		lb $t2, 0($s1)                          # Carrega o byte do repositorio
-		beq $t2, $t1, fim_loop_voltar_virgula   # Caso $s1 seja tenha o caractere ',', o loop encerra]
+		beq $t2, $t1, fim_loop_voltar_virgula   # Caso $s1 seja tenha o caractere ',', o loop encerra
 		beqz $t2, fim_loop_voltar_virgula       # Se o byte lido for o byte nulo o loop tambem eh encerrado
 		subi $s1, $s1, 1                        # Caso contrario retorna para byte anterior c
 		j loop_voltar_virgula                   # Entra em loop
 	
 	fim_loop_voltar_virgula:
+		addi $s1, $s1, 1       # Avanca mais um byte, para que a virgula seja ignorada
+		jr $ra
+
+voltar_ate_barra_n:
+	# $s1: reg que possui o endereco do repositiorio que estah sendo varrido
+	
+	la $t1, barra_n   # Carrega o endereco de virgula
+	lb $t1, 0($t1)    # Carrega o byte que correspondente ao caractere de virgula
+	 
+	loop_voltar_barra_n:
+		lb $t2, 0($s1)                          # Carrega o byte do repositorio
+		beq $t2, $t1, fim_loop_barra_n   	# Caso $s1 seja tenha o caractere '\n', o loop encerra
+		beqz $t2, fim_loop_barra_n      	 # Se o byte lido for o byte nulo o loop tambem eh encerrado
+		subi $s1, $s1, 1                        # Caso contrario retorna para byte anterior c
+		j loop_voltar_barra_n                   # Entra em loop
+	
+	fim_loop_barra_n:
 		addi $s1, $s1, 1       # Avanca mais um byte, para que a virgula seja ignorada
 		jr $ra
 
