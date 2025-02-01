@@ -2006,7 +2006,7 @@ gerar_e_montar_data_atual:
 	
 	# Atualiza o $ra para que caso, a condicao abaixo seja verdadeira o fluxo do codigo
 	# por meio do jr $ra do inserir_zero retorne volte para a linha:  move $t7, $t2 (6 linhas abaixo)                    
-	addi $ra, $ra, 12
+	addi $ra, $ra, 32
 	
 	# Verifica se o dia eh menor que 10, se for, pula para a funcao que coloca o 0 primeiro em data_sistema
 	blt $t2, $t5, inserir_zero
@@ -2307,49 +2307,151 @@ imprimir_data_hora_usuario:
 	
 	blt $t0, 1, imprimir_data_tempo  # Se $t0, for menor que 1 minuto pula logo para a funcao que vai imprimir
 	
-	la $t1, hora_config_usuario  # Carrega o endereco de hora_config_usuario
-	lb $t1, 2($t1)               # Carrega o byte que contem o minuto
-
-	addu $t0, $t0, $t1           # Soma os minutos configurados pelo usuario com os minutos decorridos
+	la $t1, hora_config_usuario    # Carrega o endereco de hora_config_usuario
+	la $t2, buffer_aux_conversao   # Carrega o endereco de buffer_aux_conversao
+	lb $t3, 3($t1)                 # Carrega primeiro byte que contem o minuto
+	sb $t3, 0($t2)                 # Escreve o primeiro byte que contem o minuto em buffer_aux_conversao
+	lb $t3, 4($t1)                 # Carrega segundo byte que contem o minuto
+	sb $t3, 1($t2)                 # Escreve o segundo byte que contem o minuto em buffer_aux_conversao
+	
+	la $t2, buffer_aux_conversao    # Recarrega o endereco de buffer_aux_conversao
+	jal converter_string_para_int   # Pula para a funcao que vai converter os minutos para inteiro
+	
+	addu $t0, $t0, $a0           # Soma os minutos configurados pelo usuario com os minutos decorridos
 	
 	# A linha abaixo verifica se o tempo em $t0 eh maior que 60 minutos 
-	bge $t0, 60, ajustar_tempo   # Se o tempo em minutos for maior ou igual a 60 pula para a funcao que vai ajustar o tempo
-	sb  $t0, 2($t1)              # Caso contrario, sobrescreve o byte de minuto em hora_config_usuario 
-	j imprimir_data_tempo        # Pula para a impressao da data e tempo
+	bge $t0, 60, ajustar_minutos      # Se o tempo em minutos for maior ou igual a 60 pula para a funcao que vai ajustar o tempo
 	
-	ajustar_tempo:
+	# Caso contrario, vamos converter o total de minutos para string
+	la $s1, buffer_aux_conversao    # Recarregamos o endereco de buffer_aux_conversao
+	jal clear_buffer                # Limpamos o buffer 
+	move $t7, $t0                   # Copiamos o valor inteiro dos minutos de $t0 para $t7
+	la $t6, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t6
+	jal converter_int_para_string   # Pulamos para a funcao que vai converter os minutos para string 
+	la $t2, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t2
+	jal descobrir_qtd_digitos       # Pulamos para a funcao que descobre a quantidade de digitos (bytes) em buffer_aux_conversao
+	beq $s7, 1, inserir_caractere0_em_buffer_aux   # Se a qtd de digitos for igual a 1 chama a funcao que insere o caractere 0 
+	
+	# Agora vamos atualizar os bytes que contem os minutos
+	la $t0, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t0
+	lb $t2, 0($t0)                  # Carregamos o primeiro byte dos minutos
+ 	sb $t2, 3($t1)                  # sobrescrevemos o primeiro byte dos minutos em hora_config_usuario 
+ 	addi $t0, $t0, 1                # Avancamos para o proximo byte a ser inserido
+ 	lb $t2, 0($t0)                  # Carregamos o segundo byte dos minutos
+ 	sb $t2, 4($t1)                  # sobrescrevemos o segundo byte dos minutos em hora_config_usuario 
+	j imprimir_data_tempo           # por fim Pulamos para a impressao da data e tempo
+	
+	ajustar_minutos:
 		li $t1, 60      # Carrega $t1 com 60
 		divu $t0, $t1   # Opera o tempo de corrido em minutos / 60
 		mflo $t1        # Move para $t1 o quociente (horas decorridas)
-		mfhi $t2        # move para $t2 o resto     (minutos restantes)
+		mfhi $t9        # move para $t2 o resto     (minutos restantes)
 		
-		la $t3, hora_config_usuario      # Carrega o endereco de hora_config_usuario
-		lb  $t4, 0($t3)                  # Carrega em $t4 o byte de hora em hora_config_usuario
+		la $t1, hora_config_usuario     # Carregamos o endereco de hora_config_usuario
+		la $t2, buffer_aux_conversao    # Carregamos o endereco de buffer_aux_conversao
+		lb $t3, 0($t1)                  # Carregamos primeiro byte que contem a hora
+		sb $t3, 0($t2)                  # Escrevemos o primeiro byte que contem o minuto em buffer_aux_conversao
+		lb $t3, 1($t1)                  # Carregamos segundo byte que contem o minuto
+		sb $t3, 1($t1)                  # Escrevemos o segundo byte que contem o minuto em buffer_aux_conversao
 		
-		addu $t0, $t4, $t1          # Soma a hora configurada pelo usuario com as horas decorridas
-		bge $t0, 24, ajustar_hora   # Verifica se as horas decorridas eh maior que 24 horas
-		sb  $t0, 0($t3)    			# Sobrescreve o byte de horas em hora_config_usuario
-		sb  $t2, 2($t3)	   			# sobrescreve o byte de minutos em hora_config_usuario
-		j imprimir_data_tempo 		# Pula para funcao que imprime a data e o tempo
+		la $t2, buffer_aux_conversao    # Recarrega o endereco de buffer_aux_conversao
+		jal converter_string_para_int   # Pula para a funcao que vai converter os minutos para inteiro
+		
+		addu $t0, $a0, $t1              # Soma a hora configurada pelo usuario com as horas decorridas
+		bge $t0, 24, ajustar_hora       # Verifica se o total de horas eh maior que 24 horas
+		
+		# Caso contrario, vamos converter o total de horas para string
+		la $s1, buffer_aux_conversao    # Caso contrario, Recarregamos o endereco de buffer_aux_conversao
+		jal clear_buffer                # Limpamos o buffer 
+		move $t7, $t0                   # Copiamos o valor inteiro do total de horas de $t0 para $t7
+		la $t6, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t6
+		jal converter_int_para_string   # Pulamos para a funcao que vai converter as horas para string 
+		la $t2, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t2
+		jal descobrir_qtd_digitos       # Pulamos para a funcao que descobre a quantidade de digitos (bytes) em buffer_aux_conversao
+		beq $s7, 1, inserir_caractere0_em_buffer_aux   # Se a qtd de digitos for igual a 1 chama a funcao que insere o caractere 0 
+		
+		# Agora vamos atualizar os bytes que contem as horas
+		la $t0, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t0
+		lb $t2, 0($t0)                  # Carregamos o primeiro byte dos minutos
+ 		sb $t2, 0($t1)                  # sobrescrevemos o primeiro byte dos minutos em hora_config_usuario 
+ 		addi $t0, $t0, 1                # Avancamos para o proximo byte a ser inserido
+ 		lb $t2, 0($t0)                  # Carregamos o segundo byte dos minutos
+ 		sb $t2, 1($t1)                  # sobrescrevemos o segundo byte dos minutos em hora_config_usuario 
+		j imprimir_data_tempo           # por fim Pulamos para a impressao da data e tempo
+		
+		# Agora vamos converter o minutos para string
+		la $s1, buffer_aux_conversao    # Caso contrario, Recarregamos o endereco de buffer_aux_conversao
+		jal clear_buffer                # Limpamos o buffer 
+		move $t7, $t9                   # Copiamos o valor inteiro dos minutos de $t9 para $t7
+		la $t6, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t6
+		jal converter_int_para_string   # Pulamos para a funcao que vai converter os minutos para string 
+		la $t2, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t2
+		jal descobrir_qtd_digitos       # Pulamos para a funcao que descobre a quantidade de digitos (bytes) em buffer_aux_conversao
+		beq $s7, 1, inserir_caractere0_em_buffer_aux   # Se a qtd de digitos for igual a 1 chama a funcao que insere o caractere 0 
+	
+		# Agora vamos atualizar os bytes que contem os minutos
+		la $t0, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t0
+		lb $t2, 0($t0)                  # Carregamos o primeiro byte dos minutos
+ 		sb $t2, 3($t1)                  # sobrescrevemos o primeiro byte dos minutos em hora_config_usuario 
+ 		addi $t0, $t0, 1                # Avancamos para o proximo byte a ser inserido
+ 		lb $t2, 0($t0)                  # Carregamos o segundo byte dos minutos
+ 		sb $t2, 4($t1)                  # sobrescrevemos o segundo byte dos minutos em hora_config_usuario 
+		j imprimir_data_tempo           # por fim Pulamos para a impressao da data e tempo
 		
 		ajustar_hora:
 			li $t1, 24     # Carrega $t1 com 24
 			divu $t0, $t1  # Opera o tempo de corrido em horas / 24
-			mflo $t5       # Move o quociente para $t5 (qtd de dias decorridos)
 			mfhi $t4       # Move o quociente para $t4 (horas restantes)
 			
 			la $t1, hora_config_usuario  # Carrega o endereco de hora_config_usuario
-			sb  $t4, 0($t1)    			 # Sobrescreve o byte de horas em hora_config_usuario
-			sb  $t2, 2($t1)	   			 # sobrescreve o byte de minutos em hora_config_usuario
 			
+			# vamos agora converter o total de horas para string
+			la $s1, buffer_aux_conversao    # Caso contrario, Recarregamos o endereco de buffer_aux_conversao
+			jal clear_buffer                # Limpamos o buffer 
+			move $t7, $t4                   # Copiamos o valor inteiro do total de horas de $t0 para $t7
+			la $t6, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t6
+			jal converter_int_para_string   # Pulamos para a funcao que vai converter as horas para string 
+			la $t2, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t2
+			jal descobrir_qtd_digitos       # Pulamos para a funcao que descobre a quantidade de digitos (bytes) em buffer_aux_conversao
+			beq $s7, 1, inserir_caractere0_em_buffer_aux   # Se a qtd de digitos for igual a 1 chama a funcao que insere o caractere 0 
+		
+			# Agora vamos atualizar os bytes que contem as horas
+			la $t0, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t0
+			lb $t2, 0($t0)                  # Carregamos o primeiro byte dos minutos
+ 			sb $t2, 0($t1)                  # sobrescrevemos o primeiro byte dos minutos em hora_config_usuario 
+ 			addi $t0, $t0, 1                # Avancamos para o proximo byte a ser inserido
+ 			lb $t2, 0($t0)                  # Carregamos o segundo byte dos minutos
+ 			sb $t2, 1($t1)                  # sobrescrevemos o segundo byte dos minutos em hora_config_usuario 
+			j imprimir_data_tempo           # por fim Pulamos para a impressao da data e tempo
+		
+			# Agora vamos converter o minutos para string
+			la $s1, buffer_aux_conversao    # Caso contrario, Recarregamos o endereco de buffer_aux_conversao
+			jal clear_buffer                # Limpamos o buffer 
+			move $t7, $t9                   # Copiamos o valor inteiro dos minutos de $t9 para $t7
+			la $t6, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t6
+			jal converter_int_para_string   # Pulamos para a funcao que vai converter os minutos para string 
+			la $t2, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t2
+			jal descobrir_qtd_digitos       # Pulamos para a funcao que descobre a quantidade de digitos (bytes) em buffer_aux_conversao
+			beq $s7, 1, inserir_caractere0_em_buffer_aux   # Se a qtd de digitos for igual a 1 chama a funcao que insere o caractere 0 
+	
+			# Agora vamos atualizar os bytes que contem os minutos
+			la $t0, buffer_aux_conversao    # Recarregamos buffer_aux_conversao em $t0
+			lb $t2, 0($t0)                  # Carregamos o primeiro byte dos minutos
+ 			sb $t2, 3($t1)                  # sobrescrevemos o primeiro byte dos minutos em hora_config_usuario 
+ 			addi $t0, $t0, 1                # Avancamos para o proximo byte a ser inserido
+ 			lb $t2, 0($t0)                  # Carregamos o segundo byte dos minutos
+ 			sb $t2, 4($t1)                  # sobrescrevemos o segundo byte dos minutos em hora_config_usuario 
+			j imprimir_data_tempo           # por fim Pulamos para a impressao da data e tempo
+			
+			# Por fim vamos atualizar a data
 			la $t1, data_config_usuario  # Carrega o endereco de data_config_usuario
 			lb $t2, 0($t1)               # Carrega o byte de dias em data_config_usuario
-			addu $t5, $t5, $t2           # Soma a quantidade de dias da data configurada com a quantidade de dias decorridos
+			addiu $t5, $t2, 1            # Soma a quantidade de dias da data configurada com 1
 			sb  $t5, 0($t1)    			 # Sobrescreve o byte de dias em data_config_usuario
 			
 			# Nao irei me dar ao trabalho de verificar se o dia, mes e ano sao validos, apos essa soma de dias, 
-			# somei e ja ta bom demais, seria muito custoso fazer tudo isso ja que os dados da data e hora 
-			# configurados pelo usuario nao sao salvos em arquivos .txt.
+			# seria muito custoso ter que fazer tudo isso ja que os dados da data e hora configurados pelo usuario 
+			# nao sao salvos em arquivos .txt.
 			
 	imprimir_data_tempo:
 		la $t1, data_config_usuario   # Carrega o endereco de data_config_usuario			
