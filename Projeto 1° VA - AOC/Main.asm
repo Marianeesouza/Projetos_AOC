@@ -2259,8 +2259,8 @@ converter_int_para_string:
      fim_loop_inserir:
     	jr $ra
    		
-gerar_data_atual:
-    li $v0, 30     # Syscall para obter o tempo do sistema
+gerar_data_hora_atual_minutos:
+	 li $v0, 30     # Syscall para obter o tempo do sistema
     li $a1, 0      # Inicializa a1
     syscall
 
@@ -2287,6 +2287,18 @@ gerar_data_atual:
     # desses valores causa um atraso de 138 minutos para que a data seja atualizada, por isso o 
     # trecho abaixo corrige esse tempo de atraso 
     addiu $t0, $t0, 139
+    
+    jr $ra  
+   		 		
+gerar_data_atual:
+   	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+	
+	jal gerar_data_hora_atual_minutos
+
+	lw $ra, 0($sp)         # Resgata o $ra original do $sp
+    addi $sp, $sp, 4    # Devolve a pilha para a posicao original
 
     # Conversao do total de minutos decorridos para dias
     li $t1, 1440         # Inicializa $t1 com 1440 (quantidade de minutos em um dia)
@@ -2356,32 +2368,14 @@ gerar_data_atual:
     	jr $ra
 
 gerar_hora_atual:
-    li $v0, 30           # Syscall 30 para obter o tempo do sistema
-    syscall
-    
-    move $t0, $a0        # Move a parte menos significativa dos milissegundos para $t0
-    move $t1, $a1        # Move a parte mais significativa dos milissegundos para $t1
-
-    # Conversao da parte menos significativa dos milissegundos para minutos
-    li $t2, 60000        # Carrega em $t2 a quantidade de milissegundos em 1 minuto
-    divu $t0, $t2        # Opera $t0 / 60000 (unsigned) para calcular minutos
-    mflo $t0             # Move para $t0 os minutos decorridos da parte menos significativa
+    # Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
 	
-    # Conversao da parte mais significativa de milissegundos para horas
-    # A conversao eh feita com base na seguinte formula: $t1 * 2^32 / 60000
-    li $t2, 71582        # Carrega 71582 em $t2 que eh o resultado aproximado (2^32) / 60000
-    mulu $t1, $t1, $t2   # Multiplica (unsigned) 71582 com $t1 para obter os minutos decorridos com a parte mais significativa
-    
-    # Soma $t0 (quantidade de minutos decorridos da parte menos significativa)
-    # com $t1 (quantidade de minutos decorridos da parte mais significativa)
-    # para obter a quantidade total de minutos decorridos de 01/01/1970 pra ca
-    addu $t0, $t0, $t1
-    
-    # O trecho abaixo soma o total de minutos com 138, isso porque a multiplicacao de 71582 * $t1
-    # utilizou um valor aproximado, desconsiderando os seis digitos depois da virgula, e a ausencia
-    # desses valores causa um atraso de 138 minutos para que a data seja atualizada, por isso o 
-    # trecho abaixo corrige esse tempo de atraso 
-    addiu $t0, $t0, 139
+	jal gerar_data_hora_atual_minutos
+
+	lw $ra, 0($sp)         # Resgata o $ra original do $sp
+    addi $sp, $sp, 4    # Devolve a pilha para a posicao original
 
     # Obtencao do total de minutos do dia atual
     li $t1, 1440         # Inicializa t1 com 1440 (quantidade de minutos em um dia) 
@@ -3248,7 +3242,7 @@ calcula_entre_datas:
     		jal calcula_dias_de_data
     		
     		# Resgata a quantidade de dias adicionada no acumulador
-    		la $t6, acumulador
+    		#la $t6, acumulador
     		lw $s6, 0($t6)		# Guarda a quantidade de dias calculado em $s6
     		sw $zero, 0($t6)	# Zera o conteúdo do acumulador
     		
@@ -3258,7 +3252,7 @@ calcula_entre_datas:
     		jal calcula_dias_de_data
     		
     		# Calcula a diferença em dias das duas datas
-    		la $t6, acumulador
+    		#la $t6, acumulador
     		lw $t7, 0($t6)		# Pega a quantidade de dias que estava em $t7
     		subu $t7, $t7, $s6
     		
@@ -3295,7 +3289,7 @@ calcula_entre_datas:
     				beqz $t7, ano_bissexto_dias_anos_completos
     				
     				# Adiciona a quantidade de dias no acumulador
-    				la $t6, acumulador
+    				#la $t6, acumulador
     				lw $t7, 0($t6)
     				add $t7, $t7, $t5
     				sw $t7, 0($t6)
@@ -3304,7 +3298,7 @@ calcula_entre_datas:
     				ano_bissexto_dias_anos_completos:
     					li $t5, 366	# Anos bissextos tem 366 dias
     					# Adiciona a quantidade de dias no acumulador
-    					la $t6, acumulador
+    					#la $t6, acumulador
     					lw $t7, 0($t6)
     					add $t7, $t7, $t5
     					sw $t7, 0($t6)
@@ -3328,7 +3322,7 @@ calcula_entre_datas:
     				beq $t4, 10, mes_com_31_dias_mes_atual  		# Se o mes em $t4 for 10, pula para a funcao que ajusta pra 31 dias
     				beq $t4, 12, mes_com_31_dias_mes_atual			# Se o mes em $t4 for 12, pula para a funcao que ajusta pra 31 dias
     				
-    				la $t6, acumulador
+    				#la $t6, acumulador
     				lw $t7, 0($t6)
     				add $t7, $t7, $t5
     				sw $t7, 0($t6)
@@ -3336,7 +3330,7 @@ calcula_entre_datas:
     			
 				mes_com_31_dias_mes_atual:
 					addi $t5, $t5, 1
-					la $t6, acumulador
+					#la $t6, acumulador
     					lw $t7, 0($t6)
     					add $t7, $t7, $t5
     					sw $t7, 0($t6)
@@ -3347,7 +3341,7 @@ calcula_entre_datas:
     					remu $t6, $t0, $t2   				# Armazena o resto da divisao de $s0 com $t2 como unsigned
     					beqz $t6, mes_com_29_dias_mes_atual  		# Se resto de $t3 for 0, significa que o ano eh bissexto 
     					subi $t5, $t5, 2  				# Se o ano nao eh bissexto ajusta a qtd de dias para 28
-    					la $t6, acumulador
+    					#la $t6, acumulador
     					lw $t7, 0($t6)
     					add $t7, $t7, $t5
     					sw $t7, 0($t6)
@@ -3355,7 +3349,7 @@ calcula_entre_datas:
     				
     				mes_com_29_dias_mes_atual:
     					subi $t5, $t5, 1  				# Se o ano nao eh bissexto ajusta a qtd de dias para 28
-    					la $t6, acumulador
+    					#la $t6, acumulador
     					lw $t7, 0($t6)
     					add $t7, $t7, $t5
     					sw $t7, 0($t6)
@@ -3363,7 +3357,7 @@ calcula_entre_datas:
     					
     			dias_mes_atual:
     			# Pega o dia, que eh a quantidade de dias passados no mes atual e acumula
-    				la $t6, acumulador
+    				#la $t6, acumulador
     				lw $t7, 0($t6)
     				add $t7, $t7, $t2
     				sw $t7, 0($t6)  			
