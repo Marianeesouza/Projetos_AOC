@@ -676,14 +676,13 @@ cadastrar_livro:
 	# Vamos verificar agora se o isbn fornecido estah associado a algum outro livro no acervo
     la $s1, repo_livro              # Carrega o endereco de repo_livro
     la $s3, ISBN                    # Carrega o endereco de ISBN
-    la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
     beq $v0, 1, escrever_livro_ja_cadastrado_display  # Caso v0 seja 1, pula para a funcao que vai escrever livro ja cadastrado
 	
-	# Agora vamos copiar a quantidade_total digitada e armazenar em quantidade_disponï¿½vel
+	# Agora vamos copiar a quantidade_total digitada e armazenar em quantidade_disponível
 	move $s0, $t9     # Recupera o endereco que contem os bytes da quantidade digitada
 	la $t1, quantidade_disponivel   # Carrega o endereco de quantidade_disponivel
-	jal guardar_info_buffer  # Adiciona os bytes da quantidade em quantidade_disponï¿½vel 
+	jal guardar_info_buffer  # Adiciona os bytes da quantidade em quantidade_disponível 
 
 	la $t2, quantidade_disponivel  # Recarrega o endereco de quantidade_disponivel
 	jal descobrir_qtd_digitos      # Chama a funcao que varre quantidade_disponivel e retorna em $s7 qtd de digitos (bytes)
@@ -850,7 +849,6 @@ descobrir_qtd_caracteres_comparacao:
 fazer_busca_no_repositorio:
 	# $s1: reg que possui o endereco do repositorio que irah ser feita a busca
 	# $s3: reg que possui o endereco do atributo que contem os dados da busca (livro -> isbn, usuario -> matricula)
-	# $s4: reg que pusui um inteiro que indica se o atributo a ser avaliado eh o primeiro ou o segundo atributo
 	
 	# Aloca espaco no $sp para salvar o endereco de $ra
     addi $sp, $sp, -4
@@ -860,9 +858,7 @@ fazer_busca_no_repositorio:
     lb $s7, 0($s1)           
     beqz $s7, tratar_repositorio_vazio 
     
-    loop_busca_repo_livro:
-    	subi $ra, $ra, 288                # Decrementa o $ra caso a condicao abaixo seja verdadeira, para que ele volte para a 2 linhas abaixo por meio do jr $ra
-    	beq $s4, 2, avancar_ate_virgula   # Verifica se eh o segundo atributo a ser avaliado, se sim pula para a funcao que avanca ate a virgula
+    loop_busca_repositorio:
     	jal descobrir_qtd_caracteres_comparacao    # Pula para a funcao que descobre a quantidade de digitos do isbn
     	move $s0, $s3                     # copia o valor do endereco de $s3 (o endereco do atributo a ser avaliado) para $s0                      
     	move $s2, $s7                     # Copia o valor de $s7, para $s2
@@ -872,7 +868,7 @@ fazer_busca_no_repositorio:
     	addi $s1, $s1, 1                  # Avanca para o proximo caractere apos o \n
     	lb $v1, 0($s1)                    # Carrega o byte de $s1
     	beqz $v1, fim_loop_busca          # Caso em $v1 seja o nulo \0 o loop eh encerrado 
-    	j loop_busca_repo_livro
+    	j loop_busca_repositorio
     
     tratar_repositorio_vazio:
     	li $v0, 0           # Inicializa v0 com 0
@@ -884,8 +880,58 @@ fazer_busca_no_repositorio:
     fim_loop_busca:
     	lw $ra, 0($sp) 	    # Resgata o $ra original do $sp
     	addi $sp, $sp, 4	# Devolve a pilha para a posicao original
+     	jr $ra	
+
+fazer_busca_isbn_repo_emprestimo_remocao:
+	# $s1: reg que possui o endereco do repositorio que irah ser feita a busca
+	# $s3: reg que possui o endereco do atributo que contem os dados da busca (livro -> isbn, usuario -> matricula)
+	
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    # Verificamos se o primeiro byte eh nulo
+    lb $s7, 0($s1)           
+    beqz $s7, tratar_repo_emprestimo_vazio1
+    
+    loop_busca_isbn_repo_emprestimo:
+    	jal avancar_ate_virgula           # pula para a funcao que avanca ate a virgula para que seja comparado somente o isbn
+    	jal descobrir_qtd_caracteres_comparacao    # Pula para a funcao que descobre a quantidade de digitos do isbn
+    	move $s0, $s3                     # copia o valor do endereco de $s3 (o endereco do atributo a ser avaliado) para $s0                      
+    	move $s2, $s7                     # Copia o valor de $s7, para $s2
+    	jal comparar_strings              # pula para a funcao que vai comparar o ibsn do livro com o isbn digitado
+    	addi $ra, $ra, 12                 # Atualiza o $ra para que caso a condicao abaixo seja verdadeira o fluxo retorne para a linha seguinte, por meio do jr $ra 
+    	beq $v0, 1, verificar_livro_tem_devolucoes_pendentes  # Se $v0 for igual a 1 a nos verificamos se o livro tem devolucoes pendentes
+    	jal avancar_ate_barra_n           # Caso contrario, pula para a funcao que avanca ate o barra n
+    	addi $s1, $s1, 1                  # Avanca para o proximo caractere apos o \n
+    	lb $v1, 0($s1)                    # Carrega o byte de $s1
+    	beqz $v1, fim_loop_busca_isbn     # Caso em $v1 seja o nulo \0 o loop eh encerrado 
+    	j loop_busca_isbn_repo_emprestimo
+    
+    tratar_repo_emprestimo_vazio1:
+    	li $v0, 0           # Inicializa v0 com 0
+    	
+    fim_loop_busca_isbn:
+    	jal decrementar_s1  # funcao que ajusta $s1 para o endereco do primieiro byte da entidade encontrada 
+    	lw $ra, 0($sp) 	    # Resgata o $ra original do $sp
+    	addi $sp, $sp, 4	# Devolve a pilha para a posicao original
      	jr $ra
-		
+     	
+verificar_livro_tem_devolucoes_pendentes:
+	# Aloca espaco no $sp para salvar o $ra
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	
+	jal avancar_ate_virgula  # Avanca os bytes que contem a matricula
+	jal avancar_ate_virgula  # Avanca os bytes que contem o ISBN 
+	jal avancar_ate_virgula  # Avanca os bytes que contem a data_registro
+	lb $t0, 0($s1)           # Carrega o byte que contem a flag se o emprestimo foi devolvido ou nao
+  	beq $t0, 48, escrever_livro_esta_emprestado_display  # se o byte for igual 48 (caractere 0) significa que nao houve a devolucao do emprestimo
+  	
+	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+	addi $sp, $sp, 4	# Devolve a pilha para a posicao original
+	jr $ra
+
 # Essa funcao decrementa $s1 para que ele contenha o apos a execucao 
 # dessa funcao o endereco exato do primeiro byte do livro a ser removido
 decrementar_s1:
@@ -982,19 +1028,24 @@ remover_livro:
 	la $t1, ISBN
 	jal guardar_info_buffer
     
-    # O trecho abaixo faz uma busca em repo_emprestimo para ver se o livro possui devolucoes pendentes
-    la $s1, repo_emprestimo            # Carrega o endereco de repo_emprestimo
-    la $s3, ISBN                       # Carrega o endereco de ISBN
-    la $s4, 2                          # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
-    jal fazer_busca_no_repositorio     # Pula para a funcao que vai fazer uma busca do ISBN no repo_emprestimo
-    beq $v0, 1, escrever_livro_esta_emprestado_display   # Caso v0 seja 1 pula para a funcao que imprime livro possui devolucoes pendentes
-    
     # O trecho abaixo faz uma busca em repo_livro para ver se o livro existe em repo_livro
     la $s1, repo_livro              # Carrega o endereco de repo_livro
     la $s3, ISBN                    # Carrega o endereco de ISBN
-    la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
     beqz $v0, escrever_livro_nao_encontrado_display   # Caso v0 seja 0 pula para a funcao que escreve livro nao encontrado
+    
+    move $t9, $s1    # Copia o endereco de $s1 em $t9
+    
+    # O trecho abaixo faz uma busca em repo_emprestimo para ver se o livro possui devolucoes pendentes
+    la $s1, repo_emprestimo         # Carrega o endereco de repo_emprestimo
+    la $s3, ISBN                    # Carrega o endereco de ISBN
+    jal fazer_busca_isbn_repo_emprestimo_remocao     # Pula para a funcao que vai fazer uma busca do ISBN no repo_emprestimo
+
+	# Se possui devolucoes pendentes do livro uma mensagem eh impressa no display 
+	# e o fluxo de execucao retorna pro main, caso contrario o fluxo de execucao 
+	# volta para ca
+	
+  	move $s1, $t9    # Recupera o endereco de $s1 que estava armazenado $t9
 
     # Se $v0 for igual a 1, significa que o livro existe, e em $s1
     # ira conter o endereco do primeiro byte do livro a ser removido
@@ -1066,7 +1117,6 @@ cadastrar_usuario:
 	# Vamos verificar agora se a matricula fornecida estah associada a algum outro usuario
     la $s1, repo_usuario            # Carrega o endereco de repo_usuario
     la $s3, matricula               # Carrega o endereco de matricula
-    la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca da matricula em repo_usuario
     beq $v0, 1, escrever_usuario_ja_cadastrado_display  # Caso v0 seja 1, pula para a funcao que vai escrever usuario ja cadastrado
 	
@@ -1097,6 +1147,56 @@ cadastrar_usuario:
     # Mensagem de sucesso
     la $t1, msgC_usuario_cadastrado   # Carrega a mensagem de sucesso em $t1.
     j escrever_com_sucesso_display    # Exibe a mensagem de sucesso.
+    
+fazer_busca_matricula_repo_emprestimo_remocao:
+	# $s1: reg que possui o endereco do repositorio que irah ser feita a busca
+	# $s3: reg que possui o endereco do atributo que contem os dados da busca (livro -> isbn, usuario -> matricula)
+	
+	# Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    # Verificamos se o primeiro byte eh nulo
+    lb $s7, 0($s1)           
+    beqz $s7, tratar_repo_emprestimo_vazio2
+    
+    loop_busca_matricula_repo_emprestimo:
+    	jal descobrir_qtd_caracteres_comparacao    # Pula para a funcao que descobre a quantidade de digitos do isbn
+    	move $s0, $s3                     # copia o valor do endereco de $s3 (o endereco do atributo a ser avaliado) para $s0                      
+    	move $s2, $s7                     # Copia o valor de $s7, para $s2
+    	jal comparar_strings              # pula para a funcao que vai comparar o ibsn do livro com o isbn digitado
+    	addi $ra, $ra, 12                 # atualiza o $ra para que caso a condicao abaixo seja verdadeira, o fluxo do codigo retorna para a linha seguinte por meio do jr $ra
+    	beq $v0, 1, verificar_usuario_tem_devolucoes_pendentes  # Se $v0 for igual a 1 a nos verificamos se o livro tem devolucoes pendentes
+    	jal avancar_ate_barra_n           # Caso contrario, pula para a funcao que avanca ate o barra n
+    	addi $s1, $s1, 1                  # Avanca para o proximo caractere apos o \n
+    	lb $v1, 0($s1)                    # Carrega o byte de $s1
+    	beqz $v1, fim_loop_busca_matricula     # Caso em $v1 seja o nulo \0 o loop eh encerrado 
+    	j loop_busca_matricula_repo_emprestimo
+    
+    tratar_repo_emprestimo_vazio2:
+    	li $v0, 0           # Inicializa v0 com 0
+    	
+    fim_loop_busca_matricula:
+    	jal decrementar_s1  # funcao que ajusta $s1 para o endereco do primieiro byte da entidade encontrada
+    	lw $ra, 0($sp) 	    # Resgata o $ra original do $sp
+    	addi $sp, $sp, 4	# Devolve a pilha para a posicao original
+     	jr $ra
+
+verificar_usuario_tem_devolucoes_pendentes:
+	# Aloca espaco no $sp para salvar o $ra
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	
+	jal avancar_ate_virgula  # Avanca os bytes que contem a matricula
+	jal avancar_ate_virgula  # Avanca os bytes que contem o ISBN 
+	jal avancar_ate_virgula  # Avanca os bytes que contem a data_registro
+	jal avancar_ate_virgula  # Avanca os bytes que contem a data_devolucao 
+	lb $t0, 0($s1)           # Carrega o byte que contem a flag se o emprestimo foi devolvido ou nao
+  	beq $t0, 48, escrever_usuario_tem_pendencias_display  # se o byte for igual 48 (caractere 0) significa que nao houve a devolucao do emprestimo
+  	
+	lw $ra, 0($sp) 		# Resgata o $ra original do $sp
+	addi $sp, $sp, 4	# Devolve a pilha para a posicao original
+	jr $ra	
 
 remover_usuario:
 	addi $s0, $s0, 1 # Passa um caractere para frente, por conta do espaco entre os comandos
@@ -1112,20 +1212,25 @@ remover_usuario:
 	# Pega o que estiver entre aspas e salva no buffer
 	la $t1, matricula
 	jal guardar_info_buffer
-    
-    # O trecho abaixo faz uma busca em repo_emprestimo para ver se o usuario possui devolucoes pendentes
-    la $s1, repo_emprestimo            # Carrega o endereco de repo_emprestimo
-    la $s3, matricula                  # Carrega o endereco de matricula
-    la $s4, 1                          # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
-    jal fazer_busca_no_repositorio     # Pula para a funcao que vai fazer uma busca do ISBN no repositï¿½rio
-    beq $v0, 1, escrever_livro_esta_emprestado_display   # Caso v0 seja 1 pula para a funcao que imprime livro possui devolucoes pendentes
-    
-    # O trecho abaixo faz uma busca em repo_usuario para ver se o usuario existe
+	
+	 # O trecho abaixo faz uma busca em repo_usuario para ver se o usuario existe
     la $s1, repo_usuario            # Carrega o endereco de repo_usuario
     la $s3, matricula               # Carrega o endereco de matricula
-    la $s4, 1                       # Inicializa $s4 com 1 para indicar que eh o primeiro atributo a ser fazer a busca
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_usuario
     beqz $v0, escrever_usuario_nao_encontrado_display   # Caso v0 seja 0 pula para a funcao que imprime usuario nao encontrado
+    
+    move $t9, $s1    # Copia o endereco de $s1 em $t9
+    
+    # O trecho abaixo faz uma busca em repo_emprestimo para ver se o usuario possui devolucoes pendentes
+    la $s1, repo_emprestimo    # Carrega o endereco de repo_emprestimo
+    la $s3, matricula          # Carrega o endereco de matricula
+    jal fazer_busca_matricula_repo_emprestimo_remocao     # Pula para a funcao que vai fazer uma busca do ISBN no repositorio
+    
+    # Se o usuario possui devolucoes pendentes uma mensagem eh impressa no display 
+	# e o fluxo de execução retorna pro main, caso contrario o fluxo de execucao 
+	# volta para ca
+    
+  	move , $s1, $t9    # Recupera o endereco de $s1 que estava armazenado $t9
 
     # Se $v0 for igual a 1, significa que o livro existe, e em $s1
     # irah conter o endereco do primeiro byte do livro a ser removido
@@ -1209,14 +1314,12 @@ registrar_emprestimo:
 	# Verifica se matricula fornecida esta associada a um usuario cadastrado
 	la $s1, repo_usuario              # Carrega o endereco de repo_usuario
 	la $s3, matricula                 # Carrega o endereco de matricula
-	li $s4, 1                         # Inicializa $s4 com 1, para indicar que a busca eh no primeiro argumento de repo_usuario
 	jal fazer_busca_no_repositorio    # pula para a funcao que faz a busca
 	beqz $v0, escrever_usuario_nao_encontrado_display  # se v0 for 0 significa a matricula nao esta associado a nenhum usuario
 	
 	# Verifica se o ISBN fornecido estah associado a um livro cadastrado
 	la $s1, repo_livro                # Carrega o endereco de repo_usuario
 	la $s3, ISBN                      # Carrega o endereco do ISBN
-	li $s4, 1                         # Inicializa $s4 com 1, para indicar que a busca eh no primeiro argumento de repo_livro
 	jal fazer_busca_no_repositorio    # Pula para a funcao que faz a busca
 	beqz $v0, escrever_livro_nao_encontrado_display # se v0 for 0 significa que o ISBN nao esta associado a nenhum livro
 	
