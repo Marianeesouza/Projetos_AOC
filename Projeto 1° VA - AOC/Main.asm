@@ -47,14 +47,19 @@
 	
 	# Emprestimo:
 	data_registro:  		.space 15    # Espaco reservado para a data em que foi registrado o emprestimo
-	data_devolucao: 		.space 15    # Espaco reservado para a data de devolucao do empr�stimo
+	data_devolucao: 		.space 15    # Espaco reservado para a data de devolucao do emprestimo
 	flag_foi_devolvido:      .space 3    # Espaco reservado para uma flag que serve para indicar se a devolucao foi feita ou nao
 	
 	# Repositorios Temporarios
-	repo_livro:           .space 4500 # Espaco reservado para a gravacao temporaria dos livros cadastrados
-	repo_usuario:         .space 4500 # Espaco reservado para a gravacao temporaria dos usuarios cadastrados
-	repo_emprestimo:      .space 4500 # Espaco reservado para a gravacao temporaria dos emprestimos cadastrados
-	buffer_aux_conversao: .space 20   # Espaco reservado para um buffer que auxilia no processo de conversao de string para int
+	repo_livro:           				.space 4500 # Espaco reservado para a gravacao temporaria dos livros cadastrados
+	repo_usuario:         				.space 4500 # Espaco reservado para a gravacao temporaria dos usuarios cadastrados
+	repo_emprestimo:      				.space 4500 # Espaco reservado para a gravacao temporaria dos emprestimos cadastrados
+	buffer_aux_conversao: 				.space 20   # Espaco reservado para um buffer que auxilia no processo de conversao de string para int
+	
+	# Buffers de Auxilio para Gerar Relatorios
+	buffer_aux_livros_emprestados:	.space 4500 	# Espaco reservado para guardar temporariamente os livros que estão emprestados
+	buffer_aux_usuario_atrasados:		.space 4500 	# Espaco reservado para guardar temporariamente os usuarios que estao atrasados na devolucao
+	acumulador:							.word 0			# Acumula os dias no calculo de dias entre datas
 	
 	# Locais dos arquivos salvos
 	local_arquivo_livros:      .asciiz  "repo_livros.txt"
@@ -679,10 +684,10 @@ cadastrar_livro:
     jal fazer_busca_no_repositorio  # Pula para a funcao que vai fazer uma busca do ISBN em repo_livro
     beq $v0, 1, escrever_livro_ja_cadastrado_display  # Caso v0 seja 1, pula para a funcao que vai escrever livro ja cadastrado
 	
-	# Agora vamos copiar a quantidade_total digitada e armazenar em quantidade_dispon�vel
+	# Agora vamos copiar a quantidade_total digitada e armazenar em quantidade_dispon�vel
 	move $s0, $t9     # Recupera o endereco que contem os bytes da quantidade digitada
 	la $t1, quantidade_disponivel   # Carrega o endereco de quantidade_disponivel
-	jal guardar_info_buffer  # Adiciona os bytes da quantidade em quantidade_dispon�vel 
+	jal guardar_info_buffer  # Adiciona os bytes da quantidade em quantidade_dispon�vel 
 
 	la $t2, quantidade_disponivel  # Recarrega o endereco de quantidade_disponivel
 	jal descobrir_qtd_digitos      # Chama a funcao que varre quantidade_disponivel e retorna em $s7 qtd de digitos (bytes)
@@ -802,20 +807,20 @@ voltar_ate_virgula:
 		jr $ra
 
 voltar_ate_barra_n:
-	# $s1: reg que possui o endereco do repositiorio que estah sendo varrido
+	# $s7: reg que possui o endereco do repositiorio que estah sendo varrido
 	
 	la $t1, barra_n   # Carrega o endereco de virgula
 	lb $t1, 0($t1)    # Carrega o byte que correspondente ao caractere de virgula
 	 
 	loop_voltar_barra_n:
-		lb $t2, 0($s1)                          # Carrega o byte do repositorio
-		beq $t2, $t1, fim_loop_barra_n   	# Caso $s1 seja tenha o caractere '\n', o loop encerra
-		beqz $t2, fim_loop_barra_n      	 # Se o byte lido for o byte nulo o loop tambem eh encerrado
-		subi $s1, $s1, 1                        # Caso contrario retorna para byte anterior c
-		j loop_voltar_barra_n                   # Entra em loop
+		lb $t2, 0($s7)                          	# Carrega o byte do repositorio
+		beq $t2, $t1, fim_loop_barra_n   			# Caso $s1 seja tenha o caractere '\n', o loop encerra
+		beqz $t2, fim_loop_barra_n      			# Se o byte lido for o byte nulo o loop tambem eh encerrado
+		subi $s7, $s7, 1                        	# Caso contrario retorna para byte anterior c
+		j loop_voltar_barra_n                   	# Entra em loop
 	
 	fim_loop_barra_n:
-		addi $s1, $s1, 1       # Avanca mais um byte, para que a virgula seja ignorada
+		addi $s7, $s7, 1	# Passa um para sair do /n
 		jr $ra
 
 descobrir_qtd_caracteres_comparacao:
@@ -1227,7 +1232,7 @@ remover_usuario:
     jal fazer_busca_matricula_repo_emprestimo_remocao     # Pula para a funcao que vai fazer uma busca do ISBN no repositorio
     
     # Se o usuario possui devolucoes pendentes uma mensagem eh impressa no display 
-	# e o fluxo de execu��o retorna pro main, caso contrario o fluxo de execucao 
+	# e o fluxo de execu��o retorna pro main, caso contrario o fluxo de execucao 
 	# volta para ca
     
   	move , $s1, $t9    # Recupera o endereco de $s1 que estava armazenado $t9
@@ -1423,7 +1428,7 @@ verificar_data_registro:
 	lb $t0, 0($t0)                 # Carrega o primeiro byte de data_config_usuario
 	beqz $t0, gerar_data           # Se o byte for nulo, entao nao configurou nenhua data. logo, pula pro gerar_data
 	
-	# Caso contr�rio, se for diferente de 0 esse trecho de c�digo abaixo copia e cola data que ta configurado
+	# Caso contrario, se for diferente de 0 esse trecho de codigo abaixo copia e cola data que ta configurado
 	# de data_config_usuario para data_registro
 	li $a2, 11                      # Define a quantidade de bytes a ser copiados 
 	la $a1, data_config_usuario     # Define o reg de origem dos bytes a ser copiados
@@ -1450,7 +1455,7 @@ verificar_data_registro:
 		jr $ra
 
 obter_qtd:
-	# $s1 reg que possui o endereco dos bytes que cont�m a quantidade do livro
+	# $s1 reg que possui o endereco dos bytes que contem a quantidade do livro
 	# $s2 reg que possui buffer onde serao armazenadas os bytes da quantidade
 	
 	la $t1, virgula     # Carrega o endereco de virgula
@@ -1851,14 +1856,270 @@ copiar_ate_barra_n:
 		jr $ra
 		
 gerar_relatorio:
+	# Funcao que mostra os livros que estao emprestados e os usuarios que estao em atraso
 	# Em construcao
+	la $s7, repo_emprestimo		# Carrega o repo_emprestimo em $s7
 	
-	# Limpa o buffer de comando
-	la $s1, comando
-	jal clear_buffer
+	loop_encontrar_nao_devolvidos:
+		la $t1, barra_n   # Carrega o endereco de barra_n
+		lb $t1, 0($t1)    # Carrega o byte que carrega o byte do caractere '\n'
+	 
+		loop_avancar_barra_n_relatorio:
+			lb $t2, 0($s7)                  				# Carrega o byte em repo_livro
+			beq $t2, $t1, fim_loop_avancar_relatorio  	# Caso $s1 seja tenha o caractere \n, o loop encerra
+			beqz $t2, fim_gerar_relatorio
+			addi $s7, $s7, 1                				# Contrario avanca o caractere
+			j loop_avancar_barra_n_relatorio          	# Entra em loop
+			
+		fim_loop_avancar_relatorio:
+			subi $s7, $s7, 1								# Volta um caracter para analisar a flag de emprestimo
+			lb $t2, 0($s7)									# Carrega a flag
+			beq $t2, 48	, emprestimo_ativo					# Se a flag eh 0, o emprestimo esta ativo
+			# Se nao for 0, o emprestimo esta finalizado e podemos continuar a busc	a 
+			addi $s7, $s7, 2								# Passa dois caracteres para passar do "/n"
+			j loop_avancar_barra_n_relatorio
+		
+		fim_gerar_relatorio:
+			# Apresenta e finaliza a funcao
+			la $t1, buffer_aux_livros_emprestados
+			jal escrever_string_display
+			
+			la $t1, buffer_aux_usuario_atrasados
+			jal escrever_string_display
+			
+			# Limpa o buffer de comando
+			la $s1, comando
+			jal clear_buffer
+		
+			j main
+		
+			emprestimo_ativo:
+			# Ja que o emprestimo esta ativo vamos guardar as infos necessarias nos buffers
+				jal voltar_ate_barra_n		# Volta ate o inicio do elemento
+				# Os emprestimos sao salvos como: ISBN,matricula,data_registro,data_devolucao
+				# Vamos salvar nos buffers as infos de ISBN, matricula e data_devolucao
+				
+				# Primeiro vamos salvar o ISBN do livro que foi emprestado
+				la $t1, ISBN
+				jal guardar_info_buffer_relatorio
+				la $t2, virgula          # Carrega o endereco da virgula (',')
+				lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
+    			sb $t2, 0($t1)           # Adiciona a virgula ao final
+    			
+    			# Guardamos agora a matricula do usuario que realizou o emprestimo
+    			la $t1, matricula
+				jal guardar_info_buffer_relatorio
+				la $t2, virgula          # Carrega o endereco da virgula (',')
+				lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
+    			sb $t2, 0($t1)           # Adiciona a virgula ao final
+    			
+    			# E guardamos por ultimo a data de devolucao
+    			la $t1, data_devolucao
+				jal guardar_info_buffer_relatorio
+				la $t2, virgula          # Carrega o endereco da virgula (',')
+				lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
+    			sb $t2, 0($t1)           # Adiciona a virgula ao final
+			
+				# Agora precisamos descobri o titulo do livro que foi emprestado
+				move $t7, $s7						# Guarda o endereço usado em $s7 em $t7, pois $s7 eh usado na funcao fazer_busca_no_repositorio
+				la $s1, repo_livro
+				la $s3, ISBN
+				jal fazer_busca_no_repositorio
+				
+				# E agora guardamos o titulo do livro no buffer
+				jal avancar_ate_virgula
+				move $s7, $s1
+				la $t1, titulo
+				jal guardar_info_buffer_relatorio
+				la $t2, barra_n          # Carrega o endereco da virgula ('/n')
+				lb $t2, 0($t2)           # Carrega o byte do caractere da /n
+    			sb $t2, 0($t1)           # Adiciona a /n ao final
+    			
+    			# Agora vamos guardar essas infos no buffer de livros emprestados
+    			# Para isso, vamos concatenar todas as informacoes que obtivemos em uma unica string e coloca-la no buffer_aux_livros_emprestados
+				la $s0, buffer_aux_livros_emprestados  # Carrega o endereco de buffer_aux_livros_emprestados
+				
+				la $s1, ISBN        # Carrega o endereco de isbn
+				jal str_concat      # Pula para a funcao que vai concatenar os dados de isbn em repo_livro
 	
-	j main
+				la $s1, titulo		# Carrega o endereco de titulo
+				jal str_concat      # Pula para a funcao que vai concatenar os dados de titulo em repo_livro
 	
+				la $s1, data_devolucao      # Carrega o endereco de autor
+				jal str_concat      # Pula para a funcao que vai concatenar os dados de autor em repo_livro
+				
+				move $s7, $t7
+	
+				# Agora temos todas as infos que precisamos para a parte dos livros que estao emprestados
+				# Vamos descobri se esse emprestimo ativo esta atrasado
+				# Para isso vamos calcular se a data atual do sistema eh anterior ou posterior a data_devolucao
+				# e tambem vamos calcular de quantos dias eh essa diferenca
+				
+				# Para isso vamos transformar a data_devolucao e a data atual do sistema em valores numericos e salva-las
+				# nos seguintes registradores: 
+				# data inicial (data do sistema) -> $s0: ano, $s1: mes, $s2: dia
+				# data final (data de devolucao) -> $s3: ano, $s4: mes, $s5: dia
+				
+				# Para pegarmos a data final, basta pegar o que estah no buffer data_devolucao e transformar em valor numerico
+				li $a2, 2
+				la $a1, data_devolucao
+				la $a0, buffer_aux_conversao
+				jal memcpy
+				
+				la $t2, buffer_aux_conversao
+				jal converter_string_para_int
+				move $s5, $s0
+				
+				li $a2, 2
+				addi $a1, $a1, 1
+				la $a0, buffer_aux_conversao
+				jal memcpy
+				
+				la $t2, buffer_aux_conversao
+				jal converter_string_para_int
+				move $s4, $s0
+				
+				li $a2, 4
+				addi $a1, $a1, 1
+				la $a0, buffer_aux_conversao
+				jal memcpy
+				
+				la $t2, buffer_aux_conversao
+				jal converter_string_para_int
+				move $s3, $s0
+				
+				# Agora precisamos verificar qual a data atual do sistema, se eh customizada (se o usuario definiu uma data) ou se eh a data gerada
+				la $a1, data_config_usuario
+				lb $t0, 0($a1)					# Carrega o primeiro byte do buffer data_config_usuario
+				beqz $t0, data_atual_gerada 	# Se for igual a zero, o buffer esta vazio e a data a ser usada eh a gerada e nao a configurada
+				# Se eh diferente de zero, a data foi configurada, entao valor pegar esses valores
+				li $a2, 2
+				la $a1, data_config_usuario
+				la $a0, buffer_aux_conversao
+				jal memcpy
+				
+				la $t2, buffer_aux_conversao
+				jal converter_string_para_int
+				move $s2, $s0
+				
+				li $a2, 2
+				addi $a1, $a1, 1
+				la $a0, buffer_aux_conversao
+				jal memcpy
+				
+				la $t2, buffer_aux_conversao
+				jal converter_string_para_int
+				move $s1, $s0
+				
+				li $a2, 4
+				addi $a1, $a1, 1
+				la $a0, buffer_aux_conversao
+				jal memcpy
+				
+				la $t2, buffer_aux_conversao
+				jal converter_string_para_int
+				
+				j calculo_atraso
+				
+				data_atual_gerada:
+					jal gerar_data_atual
+				
+				calculo_atraso:
+				# Calcula a diferenca entre as datas de devolucao e atual e guarda em $t7 a diferenca em dias
+					jal calcula_entre_datas
+					blez $t7, fim_emprestimo_ativo
+					
+					# Vamos trasformar o numero de dias de valor numerico para string
+					la $t6, buffer_aux_conversao		# Carrega o buffer que armazenara o valor numerico transformado em string
+					jal converter_int_para_string		# Converte o que esta em $t7 para string
+					la $t2, barra_n          			# Carrega o endereco da barra_n 
+					lb $t2, 0($t2)          			# Carrega o byte do caractere da barra_n
+    				sb $t2, 0($t6)           			# Adiciona a barra_n ao final
+					
+					# Agora precisamos descobri o nome do usuario que pegou emprestado
+					move $t7, $s7						# Guarda o endereço usado em $s7 em $t7, pois $s7 eh usado na funcao fazer_busca_no_repositorio
+					la $s1, repo_usuario
+					la $s3, matricula
+					jal fazer_busca_no_repositorio
+					
+					# E agora guardamos o nome do usuario no buffer
+					move $s7, $s1
+					la $t1, nome
+					jal guardar_info_buffer_relatorio
+					la $t2, virgula          # Carrega o endereco da virgula 
+					lb $t2, 0($t2)           # Carrega o byte do caractere da ,
+    				sb $t2, 0($t1)           # Adiciona a , ao final
+					
+					# Agora vamos colocar tudo no buffer_aux_usuario_atrasados
+					la $s0, buffer_aux_usuario_atrasados  # Carrega o endereco de buffer_aux_livros_emprestados
+					
+					la $s1, matricula        		# Carrega o endereco de matricula
+					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
+					
+					la $s1, nome        			# Carrega o endereco de nome
+					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
+					
+					la $s1, ISBN        			# Carrega o endereco de isbn
+					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
+	
+					la $s1, titulo					# Carrega o endereco de titulo
+					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
+	
+					la $s1, data_devolucao      	# Carrega o endereco de autor
+					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
+					
+					la $s1, buffer_aux_conversao      	# Carrega o endereco de autor
+					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
+					
+					move $s7, $t7
+					
+					fim_emprestimo_ativo:
+						addi $s7, $s7, 1		# Passa um caracte de $s7, para ter certeza que vai passar do barra_n 
+						# Limpando todos os buffers usados
+						la $s1,ISBN			
+						jal clear_buffer
+						
+						la $s1, titulo			
+						jal clear_buffer
+						
+						la $s1, matricula			
+						jal clear_buffer
+						
+						la $s1, nome			
+						jal clear_buffer
+						
+						la $s1, data_devolucao			
+						jal clear_buffer
+						
+						la $s1, acumulador			
+						jal clear_buffer
+						
+						la $s1, buffer_aux_conversao			
+						jal clear_buffer
+						
+						j loop_encontrar_nao_devolvidos
+
+guardar_info_buffer_relatorio:
+	# $t1: contem qual o buffer a ser usado
+	# $s7: contem a info a ser guardada
+	
+	la $t0, virgula     	# Carrega o endereco de virgula
+	lb $t0, 0($t0)      	# Carrega o byte correspondente ao caractere de virgula em ascII
+	
+	# Copia os caracteres ateh a virgula
+	copy_loop_relatorio:
+    	lb $t0, 0($s7)           				# Carrega o proximo caractere
+      	beq $t0, $t2, finalize_relatorio    	# Se for virgula, finaliza a copia
+    	sb $t0, 0($t1)            				# Copia o caractere para o buffer
+    	addi $s0, $s0, 1          				# Avanca para o proximo caractere
+    	addi $t1, $t1, 1          				# Avanca no buffer
+    	j copy_loop_relatorio
+
+	# Finaliza o buffer adicionando a virgula
+	finalize_relatorio:
+		addi $s0, $s0, 1 			# Passa da virgula
+    	jr $ra
+
 registrar_devolucao:
 	## Verifica argumentos obrigaorios
 	# Verifica o argumento "--matricula"
@@ -3227,58 +3488,50 @@ memcpy: # Copia uma quantidade num (a2) de caracteres de uma string do source (a
 		jr $ra
 
 calcula_entre_datas:
-		# Recebe duas datas armazenadas nos registradores a seguir e calcula a quantidade
-		# de dias que se passaram entre essas duas datas
-		# $s2: dia inicial / $s1: mes inicial / $s0: ano inicial
-		# $s5: dia final / $s4: mes final / $s3: ano final
-		# Armazena em $t7 a diferença de dias entre as datas
+	# Recebe duas datas armazenadas nos registradores a seguir e calcula a quantidade
+	# de dias que se passaram entre essas duas datas
+	# $s2: dia inicial / $s1: mes inicial / $s0: ano inicial
+	# $s5: dia final / $s4: mes final / $s3: ano final
+	# Armazena em $t7 a diferença de dias entre as datas
 		
-		addi $sp, $sp, -4
-    		sw $ra, 0($sp)
+	addi $sp, $sp, -4
+  	sw $ra, 0($sp)
+   	
+    move $t0, $s0
+    move $t1, $s1
+    move $t2, $s2
+    jal calcula_dias_de_data
+    
+    # Resgata a quantidade de dias adicionada no acumulador
+    la $t6, acumulador
+    lw $s6, 0($t6)		# Guarda a quantidade de dias calculado em $s6
+   	sw $zero, 0($t6)	# Zera o conteúdo do acumulador
     		
-    		move $t0, $s0
-    		move $t1, $s1
-    		move $t2, $s2
-    		jal calcula_dias_de_data
-    		
-    		# Resgata a quantidade de dias adicionada no acumulador
-    		#la $t6, acumulador
-    		lw $s6, 0($t6)		# Guarda a quantidade de dias calculado em $s6
-    		sw $zero, 0($t6)	# Zera o conteúdo do acumulador
-    		
-    		move $t0, $s3
-    		move $t1, $s4
-    		move $t2, $s5
-    		jal calcula_dias_de_data
-    		
-    		# Calcula a diferença em dias das duas datas
-    		#la $t6, acumulador
-    		lw $t7, 0($t6)		# Pega a quantidade de dias que estava em $t7
-    		subu $t7, $t7, $s6
-    		
-    		jal calcula_valor_absoluto
-    		
-    		lw $ra, 0($sp)         # Resgata o $ra original do $sp
-    		addi $sp, $sp, 4    # Devolve a pilha para a posicao original
-    		jr $ra
-    		
-    		calcula_valor_absoluto:
-    		# Recebe um valor em $t7 e calcula |$s6|
-    		bgez $t7, valor_absoluto
-		sub $t7, $zero, $t7
-			valor_absoluto:
-				jr $ra
-		     		
-    		calcula_dias_de_data:
+    move $t0, $s3
+    move $t1, $s4
+    move $t2, $s5
+    jal calcula_dias_de_data
+   		
+    # Calcula a diferença em dias das duas datas
+    la $t6, acumulador
+   	lw $t7, 0($t6)		# Pega a quantidade de dias que estava em $t7
+    subu $t7, $t7, $s6
+    sw $t7, 0($t6)
+    
+    lw $ra, 0($sp)         # Resgata o $ra original do $sp
+    addi $sp, $sp, 4    # Devolve a pilha para a posicao original
+   	jr $ra
+
+    	calcula_dias_de_data:
     		# Transforma uma data em dia usando como base 01/01/0000
     		# Usa $t0: ano, $t1: mes, $t2: dia
     		# Salva o resultado temporariamente em $s6
     		
-    			addi $sp, $sp, -4
-    			sw $ra, 0($sp)
-    			
-    			move $t4, $t0	# Coloca em $t4 o ano da data atual para poder calcular em cima dele
-    			
+    		addi $sp, $sp, -4
+    		sw $ra, 0($sp)
+    		
+    		move $t4, $t0	# Coloca em $t4 o ano da data atual para poder calcular em cima dele
+    		
     			loop_quantos_dias_anos_completos:
     			# Acumula os dias passados no anos que se passaram de 0 ate o que esta em $t4
     				subi $t4, $t4, 1				# Usa $t4 como contagem regressiva, do ano anterior ao atual ate 1970
@@ -3289,7 +3542,7 @@ calcula_entre_datas:
     				beqz $t7, ano_bissexto_dias_anos_completos
     				
     				# Adiciona a quantidade de dias no acumulador
-    				#la $t6, acumulador
+    				la $t6, acumulador
     				lw $t7, 0($t6)
     				add $t7, $t7, $t5
     				sw $t7, 0($t6)
@@ -3298,7 +3551,7 @@ calcula_entre_datas:
     				ano_bissexto_dias_anos_completos:
     					li $t5, 366	# Anos bissextos tem 366 dias
     					# Adiciona a quantidade de dias no acumulador
-    					#la $t6, acumulador
+    					la $t6, acumulador
     					lw $t7, 0($t6)
     					add $t7, $t7, $t5
     					sw $t7, 0($t6)
@@ -3322,7 +3575,7 @@ calcula_entre_datas:
     				beq $t4, 10, mes_com_31_dias_mes_atual  		# Se o mes em $t4 for 10, pula para a funcao que ajusta pra 31 dias
     				beq $t4, 12, mes_com_31_dias_mes_atual			# Se o mes em $t4 for 12, pula para a funcao que ajusta pra 31 dias
     				
-    				#la $t6, acumulador
+    				la $t6, acumulador
     				lw $t7, 0($t6)
     				add $t7, $t7, $t5
     				sw $t7, 0($t6)
@@ -3330,18 +3583,18 @@ calcula_entre_datas:
     			
 				mes_com_31_dias_mes_atual:
 					addi $t5, $t5, 1
-					#la $t6, acumulador
-    					lw $t7, 0($t6)
-    					add $t7, $t7, $t5
-    					sw $t7, 0($t6)
-    					j loop_meses_ano_atual
+					la $t6, acumulador
+    				lw $t7, 0($t6)
+    				add $t7, $t7, $t5
+    				sw $t7, 0($t6)
+    				j loop_meses_ano_atual
 				
 				verificar_dias_fevereiro_mes_atual:
 					li $t7, 4 
     					remu $t6, $t0, $t2   				# Armazena o resto da divisao de $s0 com $t2 como unsigned
     					beqz $t6, mes_com_29_dias_mes_atual  		# Se resto de $t3 for 0, significa que o ano eh bissexto 
     					subi $t5, $t5, 2  				# Se o ano nao eh bissexto ajusta a qtd de dias para 28
-    					#la $t6, acumulador
+    					la $t6, acumulador
     					lw $t7, 0($t6)
     					add $t7, $t7, $t5
     					sw $t7, 0($t6)
@@ -3349,19 +3602,19 @@ calcula_entre_datas:
     				
     				mes_com_29_dias_mes_atual:
     					subi $t5, $t5, 1  				# Se o ano nao eh bissexto ajusta a qtd de dias para 28
-    					#la $t6, acumulador
+    					la $t6, acumulador
     					lw $t7, 0($t6)
     					add $t7, $t7, $t5
     					sw $t7, 0($t6)
     					j loop_meses_ano_atual
     					
     			dias_mes_atual:
-    			# Pega o dia, que eh a quantidade de dias passados no mes atual e acumula
-    				#la $t6, acumulador
+    				# Pega o dia, que eh a quantidade de dias passados no mes atual e acumula
+    				la $t6, acumulador
     				lw $t7, 0($t6)
     				add $t7, $t7, $t2
     				sw $t7, 0($t6)  			
     			
-    			lw $ra, 0($sp)         # Resgata o $ra original do $sp
-    			addi $sp, $sp, 4    	# Devolve a pilha para a posicao original
-    			jr $ra
+    				lw $ra, 0($sp)         # Resgata o $ra original do $sp
+    				addi $sp, $sp, 4    	# Devolve a pilha para a posicao original
+    				jr $ra
