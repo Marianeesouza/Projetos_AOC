@@ -2739,15 +2739,38 @@ salvar_dados_no_arquivo:
 	jr $ra
 	
 formatar_dados:
-	# Do your jump, mari
-	
-	# Limpa o buffer de comando
+    # Limpa o repositório de livros
+    la   $s1, repo_livro
+    jal  clear_buffer
+
+    # Limpa o repositório de usuários
+    la   $s1, repo_usuario
+    jal  clear_buffer
+
+    # Limpa o repositório de empréstimos
+    la   $s1, repo_emprestimo
+    jal  clear_buffer
+
+    # Limpa a variável data_config_usuario
+    la   $s1, data_config_usuario
+    jal  clear_buffer
+
+    # Limpa a variável hora_config_usuario
+    la   $s1, hora_config_usuario
+    jal  clear_buffer
+
+    # Salva os dados (os buffers já estão limpos, logo os arquivos serão atualizados com os dados vazios)
+    jal  salvar_dados
+
+    # Exibe "Dados Apagados"
+    la   $t1, msgC_dados_apagados  
+    jal  escrever_string_display
+    
+    # Limpa o buffer de comando
 	la $s1, comando
 	jal clear_buffer
-	
-	la $t1, msgC_dados_apagados        # Imprime a mensagem dados confirmando que os dados foram apagados
-	jal escrever_com_sucesso_display
 
+j main
 data_hora:
     la $t0, data_config_usuario   					# Carrega o endereco de data_config_usuario
     lb $t1, 0($t0)          						# Carrega o byte 
