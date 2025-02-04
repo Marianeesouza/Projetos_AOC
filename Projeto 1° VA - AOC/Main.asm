@@ -1191,7 +1191,7 @@ loop_listar_livros:
     lb $t0, 0($s1) # Verifica se ainda ha livros na lista
     bnez $t0, loop_listar_livros  # Continua se houver mais livros
 
-    jr $ra  # Retorna para a chamada anterior
+    j main  # Retorna para a chamada anterior
 
 
 cadastrar_usuario:
