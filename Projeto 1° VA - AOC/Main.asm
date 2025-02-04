@@ -445,7 +445,7 @@ verificar_cmd_gerar_relatorio:
     
   	la $s1, cmd_gerar_relatorio     # Carrega o endereco de cmd_gerar_relatorio
   	la $s0, comando                 # Carrega o endereco de comando em S0
-  	li $s2, 20                      # Define a quantidade de caracteres de comando que irao ser comparados
+  	li $s2, 15                      # Define a quantidade de caracteres de comando que irao ser comparados
   	jal comparar_strings            # Pula para a funcao que ira comparar as strings
   	beq $v0, 1, gerar_relatorio     # se $v0 for 1, significa que o comando digitado foi o de gerar_relatorio
 	
@@ -811,11 +811,12 @@ voltar_ate_barra_n:
 	
 	la $t1, barra_n   # Carrega o endereco de virgula
 	lb $t1, 0($t1)    # Carrega o byte que correspondente ao caractere de virgula
+	la $t8, repo_emprestimo
 	 
 	loop_voltar_barra_n:
 		lb $t2, 0($s7)                          	# Carrega o byte do repositorio
 		beq $t2, $t1, fim_loop_barra_n   			# Caso $s1 seja tenha o caractere '\n', o loop encerra
-		beqz $t2, fim_loop_barra_n      			# Se o byte lido for o byte nulo o loop tambem eh encerrado
+		beq $s7, $t8, fim_loop_barra_n      		# Se o byte lido for o byte nulo o loop tambem eh encerrado
 		subi $s7, $s7, 1                        	# Caso contrario retorna para byte anterior c
 		j loop_voltar_barra_n                   	# Entra em loop
 	
@@ -1127,15 +1128,16 @@ cadastrar_usuario:
 	
     # Concatena as informacoes no repositorio de usuarios
     la $s0, repo_usuario    # Carrega o endereco do repositorio de usuarios em $s0.
-    la $s1, nome            # Carrega o endereco do buffer "nome" em $s1.
-    jal str_concat          # Concatena o nome ao repositario de usuarios.
-    la $s1, nome            # Recarrega o endereco de nome novamente (para voltar ao primeiro caractere)
-    jal clear_buffer        # Limpa o buffer "nome".
 
     la $s1, matricula   	# Carrega o endereco do buffer `matricula` em $s1.
     jal str_concat      	# Concatena a matricula ao repositorio de usuarios.
 	la $s1, matricula  		# Recarrega o endereco de matricula novamente (para voltar ao primeiro caractere)
 	jal clear_buffer    	# Limpa o buffer "matricula".
+	
+	la $s1, nome            # Carrega o endereco do buffer "nome" em $s1.
+    jal str_concat          # Concatena o nome ao repositario de usuarios.
+    la $s1, nome            # Recarrega o endereco de nome novamente (para voltar ao primeiro caractere)
+    jal clear_buffer        # Limpa o buffer "nome".
 
     la $s1, curso       	# Carrega o endereco do buffer `curso` em $s1.
     jal str_concat      	# Concatena o curso ao repositorio de usuarios.
@@ -1895,6 +1897,11 @@ gerar_relatorio:
 		
 			emprestimo_ativo:
 			# Ja que o emprestimo esta ativo vamos guardar as infos necessarias nos buffers
+			# Antes vamos preservar o endereço do $s7, pois ele é usado em algumas funcoes mais pra frente
+				addi $sp, $sp, -4
+    			sw $s7, 0($sp)
+    			
+    			subi $s7, $s7, 2
 				jal voltar_ate_barra_n		# Volta ate o inicio do elemento
 				# Os emprestimos sao salvos como: ISBN,matricula,data_registro,data_devolucao
 				# Vamos salvar nos buffers as infos de ISBN, matricula e data_devolucao
@@ -1912,6 +1919,11 @@ gerar_relatorio:
 				la $t2, virgula          # Carrega o endereco da virgula (',')
 				lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
     			sb $t2, 0($t1)           # Adiciona a virgula ao final
+    			
+    			# Pula a data de registro
+    			move $s1, $s7
+    			jal avancar_ate_virgula
+    			move $s7, $s1
     			
     			# E guardamos por ultimo a data de devolucao
     			la $t1, data_devolucao
@@ -1948,7 +1960,7 @@ gerar_relatorio:
 				la $s1, data_devolucao      # Carrega o endereco de autor
 				jal str_concat      # Pula para a funcao que vai concatenar os dados de autor em repo_livro
 				
-				move $s7, $t7
+				lw $s7, 0($sp) 		   # Resgata o $s7 original do $sp
 	
 				# Agora temos todas as infos que precisamos para a parte dos livros que estao emprestados
 				# Vamos descobri se esse emprestimo ativo esta atrasado
@@ -1968,25 +1980,25 @@ gerar_relatorio:
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
-				move $s5, $s0
+				move $s5, $a0
 				
 				li $a2, 2
-				addi $a1, $a1, 1
+				addi $a1, $a1, 3
 				la $a0, buffer_aux_conversao
 				jal memcpy
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
-				move $s4, $s0
+				move $s4, $a0
 				
 				li $a2, 4
-				addi $a1, $a1, 1
+				addi $a1, $a1, 3
 				la $a0, buffer_aux_conversao
 				jal memcpy
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
-				move $s3, $s0
+				move $s3, $a0
 				
 				# Agora precisamos verificar qual a data atual do sistema, se eh customizada (se o usuario definiu uma data) ou se eh a data gerada
 				la $a1, data_config_usuario
@@ -2000,24 +2012,25 @@ gerar_relatorio:
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
-				move $s2, $s0
+				move $s2, $a0
 				
 				li $a2, 2
-				addi $a1, $a1, 1
+				addi $a1, $a1, 3
 				la $a0, buffer_aux_conversao
 				jal memcpy
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
-				move $s1, $s0
+				move $s1, $a0
 				
 				li $a2, 4
-				addi $a1, $a1, 1
+				addi $a1, $a1, 3
 				la $a0, buffer_aux_conversao
 				jal memcpy
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
+				move $s0, $a0
 				
 				j calculo_atraso
 				
@@ -2027,8 +2040,9 @@ gerar_relatorio:
 				calculo_atraso:
 				# Calcula a diferenca entre as datas de devolucao e atual e guarda em $t7 a diferenca em dias
 					jal calcula_entre_datas
-					blez $t7, fim_emprestimo_ativo
+					bgez $t7, fim_emprestimo_ativo
 					
+					sub $t7, $zero, $t7
 					# Vamos trasformar o numero de dias de valor numerico para string
 					la $t6, buffer_aux_conversao		# Carrega o buffer que armazenara o valor numerico transformado em string
 					jal converter_int_para_string		# Converte o que esta em $t7 para string
@@ -2036,13 +2050,12 @@ gerar_relatorio:
 					lb $t2, 0($t2)          			# Carrega o byte do caractere da barra_n
     				sb $t2, 0($t6)           			# Adiciona a barra_n ao final
 					
-					# Agora precisamos descobri o nome do usuario que pegou emprestado
-					move $t7, $s7						# Guarda o endereço usado em $s7 em $t7, pois $s7 eh usado na funcao fazer_busca_no_repositorio
 					la $s1, repo_usuario
 					la $s3, matricula
 					jal fazer_busca_no_repositorio
 					
 					# E agora guardamos o nome do usuario no buffer
+					jal avancar_ate_virgula
 					move $s7, $s1
 					la $t1, nome
 					jal guardar_info_buffer_relatorio
@@ -2071,10 +2084,7 @@ gerar_relatorio:
 					la $s1, buffer_aux_conversao      	# Carrega o endereco de autor
 					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
 					
-					move $s7, $t7
-					
 					fim_emprestimo_ativo:
-						addi $s7, $s7, 1		# Passa um caracte de $s7, para ter certeza que vai passar do barra_n 
 						# Limpando todos os buffers usados
 						la $s1,ISBN			
 						jal clear_buffer
@@ -2097,6 +2107,9 @@ gerar_relatorio:
 						la $s1, buffer_aux_conversao			
 						jal clear_buffer
 						
+						lw $s7, 0($sp) 		   # Resgata o $s7 original do $sp
+    					addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
+						
 						j loop_encontrar_nao_devolvidos
 
 guardar_info_buffer_relatorio:
@@ -2104,20 +2117,20 @@ guardar_info_buffer_relatorio:
 	# $s7: contem a info a ser guardada
 	
 	la $t0, virgula     	# Carrega o endereco de virgula
-	lb $t0, 0($t0)      	# Carrega o byte correspondente ao caractere de virgula em ascII
+	lb $t2, 0($t0)      	# Carrega o byte correspondente ao caractere de virgula em ascII
 	
 	# Copia os caracteres ateh a virgula
 	copy_loop_relatorio:
     	lb $t0, 0($s7)           				# Carrega o proximo caractere
       	beq $t0, $t2, finalize_relatorio    	# Se for virgula, finaliza a copia
     	sb $t0, 0($t1)            				# Copia o caractere para o buffer
-    	addi $s0, $s0, 1          				# Avanca para o proximo caractere
+    	addi $s7, $s7, 1          				# Avanca para o proximo caractere
     	addi $t1, $t1, 1          				# Avanca no buffer
     	j copy_loop_relatorio
 
 	# Finaliza o buffer adicionando a virgula
 	finalize_relatorio:
-		addi $s0, $s0, 1 			# Passa da virgula
+		addi $s7, $s7, 1 			# Passa da virgula
     	jr $ra
 
 registrar_devolucao:
