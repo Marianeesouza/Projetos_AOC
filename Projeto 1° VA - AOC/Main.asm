@@ -2020,7 +2020,9 @@ copiar_ate_barra_n:
 		
 gerar_relatorio:
 	# Funcao que mostra os livros que estao emprestados e os usuarios que estao em atraso
-	# Em construcao
+	# A funcao recebe o repositorio de emprestimos no $s7 e faz um conjunto de calculos e verificacoes para
+	# determinar quais livros estao emprestados e quais usuarios estao em atraso
+	
 	la $s7, repo_emprestimo		# Carrega o repo_emprestimo em $s7
 	
 	loop_encontrar_nao_devolvidos:
@@ -2029,8 +2031,8 @@ gerar_relatorio:
 	 
 		loop_avancar_barra_n_relatorio:
 			lb $t2, 0($s7)                  				# Carrega o byte em repo_livro
-			beq $t2, $t1, fim_loop_avancar_relatorio  	# Caso $s1 seja tenha o caractere \n, o loop encerra
-			beqz $t2, fim_gerar_relatorio
+			beq $t2, $t1, fim_loop_avancar_relatorio  	# Caso $s7 esteja no caractere \n, o loop encerra e passa para verificar se o emprestimo estah ativo
+			beqz $t2, fim_gerar_relatorio					# Caso $s7 esteja no caractere nulo, o loop encerra e encerra tambem a funcao, pois chegou as final do repositorio
 			addi $s7, $s7, 1                				# Contrario avanca o caractere
 			j loop_avancar_barra_n_relatorio          	# Entra em loop
 			
@@ -2043,18 +2045,22 @@ gerar_relatorio:
 			j loop_avancar_barra_n_relatorio
 		
 		fim_gerar_relatorio:
-			# Apresenta e finaliza a funcao
-			la $t1, string_livros_emprestados
-			jal escrever_string_display
-			jal escrever_barra_n_display
+			# Apos a finalizacao da funcao, apresentamos os dados obtidos
+			la $t1, string_livros_emprestados					# Carrega a string "Livros emprestados:"
+			jal escrever_string_display						# Apresenta a string
+			jal escrever_barra_n_display						# Pula linha
 			
-			la $s7, buffer_aux_livros_emprestados
-			jal loop_escrever_livros_emprestados_display
-			jal escrever_barra_n_display
+			la $s7, buffer_aux_livros_emprestados				# Carrega o buffer que comtém os livros emprestados
+			jal loop_escrever_livros_emprestados_display		# Passa para a funcao que apresenta as informacoes formatadas
+			jal escrever_barra_n_display						# Pula linha
 			
-			la $s7, buffer_aux_usuario_atrasados
-			jal loop_escrever_usuarios_atrasados_display
-			jal escrever_barra_n_display
+			la $t1, string_usuarios_atrasados					# Carrega a string "Livros emprestados:"
+			jal escrever_string_display						# Apresenta a string
+			jal escrever_barra_n_display						# Pula linha
+			
+			la $s7, buffer_aux_usuario_atrasados				# Carrega o buffer que comtém os usuarios que estao em atraso
+			jal loop_escrever_usuarios_atrasados_display		# Passa para a funcao que apresenta as informacoes formatadas
+			jal escrever_barra_n_display						# Pula linha
 			
 			# Limpa o buffer de comando
 			la $s1, comando
@@ -2063,11 +2069,15 @@ gerar_relatorio:
 			j main
 			
 			loop_escrever_livros_emprestados_display:
+			# Funcao que formata e exibe as informacoes do livros que estao emprestados
 				addi $sp, $sp, -4
     			sw $ra, 0($sp)
 				
 				loop_escrever_relatorio_emprestados:
 					# Guarda as infos nos buffers
+					# Em $t1 eh passado o buffer no qual a informacao vai ser temporariamenete armazenada para impressao
+					# Em $s7 estah o buffer_aux_livros_emprestados que contem as infos de todos os livros que ainda estao emprestados
+					# Esses registradores sao usados na funcao guardar_info_buffer_relatorio
 					la $t1, ISBN
 					jal guardar_info_buffer_relatorio
 					
@@ -2078,22 +2088,24 @@ gerar_relatorio:
 					jal guardar_info_buffer_relatorio
 					
 					# Exibir ISBN
-    				la $t1, string_isbn
-    				jal escrever_string_display
-    				la $t1, ISBN
-    				jal escrever_string_display
-    				jal escrever_barra_vertical_display
-    
+    				la $t1, string_isbn						# Carrega a string "ISBN: "
+    				jal escrever_string_display				# Escreve no display
+    				la $t1, ISBN								# Carrega o buffer do ISBN
+    				jal escrever_string_display				# Escreve no display
+    				jal escrever_barra_vertical_display		# Escreve o caractere de "|"
+    				
+    				# Limpa o buffer do ISBN
     				la $s1, ISBN
     				jal clear_buffer
 
    					 # Exibir Título
-    				la $t1, string_livro
-    				jal escrever_string_display
-   	 				la $t1, titulo
-    				jal escrever_string_display
-    				jal escrever_barra_vertical_display
-    
+    				la $t1, string_livro						# Carrega a string "Livro: "
+    				jal escrever_string_display				# Escreve no display
+   	 				la $t1, titulo								# Carrega o buffer de titulo
+    				jal escrever_string_display				# Escreve no display
+    				jal escrever_barra_vertical_display		# Escreve o caractere de "|"
+    				
+    				# Limpa o buffer do titulo
     				la $s1, titulo
     				jal clear_buffer
 
@@ -2104,6 +2116,7 @@ gerar_relatorio:
     				jal escrever_string_display
     				jal escrever_barra_n_display
     				
+    				# Limpa o buffer da data_devolucao
     				la $s1, data_devolucao
     				jal clear_buffer
     				
@@ -2111,7 +2124,7 @@ gerar_relatorio:
     				bnez $t0, loop_escrever_relatorio_emprestados   # Continua se ainda houver dados
 					
 					lw $ra, 0($sp)         # Resgata o $ra original do $sp
-    				addi $sp, $sp, 4    # Devolve a pilha para a posicao original
+    				addi $sp, $sp, 4    	# Devolve a pilha para a posicao original
     				jr $ra
 			
 			loop_escrever_usuarios_atrasados_display:
@@ -2120,6 +2133,10 @@ gerar_relatorio:
 				
 				loop_escrever_relatorio_atrasados:
 					# Guarda as infos nos buffers
+					# Em $t1 eh passado o buffer no qual a informacao vai ser temporariamenete armazenada para impressao
+					# Em $s7 estah o buffer_aux_usuario_atrasados que contem as infos de todos os livros que ainda estao emprestados
+					# Esses registradores sao usados na funcao guardar_info_buffer_relatorio
+					
 					la $t1, matricula
 					jal guardar_info_buffer_relatorio
 					
@@ -2139,12 +2156,13 @@ gerar_relatorio:
 					jal guardar_info_buffer_relatorio
 					
 					# Exibir Matricula
-    				la $t1, string_matricula
+    				la $t1, string_matricula	
     				jal escrever_string_display
     				la $t1, matricula
     				jal escrever_string_display
     				jal escrever_barra_vertical_display
-    
+    				
+    				# Limpa o buffer da matricula
     				la $s1, matricula
     				jal clear_buffer
 					
@@ -2154,8 +2172,9 @@ gerar_relatorio:
     				la $t1, nome
     				jal escrever_string_display
     				jal escrever_barra_vertical_display
-    
-    				la $s1, ISBN
+    				
+    				# Limpa o buffer do nome
+    				la $s1, nome
     				jal clear_buffer
 					
 					# Exibir ISBN
@@ -2164,7 +2183,8 @@ gerar_relatorio:
     				la $t1, ISBN
     				jal escrever_string_display
     				jal escrever_barra_vertical_display
-    
+    				
+    				# Limpa o buffer do ISBN
     				la $s1, ISBN
     				jal clear_buffer
 
@@ -2174,7 +2194,8 @@ gerar_relatorio:
    	 				la $t1, titulo
     				jal escrever_string_display
     				jal escrever_barra_vertical_display
-    
+    				
+    				# Limpa o buffer do titulo
     				la $s1, titulo
     				jal clear_buffer
 
@@ -2185,6 +2206,7 @@ gerar_relatorio:
     				jal escrever_string_display
     				jal escrever_barra_vertical_display
     				
+    				# Limpa o buffer da data_devolucao
     				la $s1, data_devolucao
     				jal clear_buffer
     				
@@ -2194,12 +2216,13 @@ gerar_relatorio:
     				la $t1, buffer_aux_conversao
     				jal escrever_string_display
     				jal escrever_barra_n_display
-    
+    				
+    				# Limpa o buffer que guarda os dias de atraso
     				la $s1, buffer_aux_conversao
     				jal clear_buffer
     				
     				lb $t0, 0($s7)                 					# Verifica se chegamos ao fim
-    				bnez $t0, loop_escrever_relatorio_atrasados   # Continua se ainda houver dados
+    				bnez $t0, loop_escrever_relatorio_atrasados   	# Continua se ainda houver dados
 					
 					lw $ra, 0($sp)         # Resgata o $ra original do $sp
     				addi $sp, $sp, 4    # Devolve a pilha para a posicao original
@@ -2208,7 +2231,7 @@ gerar_relatorio:
 			
 			emprestimo_ativo:
 			# Ja que o emprestimo esta ativo vamos guardar as infos necessarias nos buffers
-			# Antes vamos preservar o endereco do $s7, pois ele eh usado em algumas funcoes mais pra frente
+			# Antes vamos preservar o endereco do $s7 guardando ele no stack, pois ele eh usado em algumas funcoes mais pra frente
 				addi $sp, $sp, -4
     			sw $s7, 0($sp)
     			
@@ -2231,7 +2254,7 @@ gerar_relatorio:
 				lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
     			sb $t2, 0($t1)           # Adiciona a virgula ao final
     			
-    			# Pula a data de registro
+    			# Pula a data de registro avancando ateh a proxima virgula e ignorando a da registro
     			move $s1, $s7
     			jal avancar_ate_virgula
     			move $s7, $s1
@@ -2239,20 +2262,25 @@ gerar_relatorio:
     			# E guardamos por ultimo a data de devolucao
     			la $t1, data_devolucao
 				jal guardar_info_buffer_relatorio
+				
+				# Cada uma das informacoes agora esta salva em seus respectivos buffers
+				# A data_devolucao eh a unica que nao tem um separador adicionado ao fim (diferente do ISBN, por exemplo, que colocamos uma virgula ao fim)
+				# pois esse buffer eh possivelmente usado tambem para as infos dos usuarios em atraso, e cada uma dessas ocorrencias necessita
+				# de separadores distintos.
 			
 				# Agora precisamos descobri o titulo do livro que foi emprestado
-				la $s1, repo_livro
-				la $s3, ISBN
-				jal fazer_busca_no_repositorio
+				la $s1, repo_livro						# Carregamos o repositorio de livros 
+				la $s3, ISBN							# Carregamos o ISBN que salvamos anteriormente
+				jal fazer_busca_no_repositorio		   	#Buscamos no repositorio de livros pelo ISBN salvo
 				
 				# E agora guardamos o titulo do livro no buffer
-				jal avancar_ate_virgula
-				move $s7, $s1
-				la $t1, titulo
+				jal avancar_ate_virgula				# Passamos da virgula, pois a primeira info eh o ISBN
+				move $s7, $s1							# Guarda o $s1 no registrador $s7 pois esse eh o usado para a funcao guardar_info_buffer_relatorio
+				la $t1, titulo							# Carregamos o endereco do buffer de titulo
 				jal guardar_info_buffer_relatorio
-				la $t2, virgula          # Carrega o endereco da virgula ('/n')
-				lb $t2, 0($t2)           # Carrega o byte do caractere da /n
-    			sb $t2, 0($t1)           # Adiciona a /n ao final
+				la $t2, virgula          # Carrega o endereco da virgula (',')
+				lb $t2, 0($t2)           # Carrega o byte do caractere da ','
+    			sb $t2, 0($t1)           # Adiciona a ',' ao final
     			
     			# Agora vamos guardar essas infos no buffer de livros emprestados
     			# Para isso, vamos concatenar todas as informacoes que obtivemos em uma unica string e coloca-la no buffer_aux_livros_emprestados
@@ -2267,6 +2295,7 @@ gerar_relatorio:
 				la $s1, data_devolucao      # Carrega o endereco de autor
 				jal str_concat      # Pula para a funcao que vai concatenar os dados de autor em repo_livro
 				
+				# Aqui adicionamos um /n ao final do elemento salvo no buffer, de modo que temos uma separacao clara entre os elementos
 				la $t0, barra_n
 				lb $t0, 0($t0)
 				sb $t0, 0($s0)
@@ -2274,7 +2303,7 @@ gerar_relatorio:
 				lw $s7, 0($sp) 		   # Resgata o $s7 original do $sp
 	
 				# Agora temos todas as infos que precisamos para a parte dos livros que estao emprestados
-				# Vamos descobri se esse emprestimo ativo esta atrasado
+				# Vamos descobri se esse emprestimo ativo estah atrasado
 				# Para isso vamos calcular se a data atual do sistema eh anterior ou posterior a data_devolucao
 				# e tambem vamos calcular de quantos dias eh essa diferenca
 				
@@ -2284,41 +2313,48 @@ gerar_relatorio:
 				# data final (data de devolucao) -> $s3: ano, $s4: mes, $s5: dia
 				
 				# Para pegarmos a data final, basta pegar o que estah no buffer data_devolucao e transformar em valor numerico
-				li $a2, 2
-				la $a1, data_devolucao
+				# A funcao memcpy usa os registradores $a0 (destination), $a1 (source) e $a2 (contador)
+				
+				li $a2, 2						# Define que serao copiados 2 caracteres (dia)
+				la $a1, data_devolucao			# Define data_devolucao como o buffer de origem
+				la $a0, buffer_aux_conversao	# Define buffer_aux_conversao como buffer de destino
+				jal memcpy						# Copia os dois caracteres do dia para o buffer de conversao 
+				
+				la $t2, buffer_aux_conversao		# Carrega o endereco do buffer de conversao
+				jal converter_string_para_int		# Converte a string que representa o dia para um inteiro 
+				# Por exemplo, se antes tinhamos os caracteres "02" agora temos o inteiro 2
+				move $s5, $a0	# Passa o inteiro convertido para o registrador $s5 para ser usado posteriormente na funcao de calculo de dias entre datas
+				
+				addi $a1, $a1, 3 					# Passa 3 caracteres no buffer de data_devolucao para chegar nos caracteres do mes
+				li $a2, 2							# Define que serao copiados 2 caracteres (mes)
+				la $a0, buffer_aux_conversao		# Define buffer_aux_conversao como buffer de destino
+				jal memcpy							# Copia os dois caracteres do dia para o buffer de conversao 
+				
+				la $t2, buffer_aux_conversao		# Carrega o endereco do buffer de conversao
+				jal converter_string_para_int		# Converte a string que representa o mes para um inteiro
+				move $s4, $a0						# Move o inteiro convertido do mes para $s4
+				
+				addi $a1, $a1, 3					# Passa 3 caracteres no buffer de data_devolucao para chegar nos caracteres do ano
+				li $a2, 4							# Define que serao copiados 4 caracteres	(ano)
 				la $a0, buffer_aux_conversao
 				jal memcpy
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
-				move $s5, $a0
+				move $s3, $a0						# Move o inteiro convertido do ano para $s3
 				
-				li $a2, 2
-				addi $a1, $a1, 3
-				la $a0, buffer_aux_conversao
-				jal memcpy
-				
-				la $t2, buffer_aux_conversao
-				jal converter_string_para_int
-				move $s4, $a0
-				
-				li $a2, 4
-				addi $a1, $a1, 3
-				la $a0, buffer_aux_conversao
-				jal memcpy
-				
-				la $t2, buffer_aux_conversao
-				jal converter_string_para_int
-				move $s3, $a0
-				
+				# Limpa o buffer de conversao
 				la $s1, buffer_aux_conversao
 				jal clear_buffer
 				
 				# Agora precisamos verificar qual a data atual do sistema, se eh customizada (se o usuario definiu uma data) ou se eh a data gerada
-				la $a1, data_config_usuario
+				la $a1, data_config_usuario	# Carrega o buffer que guarda a data definida pelo usuario
 				lb $t0, 0($a1)					# Carrega o primeiro byte do buffer data_config_usuario
 				beqz $t0, data_atual_gerada 	# Se for igual a zero, o buffer esta vazio e a data a ser usada eh a gerada e nao a configurada
-				# Se eh diferente de zero, a data foi configurada, entao valor pegar esses valores
+				# Se eh diferente de zero, a data foi configurada, entao deve-se resgatar o valor definido pelo usuario para a data
+				
+				# O processo a seguir pega a data configurada pelo usuario e transforma em inteiros semelhante
+				# ao processo feito anteriormente
 				li $a2, 2
 				la $a1, data_config_usuario
 				la $a0, buffer_aux_conversao
@@ -2326,16 +2362,16 @@ gerar_relatorio:
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
-				move $s2, $a0
+				move $s2, $a0						# Move o inteiro convertido do dia configurado para $s2
 				
 				li $a2, 2
 				addi $a1, $a1, 3
 				la $a0, buffer_aux_conversao
-				jal memcpy
+				jal memcpy							
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
-				move $s1, $a0
+				move $s1, $a0						# Move o inteiro convertido do mes configurado para $s1
 				
 				li $a2, 4
 				addi $a1, $a1, 3
@@ -2344,34 +2380,43 @@ gerar_relatorio:
 				
 				la $t2, buffer_aux_conversao
 				jal converter_string_para_int
-				move $s0, $a0
+				move $s0, $a0						# Move o inteiro convertido do ano configurado para $s0
 				
+				# Limpa o buffer de conversao
 				la $s1, buffer_aux_conversao
 				jal clear_buffer
 				
+				# Passa para o calculo dos dias entre as duas datas registradas
 				j calculo_atraso
 				
 				data_atual_gerada:
+					# Caso a data do sistema nao tenha sido configurada pelo usuario, geramos a data atual
+					# utilizando o syscall 30
+					# Essa funcao ja coloca o dia, mes e ano nos registradores esperados para serem usados na funcao de calculo
+					# de dias entre duas datas
+					# $s0 = ano | $s1 = mes | $s2 = dia
 					jal gerar_data_atual
 				
 				calculo_atraso:
 				# Calcula a diferenca entre as datas de devolucao e atual e guarda em $t7 a diferenca em dias
-					jal calcula_entre_datas
-					bgez $t7, fim_emprestimo_ativo
+					jal calcula_entre_datas				# Chama a funcao que de fato calcula os dias entre as datas
+					bgez $t7, fim_emprestimo_ativo		#Se $t7 for maior ou igual a zero, o usuario ainda nao esta em atraso
+					# pois significa que a data de devolucao eh posterior a data atual
 					
-					sub $t7, $zero, $t7
+					sub $t7, $zero, $t7			# No momento, $t7 carrega um valor negativo, entao transformamos em um valor positivo ao subtrair com zero
 					# Vamos trasformar o numero de dias de valor numerico para string
 					la $t6, buffer_aux_conversao		# Carrega o buffer que armazenarah o valor numerico transformado em string
 					jal converter_int_para_string		# Converte o que esta em $t7 para string
 					
+					# Busca no repositorio de usuario o nome do usuario que esta em atraso
 					la $s1, repo_usuario
 					la $s3, matricula
 					jal fazer_busca_no_repositorio
 					
 					# E agora guardamos o nome do usuario no buffer
-					jal avancar_ate_virgula
-					move $s7, $s1
-					la $t1, nome
+					jal avancar_ate_virgula				# Passa da matricula que eh a primeira informacao guardada do usuario
+					move $s7, $s1							# Passa para $s7 o endereco salvo em $s1
+					la $t1, nome							# Carrega o endereco do buffer de nome
 					jal guardar_info_buffer_relatorio
 					la $t2, virgula          # Carrega o endereco da virgula 
 					lb $t2, 0($t2)           # Carrega o byte do caractere da ,
@@ -2392,16 +2437,18 @@ gerar_relatorio:
 					la $s1, titulo					# Carrega o endereco de titulo
 					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
 	
-					la $s1, data_devolucao      	# Carrega o endereco de autor
+					la $s1, data_devolucao      	# Carrega o endereco de data_devolucao
 					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
 					
+					# Adiciona o separador de virgula apos a data_devolucao ser adicionada
 					la $t0, virgula
 					lb $t0, 0($t0)
 					sb $t0, 0($s0)
 					
-					la $s1, buffer_aux_conversao      	# Carrega o endereco de autor
+					la $s1, buffer_aux_conversao      	# Carrega o endereco do buffer que guarda os dias de atraso
 					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
 					
+					# Adiciona o separador de /n ao fim dos dias de atraso
 					la $t2, barra_n          			# Carrega o endereco da barra_n 
 					lb $t2, 0($t2)          			# Carrega o byte do caractere da barra_n
     				sb $t2, 0($s1)           			# Adiciona a barra_n ao final
@@ -2433,7 +2480,7 @@ gerar_relatorio:
 						addi $s7, $s7, 2       # Avanca 2 bytes para ir para a proxima linha
     					addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
 						
-						j loop_encontrar_nao_devolvidos
+						j loop_encontrar_nao_devolvidos  # Continua procurando por emprestimos ativos
 
 guardar_info_buffer_relatorio:
 	# $t1: contem qual o buffer a ser usado
@@ -2442,15 +2489,15 @@ guardar_info_buffer_relatorio:
 	la $t0, virgula     	# Carrega o endereco de virgula
 	lb $t2, 0($t0)      	# Carrega o byte correspondente ao caractere de virgula em ascII
 	
-	la $t0, barra_n
-	lb $t3, 0($t0)
+	la $t0, barra_n			# Carrega o endereco barra_n
+	lb $t3, 0($t0)			# Carrega o byte correspondente ao caractere de barra_n em ascII
 	
 	# Copia os caracteres ateh a virgula
 	copy_loop_relatorio:
     	lb $t0, 0($s7)           				# Carrega o proximo caractere
       	beq $t0, $t2, finalize_relatorio    	# Se for virgula, finaliza a copia
       	beq $t0, $t3, finalize_relatorio		# Se for barra_n, finaliza a copia
-      	beqz $t0, finalize_relatorio
+      	beqz $t0, finalize_relatorio			# Se achar um byte nulo, finaliza a copia
     	sb $t0, 0($t1)            				# Copia o caractere para o buffer
     	addi $s7, $s7, 1          				# Avanca para o proximo caractere
     	addi $t1, $t1, 1          				# Avanca no buffer
@@ -2458,7 +2505,7 @@ guardar_info_buffer_relatorio:
 
 	# Finaliza o buffer adicionando a virgula
 	finalize_relatorio:
-		sb $zero, 0($t1)
+		sb $zero, 0($t1)			# Adiciona um byte nulo ao fim do buffer que guarda a copia
 		addi $s7, $s7, 1 			# Passa da virgula
     	jr $ra
 
@@ -3839,25 +3886,28 @@ calcula_entre_datas:
 	addi $sp, $sp, -4
   	sw $ra, 0($sp)
    	
+   	# Move para registradores temporarios os valores do ano, mes e dia atual respectivamente
     move $t0, $s0
     move $t1, $s1
     move $t2, $s2
-    jal calcula_dias_de_data
+    
+    jal calcula_dias_de_data 		# Calcula os dias que se passaram entre a data passada e 01/01/1970
     
     # Resgata a quantidade de dias adicionada no acumulador
     la $t6, acumulador
     lw $s6, 0($t6)		# Guarda a quantidade de dias calculado em $s6
    	sw $zero, 0($t6)	# Zera o conteúdo do acumulador
-    		
+   	
+   	# Move para registradores temporarios os valores do ano, mes e dia final respectivamente
     move $t0, $s3
     move $t1, $s4
     move $t2, $s5
-    jal calcula_dias_de_data
+    jal calcula_dias_de_data		# Calcula os dias que se passaram entre a data passada e 01/01/1970
    		
     # Calcula a diferença em dias das duas datas
-    la $t6, acumulador
-   	lw $t7, 0($t6)		# Pega a quantidade de dias que estava em $t7
-    subu $t7, $t7, $s6
+    la $t6, acumulador		# Carrega o endereco do acumulador
+   	lw $t7, 0($t6)			# Pega a quantidade de dias que estava em $t7
+    subu $t7, $t7, $s6		# Faz a subtracao da (quantidade de dias passados ate a data final) - (quantidade de dias passados ate a data inicial)
     sw $t7, 0($t6)
     
     lw $ra, 0($sp)         # Resgata o $ra original do $sp
@@ -3881,17 +3931,17 @@ calcula_entre_datas:
     				li $t5, 365				# Considera 365 a quantidade padrao de dias
     				li $t6, 4 				# Para fazer a divisao para calcular se o ano é bissexto
     				remu $t7, $t4, $t6  			# Armazena o resto da divisao de $s0 com $t2 como unsigned
-    				beqz $t7, ano_bissexto_dias_anos_completos
+    				beqz $t7, ano_bissexto_dias_anos_completos		# $t7 eh divisivel por 4, o ano eh bissexto
     				
     				# Adiciona a quantidade de dias no acumulador
-    				la $t6, acumulador
-    				lw $t7, 0($t6)
-    				add $t7, $t7, $t5
-    				sw $t7, 0($t6)
-    				j loop_quantos_dias_anos_completos
+    				la $t6, acumulador						# Carrega endereco do acumulador
+    				lw $t7, 0($t6)							# Carrega o que esta no acumulador
+    				add $t7, $t7, $t5						# Soma o que jah existe no acumulador com a quantidade de dias adicional
+    				sw $t7, 0($t6)							# Guarda a soma no acumulador
+    				j loop_quantos_dias_anos_completos	# Volta para o loop
     				
     				ano_bissexto_dias_anos_completos:
-    					li $t5, 366	# Anos bissextos tem 366 dias
+    					li $t5, 366		# Se o ano for bissexto a quantidade de dias acumulados eh 366
     					# Adiciona a quantidade de dias no acumulador
     					la $t6, acumulador
     					lw $t7, 0($t6)
@@ -3906,7 +3956,7 @@ calcula_entre_datas:
     				loop_meses_ano_atual:
     				# Calcula quantos dias de passaram nos meses anteriores ao atual
     				subi $t4, $t4, 1					# Usa $t4 como uma contagem regressiva, do mes atual ate 0
-    				beqz $t4, dias_mes_atual
+    				beqz $t4, dias_mes_atual			# Se chegar em 0, nao ha mais meses para analisar
     				li $t5, 30						# Considera 30 a quantidade padrao de dias
     				beq $t4, 1, mes_com_31_dias_mes_atual   		# Se o mes em $t4 for 1, pula para a funcao que ajusta pra 31 dias       
     				beq $t4, 2, verificar_dias_fevereiro_mes_atual		# Se o mes em $t4 for 2, pula para a funcao que verifica a quantidade de dias
@@ -3917,6 +3967,7 @@ calcula_entre_datas:
     				beq $t4, 10, mes_com_31_dias_mes_atual  		# Se o mes em $t4 for 10, pula para a funcao que ajusta pra 31 dias
     				beq $t4, 12, mes_com_31_dias_mes_atual			# Se o mes em $t4 for 12, pula para a funcao que ajusta pra 31 dias
     				
+    				# Acumula 30 dias no acumulador
     				la $t6, acumulador
     				lw $t7, 0($t6)
     				add $t7, $t7, $t5
@@ -3924,7 +3975,8 @@ calcula_entre_datas:
     				j loop_meses_ano_atual
     			
 				mes_com_31_dias_mes_atual:
-					addi $t5, $t5, 1
+					addi $t5, $t5, 1		# Guarda 31 no $t5
+					# Acumula 31 dias no acumulador
 					la $t6, acumulador
     				lw $t7, 0($t6)
     				add $t7, $t7, $t5
@@ -3932,10 +3984,12 @@ calcula_entre_datas:
     				j loop_meses_ano_atual
 				
 				verificar_dias_fevereiro_mes_atual:
-					li $t7, 4 
+						# Verifica se o ano eh bissexto
+						li $t7, 4 
     					remu $t6, $t0, $t2   				# Armazena o resto da divisao de $s0 com $t2 como unsigned
     					beqz $t6, mes_com_29_dias_mes_atual  		# Se resto de $t3 for 0, significa que o ano eh bissexto 
     					subi $t5, $t5, 2  				# Se o ano nao eh bissexto ajusta a qtd de dias para 28
+    					# Acumula 28 dias no acumulador
     					la $t6, acumulador
     					lw $t7, 0($t6)
     					add $t7, $t7, $t5
@@ -3943,7 +3997,8 @@ calcula_entre_datas:
     					j loop_meses_ano_atual
     				
     				mes_com_29_dias_mes_atual:
-    					subi $t5, $t5, 1  				# Se o ano nao eh bissexto ajusta a qtd de dias para 28
+    					subi $t5, $t5, 1  				# Se o ano eh bissexto ajusta a qtd de dias para 29
+    					# Acumula 29 dias no acumulador
     					la $t6, acumulador
     					lw $t7, 0($t6)
     					add $t7, $t7, $t5
