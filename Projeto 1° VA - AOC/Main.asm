@@ -4,6 +4,14 @@
 #         Mariane Elisa dos Santos Souza
 #         Samuel Roberto de Carvalho Bezerra
 
+# O presente arquivo descreve o codigo do sistema de uma biblioteca e apresenta funcionalidades como:
+# Criacao, remocao e visualizacao de livros; criacao, remocao e visualizacao de usuarios; criacao, atualizacao e visualizacao de emprestimos;
+# sistema de data e hora utilizando syscall 30; sistema de data e hora personalizado; salvamento de dados em arquivos; e geracao de relatorios
+# de emprestimos.
+
+# Para que a funcionalidade do salvamento de dados funcione plenamente, eh necessario que sejam previamente criados os arquivos txt com os nomes
+# descritos a seguir: repo_livros (para o repositorio de livros), repo_usuarios (para o repositorio de usuarios), repo_emprestimos (para o repositorio de emprestimos).
+
 .data
 
 	# Constantes
@@ -2655,7 +2663,7 @@ buscar_emprestimo:
     
 verificar_flag_t9:
 	beq $t9, 1, fim_busca_emprestimo   # se $a3 for igual a 1, signigica que estamos fazendo uma busca dentro de registrar_empresitmo
-	beqz $t9, escrever_emprestimo_nao_encontrado_display # se for igual a 0, nós imprimos a mensagem 
+	beqz $t9, escrever_emprestimo_nao_encontrado_display # se for igual a 0, nï¿½s imprimos a mensagem 
 
 fazer_devolucao:
     addi $sp, $sp, -4
