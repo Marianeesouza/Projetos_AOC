@@ -124,6 +124,7 @@
 	msgE_livro_ja_cadastrado:                .asciiz " o isbn fornecido ja esta associada a um outro livro no acervo" 
 	msgE_usuario_ja_cadastrado:              .asciiz " a matricula fornecida ja esta associada a um outro usuario"
 	msgE_emprestimo_nao_encontrado:          .asciiz "Nao existe nenhum emprestimo associado ao usuaro fornecido"
+	msgE_usuario_ja_possui_emprestimo_livro: .asciiz " o usuario indicado ja possui um emprestimo pendente do livro associado ao iSBN fornecido."
 	
 	# strings auxiliares para impressoes
 	string_data:     .asciiz "Data: "
@@ -1479,6 +1480,11 @@ registrar_emprestimo:
 	
 	## Verificacoes nos repositorios
 	
+	# Verifica se o usuario ja possui um emprestimo pendente do livro associado ao Isbn fornecido
+	li $t9, 1     # inicializa $t9 com 1 (flag para que a funcao indentifique que estamos fazendo uma busca em registrar_emprestimo)
+	jal buscar_emprestimo
+	beq $v1, 1, escrever_usuario_ja_possui_emprestimo_livro_display   
+	
 	# Verifica se matricula fornecida esta associada a um usuario cadastrado
 	la $s1, repo_usuario              # Carrega o endereco de repo_usuario
 	la $s3, matricula                 # Carrega o endereco de matricula
@@ -1548,7 +1554,7 @@ registrar_emprestimo:
 	
 	la $t1, msgC_emprestimo_realizado  # Carrega o endereco de msgC_emprestimo_realizado
 	j escrever_com_sucesso_display
-	
+
 recuperar_endereco_s0:
 	move $s0, $s3   # copia o endereco de $s3 pra $s0
 	subi $s0, $s0, 1
@@ -2541,6 +2547,7 @@ registrar_devolucao:
     sb $t2, 0($t1)              # Adiciona virgula ao final da matricula
 
 	## Agora verificamos se o emprestimo com a matricula e ISBN fornecidos existe 
+	li $t9, 0   # inicializamos $t9 com 0 (flag para indicar que estamos fazendo uma busca por meio da funcao registrar_devolucao)
 	jal buscar_emprestimo
 	
 	# Se existir, vamos para a funcao que atualiza o status para devolvido
@@ -2586,9 +2593,9 @@ buscar_emprestimo:
   	la $s0, repo_emprestimo # inicializa s1 com endereco do repo_emprestimo para comparacoes
   	
   	loop_busca_matricula:     # busca primeiro por matricula
-  		# verifica se esta no final de repo_livro
+  		# Verifica se esta no final de repo_emprestimo
   		lb $t0, 0($s0)
-  		beqz $t0, escrever_emprestimo_nao_encontrado_display
+  		beqz $t0, verificar_flag_t9
   		
   		# Verifica se matricula foi encontrada
   		la $s1, matricula            # Carrega t0 com o buffer matricula
@@ -2609,17 +2616,34 @@ buscar_emprestimo:
   			move $s0, $s1            # atualiza $s0 com o novo endereco de $s1 obtido pela chamada da funcao acima
   			
   			# Verifica se isbn foi encontrado
-  			la $s1, ISBN 	                   # Carrega o endereco de isbn em t0
-  			move $s2, $s6 	                   # Carrega o tamanho de isbn em t5
-  			jal comparar_strings               # Compara se a matricula dessa linha e o procurada
-  			beq $v0, 1, fim_busca_emprestimo   # Se v0 eh igual 1 o emprestimo foi encotrado
+  			la $s1, ISBN 	                   		   # Carrega o endereco de isbn em t0
+  			move $s2, $s6 	                   		   # Carrega o tamanho de isbn em t5
+  			jal comparar_strings               		   # Compara se a matricula dessa linha e o procurada
+  			beq $v0, 1, verificar_flag_foi_devolvido   # Se v0 eh igual 1 o emprestimo foi encotrado
   			
   			# Caso nao seja pula para a proxima linha
   			move $s1, $s0            # copia o endereco de $s0 em $s1 
   			jal avancar_ate_barra_n
-  			addi $s1, $s1, 1         # avanca para a proxima linha do registro
-  			move $s0, $s1            # atualiza $s0 com o novo endereco de $s1 obtido pela chamada da funcao acima
-  			j loop_busca_matricula   # recomeca o loop
+  			addi $s1, $s1, 1         # Avanca para a proxima linha do registro
+  			move $s0, $s1            # Atualiza $s0 com o novo endereco de $s1 obtido pela chamada da funcao acima
+  			j loop_busca_matricula   # Recomeca o loop
+  			
+  			verificar_flag_foi_devolvido:
+  				li $v1, 0                  # Inicializa $v1 com 0 (flag para indicar que o emprestimo nao foi encontrado)
+  				move $s1, $s0              # copia o endereco de $s0 em $s1
+  				addi $s1, $s1, 1           # Avanca mais um byte (por conta da virgula depois do isbn) 
+  				jal avancar_ate_virgula    # Avanca os bytes de data_registro
+  				jal avancar_ate_virgula    # Avanca os bytes de data_devolucao
+  				lb $a3, 0($s1)             # Carrega o byte da flag
+  				beq $a3, 48, atualizar_flag_v1
+  				
+  				# Caso nao seja pula para a proxima linha
+  				addi $s1, $s1, 1         # Avanca para a proxima linha do registro
+  				move $s0, $s1            # Atualiza $s0 com o novo endereco de $s1 obtido pela chamada da funcao acima
+  				j loop_busca_matricula   # Recomeca o loop
+  			
+  			atualizar_flag_v1:
+				li $v1, 1     # Atualiza a flag de $v1
   			
 	fim_busca_emprestimo:
 	move $s1, $s0  # copia o endereco de $s0 em $s1 (reg a qual iremos usar a partir desse ponto)
@@ -2628,6 +2652,10 @@ buscar_emprestimo:
     lw $ra, 0($sp) 		   # Resgata o $ra original do $sp
     addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
     jr $ra
+    
+verificar_flag_t9:
+	beq $t9, 1, fim_busca_emprestimo   # se $a3 for igual a 1, signigica que estamos fazendo uma busca dentro de registrar_empresitmo
+	beqz $t9, escrever_emprestimo_nao_encontrado_display # se for igual a 0, nós imprimos a mensagem 
 
 fazer_devolucao:
     addi $sp, $sp, -4
@@ -3753,6 +3781,14 @@ escrever_usuario_ja_cadastrado_display:
 	jal escrever_string_display
 	jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
 	j main
+	
+escrever_usuario_ja_possui_emprestimo_livro_display:
+	la $t1, msgE_operacao_cadastro_invalida    # Carrega o endereco de operacao_cadastro_invalida
+	jal escrever_string_display                # Pula para a funcao generica que ira imprimir a string armazenada em $t1
+	la $t1, msgE_usuario_ja_possui_emprestimo_livro         # Carrega o endereco de usuario_ja_cadastrado 
+	jal escrever_string_display
+	jal escrever_barra_n_display    # Pula para a funcao que ira imprimir uma quebra de linha no display
+	j main	
 	
 escrever_data_invalida_display_display:
     la $t1, msgE_data_invalida       # Carrega o endereco de msgE_data_invalida
