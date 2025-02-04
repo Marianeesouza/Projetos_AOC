@@ -31,6 +31,7 @@
 	dois_pontos:    .byte 58      # Valor em ASCII do caractere de dois pontos (':')
     barra:          .byte 47      # Valor em ASCII do caractere de barra ('/')
 	backspace:      .byte 8       # Valor em ASCII do caractere de backspace (botao de apagar)
+	barra_vertical: .byte 124		# Valor em ASCII do caractere de barra vertical ('|')
 	
 	# Livro:
 	titulo:  	      		   .space 35     # Espaco reservado para o titulo do livro
@@ -127,6 +128,19 @@
 	# strings auxiliares para impressoes
 	string_data:     .asciiz "Data: "
     string_hora:     .asciiz "Hora: "
+    string_livros_emprestados: .asciiz "Livros emprestados:"
+    string_usuarios_atrasados: .asciiz "Usuarios em atraso:"
+    string_isbn:           .asciiz "ISBN: "
+	string_autor:          .asciiz "Autor: "
+	string_livro:          .asciiz "Livro: "
+	string_qtd:            .asciiz "Qtd: "
+	string_qtd_disponivel: .asciiz "Qtd Disponível: "
+	string_qtd_emprestada: .asciiz "Qtd Indisponível: "
+	string_nome:			.asciiz "Nome: "
+	string_matricula:		.asciiz "Matricula: "
+	string_dias_atraso: 	.asciiz "Dias de atraso: "
+	string_data_devolucao: .asciiz "Data de Devolucao: "
+    
 .text
 .globl main
 
@@ -266,6 +280,24 @@ escrever_barra_n_display:
     addi $sp, $sp, 4		   # Devolve a pilha para a posicao original
 
     la $t1, barra_n            # Carrega o endereco de barra_n
+    lb $t1, 0($t1)             # Carrega o valor de barra_n diretamente em $t1
+
+    li $t0, display_buffer         # Endereco do Transmitter data do display
+    sw $t1, 0($t0)             # Escreve o caractere \n no display
+
+    jr $ra
+    
+escrever_barra_vertical_display:
+    # Aloca espaco no $sp para salvar o endereco de $ra
+    addi $sp, $sp, -4
+    sw $ra, 0($sp)
+    
+    jal esperar_display_carregar   
+    
+    lw $ra, 0($sp) 			   # Resgata o $ra original do $sp
+    addi $sp, $sp, 4		   # Devolve a pilha para a posicao original
+
+    la $t1, barra_vertical            # Carrega o endereco de barra_n
     lb $t1, 0($t1)             # Carrega o valor de barra_n diretamente em $t1
 
     li $t0, display_buffer         # Endereco do Transmitter data do display
@@ -1883,18 +1915,168 @@ gerar_relatorio:
 		
 		fim_gerar_relatorio:
 			# Apresenta e finaliza a funcao
-			la $t1, buffer_aux_livros_emprestados
+			la $t1, string_livros_emprestados
 			jal escrever_string_display
+			jal escrever_barra_n_display
 			
-			la $t1, buffer_aux_usuario_atrasados
-			jal escrever_string_display
+			la $s7, buffer_aux_livros_emprestados
+			jal loop_escrever_livros_emprestados_display
+			jal escrever_barra_n_display
+			
+			la $s7, buffer_aux_usuario_atrasados
+			jal loop_escrever_usuarios_atrasados_display
+			jal escrever_barra_n_display
 			
 			# Limpa o buffer de comando
 			la $s1, comando
 			jal clear_buffer
 		
 			j main
-		
+			
+			loop_escrever_livros_emprestados_display:
+				addi $sp, $sp, -4
+    			sw $ra, 0($sp)
+				
+				loop_escrever_relatorio_emprestados:
+					# Guarda as infos nos buffers
+					la $t1, ISBN
+					jal guardar_info_buffer_relatorio
+					
+					la $t1, titulo
+					jal guardar_info_buffer_relatorio
+    				
+    				la $t1, data_devolucao
+					jal guardar_info_buffer_relatorio
+					
+					# Exibir ISBN
+    				la $t1, string_isbn
+    				jal escrever_string_display
+    				la $t1, ISBN
+    				jal escrever_string_display
+    				jal escrever_barra_vertical_display
+    
+    				la $s1, ISBN
+    				jal clear_buffer
+
+   					 # Exibir Título
+    				la $t1, string_livro
+    				jal escrever_string_display
+   	 				la $t1, titulo
+    				jal escrever_string_display
+    				jal escrever_barra_vertical_display
+    
+    				la $s1, titulo
+    				jal clear_buffer
+
+    				# Exibir Data de Devolucao
+    				la $t1, string_data_devolucao
+    				jal escrever_string_display
+    				la $t1, data_devolucao
+    				jal escrever_string_display
+    				jal escrever_barra_n_display
+    				
+    				la $s1, data_devolucao
+    				jal clear_buffer
+    				
+    				lb $t0, 0($s7)                 					# Verifica se chegamos ao fim
+    				bnez $t0, loop_escrever_relatorio_emprestados   # Continua se ainda houver dados
+					
+					lw $ra, 0($sp)         # Resgata o $ra original do $sp
+    				addi $sp, $sp, 4    # Devolve a pilha para a posicao original
+    				jr $ra
+			
+			loop_escrever_usuarios_atrasados_display:
+				addi $sp, $sp, -4
+    			sw $ra, 0($sp)
+				
+				loop_escrever_relatorio_atrasados:
+					# Guarda as infos nos buffers
+					la $t1, matricula
+					jal guardar_info_buffer_relatorio
+					
+					la $t1, nome
+					jal guardar_info_buffer_relatorio
+					
+					la $t1, ISBN
+					jal guardar_info_buffer_relatorio
+					
+					la $t1, titulo
+					jal guardar_info_buffer_relatorio
+    				
+    				la $t1, data_devolucao
+					jal guardar_info_buffer_relatorio
+					
+					la $t1, buffer_aux_conversao
+					jal guardar_info_buffer_relatorio
+					
+					# Exibir Matricula
+    				la $t1, string_matricula
+    				jal escrever_string_display
+    				la $t1, matricula
+    				jal escrever_string_display
+    				jal escrever_barra_vertical_display
+    
+    				la $s1, matricula
+    				jal clear_buffer
+					
+					# Exibir Nome
+    				la $t1, string_nome
+    				jal escrever_string_display
+    				la $t1, nome
+    				jal escrever_string_display
+    				jal escrever_barra_vertical_display
+    
+    				la $s1, ISBN
+    				jal clear_buffer
+					
+					# Exibir ISBN
+    				la $t1, string_isbn
+    				jal escrever_string_display
+    				la $t1, ISBN
+    				jal escrever_string_display
+    				jal escrever_barra_vertical_display
+    
+    				la $s1, ISBN
+    				jal clear_buffer
+
+   					 # Exibir Título
+    				la $t1, string_livro
+    				jal escrever_string_display
+   	 				la $t1, titulo
+    				jal escrever_string_display
+    				jal escrever_barra_vertical_display
+    
+    				la $s1, titulo
+    				jal clear_buffer
+
+    				# Exibir Data de Devolucao
+    				la $t1, string_data_devolucao
+    				jal escrever_string_display
+    				la $t1, data_devolucao
+    				jal escrever_string_display
+    				jal escrever_barra_vertical_display
+    				
+    				la $s1, data_devolucao
+    				jal clear_buffer
+    				
+    				# Exibir Dias de atraso
+    				la $t1, string_dias_atraso
+    				jal escrever_string_display
+    				la $t1, buffer_aux_conversao
+    				jal escrever_string_display
+    				jal escrever_barra_n_display
+    
+    				la $s1, buffer_aux_conversao
+    				jal clear_buffer
+    				
+    				lb $t0, 0($s7)                 					# Verifica se chegamos ao fim
+    				bnez $t0, loop_escrever_relatorio_atrasados   # Continua se ainda houver dados
+					
+					lw $ra, 0($sp)         # Resgata o $ra original do $sp
+    				addi $sp, $sp, 4    # Devolve a pilha para a posicao original
+    				jr $ra
+			
+			
 			emprestimo_ativo:
 			# Ja que o emprestimo esta ativo vamos guardar as infos necessarias nos buffers
 			# Antes vamos preservar o endereco do $s7, pois ele eh usado em algumas funcoes mais pra frente
@@ -1928,12 +2110,8 @@ gerar_relatorio:
     			# E guardamos por ultimo a data de devolucao
     			la $t1, data_devolucao
 				jal guardar_info_buffer_relatorio
-				la $t2, virgula          # Carrega o endereco da virgula (',')
-				lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
-    			sb $t2, 0($t1)           # Adiciona a virgula ao final
 			
 				# Agora precisamos descobri o titulo do livro que foi emprestado
-				move $t7, $s7						# Guarda o endereço usado em $s7 em $t7, pois $s7 eh usado na funcao fazer_busca_no_repositorio
 				la $s1, repo_livro
 				la $s3, ISBN
 				jal fazer_busca_no_repositorio
@@ -1943,7 +2121,7 @@ gerar_relatorio:
 				move $s7, $s1
 				la $t1, titulo
 				jal guardar_info_buffer_relatorio
-				la $t2, barra_n          # Carrega o endereco da virgula ('/n')
+				la $t2, virgula          # Carrega o endereco da virgula ('/n')
 				lb $t2, 0($t2)           # Carrega o byte do caractere da /n
     			sb $t2, 0($t1)           # Adiciona a /n ao final
     			
@@ -1959,6 +2137,10 @@ gerar_relatorio:
 	
 				la $s1, data_devolucao      # Carrega o endereco de autor
 				jal str_concat      # Pula para a funcao que vai concatenar os dados de autor em repo_livro
+				
+				la $t0, barra_n
+				lb $t0, 0($t0)
+				sb $t0, 0($s0)
 				
 				lw $s7, 0($sp) 		   # Resgata o $s7 original do $sp
 	
@@ -2000,6 +2182,9 @@ gerar_relatorio:
 				jal converter_string_para_int
 				move $s3, $a0
 				
+				la $s1, buffer_aux_conversao
+				jal clear_buffer
+				
 				# Agora precisamos verificar qual a data atual do sistema, se eh customizada (se o usuario definiu uma data) ou se eh a data gerada
 				la $a1, data_config_usuario
 				lb $t0, 0($a1)					# Carrega o primeiro byte do buffer data_config_usuario
@@ -2032,6 +2217,9 @@ gerar_relatorio:
 				jal converter_string_para_int
 				move $s0, $a0
 				
+				la $s1, buffer_aux_conversao
+				jal clear_buffer
+				
 				j calculo_atraso
 				
 				data_atual_gerada:
@@ -2044,11 +2232,8 @@ gerar_relatorio:
 					
 					sub $t7, $zero, $t7
 					# Vamos trasformar o numero de dias de valor numerico para string
-					la $t6, buffer_aux_conversao		# Carrega o buffer que armazenara o valor numerico transformado em string
+					la $t6, buffer_aux_conversao		# Carrega o buffer que armazenarah o valor numerico transformado em string
 					jal converter_int_para_string		# Converte o que esta em $t7 para string
-					la $t2, barra_n          			# Carrega o endereco da barra_n 
-					lb $t2, 0($t2)          			# Carrega o byte do caractere da barra_n
-    				sb $t2, 0($t6)           			# Adiciona a barra_n ao final
 					
 					la $s1, repo_usuario
 					la $s3, matricula
@@ -2081,8 +2266,16 @@ gerar_relatorio:
 					la $s1, data_devolucao      	# Carrega o endereco de autor
 					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
 					
+					la $t0, virgula
+					lb $t0, 0($t0)
+					sb $t0, 0($s0)
+					
 					la $s1, buffer_aux_conversao      	# Carrega o endereco de autor
 					jal str_concat      			# Pula para a funcao que vai concatenar os dados no buffer
+					
+					la $t2, barra_n          			# Carrega o endereco da barra_n 
+					lb $t2, 0($t2)          			# Carrega o byte do caractere da barra_n
+    				sb $t2, 0($s1)           			# Adiciona a barra_n ao final
 					
 					fim_emprestimo_ativo:
 						# Limpando todos os buffers usados
@@ -2120,10 +2313,15 @@ guardar_info_buffer_relatorio:
 	la $t0, virgula     	# Carrega o endereco de virgula
 	lb $t2, 0($t0)      	# Carrega o byte correspondente ao caractere de virgula em ascII
 	
+	la $t0, barra_n
+	lb $t3, 0($t0)
+	
 	# Copia os caracteres ateh a virgula
 	copy_loop_relatorio:
     	lb $t0, 0($s7)           				# Carrega o proximo caractere
       	beq $t0, $t2, finalize_relatorio    	# Se for virgula, finaliza a copia
+      	beq $t0, $t3, finalize_relatorio		# Se for barra_n, finaliza a copia
+      	beqz $t0, finalize_relatorio
     	sb $t0, 0($t1)            				# Copia o caractere para o buffer
     	addi $s7, $s7, 1          				# Avanca para o proximo caractere
     	addi $t1, $t1, 1          				# Avanca no buffer
@@ -2131,6 +2329,7 @@ guardar_info_buffer_relatorio:
 
 	# Finaliza o buffer adicionando a virgula
 	finalize_relatorio:
+		sb $zero, 0($t1)
 		addi $s7, $s7, 1 			# Passa da virgula
     	jr $ra
 
