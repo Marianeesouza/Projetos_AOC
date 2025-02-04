@@ -1386,11 +1386,12 @@ listar_usuarios:
 loop_listar_usuarios:
     # Guarda as informacoes nos buffers temporarios
     move $s7, $s1  # Salva o endereco atual de $s1 para restaurar depois
-    la $t1, nome
-    jal guardar_info_buffer_relatorio  # Armazena o nome no buffer
     
     la $t1, matricula
     jal guardar_info_buffer_relatorio  # Armazena a matricula no buffer
+    
+    la $t1, nome
+    jal guardar_info_buffer_relatorio  # Armazena o nome no buffer
     
     la $t1, curso
     jal guardar_info_buffer_relatorio  # Armazena o curso no buffer
@@ -2465,7 +2466,7 @@ gerar_relatorio:
 					# Adiciona o separador de /n ao fim dos dias de atraso
 					la $t2, barra_n          			# Carrega o endereco da barra_n 
 					lb $t2, 0($t2)          			# Carrega o byte do caractere da barra_n
-    				sb $t2, 0($s1)           			# Adiciona a barra_n ao final
+    				sb $t2, 0($s0)           			# Adiciona a barra_n ao final
 					
 					fim_emprestimo_ativo:
 						# Limpando todos os buffers usados
