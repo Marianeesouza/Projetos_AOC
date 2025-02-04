@@ -1877,7 +1877,7 @@ gerar_relatorio:
 			subi $s7, $s7, 1								# Volta um caracter para analisar a flag de emprestimo
 			lb $t2, 0($s7)									# Carrega a flag
 			beq $t2, 48	, emprestimo_ativo					# Se a flag eh 0, o emprestimo esta ativo
-			# Se nao for 0, o emprestimo esta finalizado e podemos continuar a busc	a 
+			# Se nao for 0, o emprestimo esta finalizado e podemos continuar a busca 
 			addi $s7, $s7, 2								# Passa dois caracteres para passar do "/n"
 			j loop_avancar_barra_n_relatorio
 		
@@ -1897,7 +1897,7 @@ gerar_relatorio:
 		
 			emprestimo_ativo:
 			# Ja que o emprestimo esta ativo vamos guardar as infos necessarias nos buffers
-			# Antes vamos preservar o endereço do $s7, pois ele é usado em algumas funcoes mais pra frente
+			# Antes vamos preservar o endereco do $s7, pois ele eh usado em algumas funcoes mais pra frente
 				addi $sp, $sp, -4
     			sw $s7, 0($sp)
     			
@@ -1906,15 +1906,15 @@ gerar_relatorio:
 				# Os emprestimos sao salvos como: ISBN,matricula,data_registro,data_devolucao
 				# Vamos salvar nos buffers as infos de ISBN, matricula e data_devolucao
 				
-				# Primeiro vamos salvar o ISBN do livro que foi emprestado
-				la $t1, ISBN
+				# Primeiro vamos salvar a matricula do usuario que realizou o emprestimo
+    			la $t1, matricula
 				jal guardar_info_buffer_relatorio
 				la $t2, virgula          # Carrega o endereco da virgula (',')
 				lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
     			sb $t2, 0($t1)           # Adiciona a virgula ao final
-    			
-    			# Guardamos agora a matricula do usuario que realizou o emprestimo
-    			la $t1, matricula
+				
+				# Guardamos agora o ISBN do livro que foi emprestado
+				la $t1, ISBN
 				jal guardar_info_buffer_relatorio
 				la $t2, virgula          # Carrega o endereco da virgula (',')
 				lb $t2, 0($t2)           # Carrega o byte do caractere da virgula
@@ -2108,6 +2108,7 @@ gerar_relatorio:
 						jal clear_buffer
 						
 						lw $s7, 0($sp) 		   # Resgata o $s7 original do $sp
+						addi $s7, $s7, 2       # Avanca 2 bytes para ir para a proxima linha
     					addi $sp, $sp, 4	   # Devolve a pilha para a posicao original
 						
 						j loop_encontrar_nao_devolvidos
