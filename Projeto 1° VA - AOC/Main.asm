@@ -138,6 +138,7 @@
 	string_qtd_emprestada: .asciiz "Qtd Indisponível: "
 	string_nome:			.asciiz "Nome: "
 	string_matricula:		.asciiz "Matricula: "
+	string_curso:			.asciiz "Curso: "
 	string_dias_atraso: 	.asciiz "Dias de atraso: "
 	string_data_devolucao: .asciiz "Data de Devolucao: "
     
@@ -1101,12 +1102,97 @@ remover_livro:
 	j escrever_com_sucesso_display
 
 listar_livro:
-	la $t1, repo_livro             # Carrega o endereco de repo_livro
-	jal escrever_string_display    # Pula para a funcao que imprime strings (ele todo no caso)
-	la $s1, comando
-	jal clear_buffer
-	
-	j main
+    la $s1, repo_livro             # Carrega o endereco da base de dados de livros
+    lb $t0, 0($s1)                 # Verifica se o primeiro byte e nulo (indica repositorio vazio)
+    beqz $t0, escrever_acervo_vazio_display # Se o repositorio estiver vazio, exibe uma mensagem
+
+loop_listar_livros:
+    # Guarda as informacoes nos buffers temporarios
+    move $s7, $s1  # Salva o endereco atual de $s1 para restaura-lo depois
+    la $t1, ISBN
+    jal guardar_info_buffer_relatorio  # Armazena o ISBN no buffer
+    
+    la $t1, titulo
+    jal guardar_info_buffer_relatorio  # Armazena o titulo no buffer
+    
+    la $t1, autor
+    jal guardar_info_buffer_relatorio  # Armazena o autor no buffer
+    
+    la $t1, quantidade_total
+    jal guardar_info_buffer_relatorio  # Armazena a quantidade total no buffer
+    
+    la $t1, quantidade_disponivel
+    jal guardar_info_buffer_relatorio  # Armazena a quantidade disponivel no buffer
+    
+    la $t1, quantidade_emprestado
+    jal guardar_info_buffer_relatorio  # Armazena a quantidade emprestada no buffer
+    
+    # Exibir ISBN
+    la $t1, string_isbn  # Carrega o rotulo "ISBN: "
+    jal escrever_string_display  # Exibe "ISBN: "
+    la $t1, ISBN  # Carrega o ISBN
+    jal escrever_string_display  # Exibe o ISBN
+    jal escrever_barra_vertical_display  # Adiciona uma barra vertical para separacao
+    
+    la $s1, ISBN 
+    jal clear_buffer  # Limpa o buffer
+
+    # Exibir Titulo
+    la $t1, string_livro  # Carrega o rotulo "Livro: "
+    jal escrever_string_display  # Exibe "Livro: "
+    la $t1, titulo  # Carrega o titulo do livro
+    jal escrever_string_display  # Exibe o titulo do livro
+    jal escrever_barra_vertical_display  # Adiciona uma barra vertical para separacao
+    
+    la $s1, titulo  
+    jal clear_buffer  # Limpa o buffer
+
+    # Exibir Autor
+    la $t1, string_autor  # Carrega o rotulo "Autor: "
+    jal escrever_string_display  # Exibe "Autor: "
+    la $t1, autor  # Carrega o autor do livro
+    jal escrever_string_display  # Exibe o autor do livro
+    jal escrever_barra_vertical_display  # Adiciona uma barra vertical para separacao
+    
+    la $s1, autor  
+    jal clear_buffer  # Limpa o buffer
+
+    # Exibir Quantidade Total
+    la $t1, string_qtd  # Carrega o rotulo "Qtd: "
+    jal escrever_string_display  # Exibe "Qtd: "
+    la $t1, quantidade_total  # Carrega a quantidade total
+    jal escrever_string_display  # Exibe a quantidade total
+    jal escrever_barra_vertical_display  # Adiciona uma barra vertical para separacao
+    
+    la $s1, quantidade_total  
+    jal clear_buffer  # Limpa o buffer
+
+    # Exibir Quantidade Disponivel
+    la $t1, string_qtd_disponivel  # Carrega o rotulo "Qtd Disponivel: "
+    jal escrever_string_display  # Exibe "Qtd Disponivel: "
+    la $t1, quantidade_disponivel  # Carrega a quantidade disponivel
+    jal escrever_string_display  # Exibe a quantidade disponivel
+    jal escrever_barra_vertical_display  # Adiciona uma barra vertical para separacao
+    
+    la $s1, quantidade_disponivel  
+    jal clear_buffer  # Limpa o buffer
+
+    # Exibir Quantidade Emprestada
+    la $t1, string_qtd_emprestada  # Carrega o rotulo "Qtd Emprestada: "
+    jal escrever_string_display  # Exibe "Qtd Emprestada: "
+    la $t1, quantidade_emprestado  # Carrega a quantidade emprestada
+    jal escrever_string_display  # Exibe a quantidade emprestada
+    jal escrever_barra_n_display  # Adiciona uma nova linha para separacao
+    
+    la $s1, quantidade_emprestado  
+    jal clear_buffer  # Limpa o buffer
+
+    move $s1, $s7  # Restaura o endereco original do livro para continuar a leitura
+    lb $t0, 0($s1) # Verifica se ainda ha livros na lista
+    bnez $t0, loop_listar_livros  # Continua se houver mais livros
+
+    jr $ra  # Retorna para a chamada anterior
+
 
 cadastrar_usuario:
 
@@ -1175,9 +1261,6 @@ cadastrar_usuario:
     jal str_concat      	# Concatena o curso ao repositorio de usuarios.
     la $s1, curso       	# Recarrega o endereco de curso novamente (para voltar ao primeiro caractere)	
     jal clear_buffer    	# Limpa o buffer "curso".
-	
-	la $t1, repo_usuario            # Carrega o endereco do repositorio de usuarios em $t1.
-	jal escrever_string_display     # Exibe o conteudo do repositorio de usuarios.
 	
 	# Limpa o buffer de comando
     la $s1, comando       # Carrega o endereco do buffer `comando` em $s1.
@@ -1287,12 +1370,58 @@ remover_usuario:
 	j escrever_com_sucesso_display
 	
 listar_usuarios:
-	la $t1, repo_usuario           # Carrega o endereco de repo_usuario
-	jal escrever_string_display    # Pula para a funcao que imprime strings (ele todo no caso)
-	la $s1, comando
-	jal clear_buffer
-	
-	j main
+    la $s1, repo_usuario          # Carrega o endereco da base de dados de usuarios
+    lb $t0, 0($s1)                # Verifica se o primeiro byte e nulo (indica repositorio vazio)
+    beqz $t0, escrever_acervo_vazio_display # Se o repositorio estiver vazio, exibe uma mensagem
+
+loop_listar_usuarios:
+    # Guarda as informacoes nos buffers temporarios
+    move $s7, $s1  # Salva o endereco atual de $s1 para restaurar depois
+    la $t1, nome
+    jal guardar_info_buffer_relatorio  # Armazena o nome no buffer
+    
+    la $t1, matricula
+    jal guardar_info_buffer_relatorio  # Armazena a matricula no buffer
+    
+    la $t1, curso
+    jal guardar_info_buffer_relatorio  # Armazena o curso no buffer
+    
+    # Exibir Nome
+    la $t1, string_nome  # Carrega o rotulo "Nome: "
+    jal escrever_string_display  # Exibe "Nome: "
+    la $t1, nome  # Carrega o nome do usuario
+    jal escrever_string_display  # Exibe o nome do usuario
+    jal escrever_barra_vertical_display  # Adiciona uma barra vertical para separacao
+    
+    la $s1, nome  
+    jal clear_buffer  # Limpa o buffer para evitar lixo de memoria
+
+    # Exibir Matricula
+    la $t1, string_matricula  # Carrega o rotulo "Matricula: "
+    jal escrever_string_display  # Exibe "Matricula: "
+    la $t1, matricula  # Carrega a matricula do usuario
+    jal escrever_string_display  # Exibe a matricula do usuario
+    jal escrever_barra_vertical_display  # Adiciona uma barra vertical para separacao
+    
+    la $s1, matricula  
+    jal clear_buffer  # Limpa o buffer
+
+    # Exibir Curso
+    la $t1, string_curso  # Carrega o rotulo "Curso: "
+    jal escrever_string_display  # Exibe "Curso: "
+    la $t1, curso  # Carrega o curso do usuario
+    jal escrever_string_display  # Exibe o curso do usuario
+    jal escrever_barra_n_display  # Adiciona uma nova linha para separacao
+    
+    la $s1, curso  
+    jal clear_buffer  # Limpa o buffer
+
+    move $s1, $s7  # Restaura o endereco original do usuario para continuar a leitura
+    lb $t0, 0($s1) # Verifica se ainda ha usuarios na lista
+    bnez $t0, loop_listar_usuarios  # Continua se houver mais usuarios
+
+    j main # Retorna para a main
+
 
 registrar_emprestimo:
     # Verifica o argumento "--matricula"
