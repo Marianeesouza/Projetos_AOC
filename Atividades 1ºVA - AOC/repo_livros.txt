@@ -1,0 +1,3 @@
+1234,Dom Casmurro,Machado de Assis,8,6,2
+5677,Senhora,Jose de Alencar,2,2,0
+7890,Memorias Postumas,Bras Cubas,12,11,01

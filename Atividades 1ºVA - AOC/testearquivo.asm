@@ -22,9 +22,9 @@ main:
 #jal cadastrar_livro
 #jal aloca_rep
 #jal imprime_rep_livro
-#la $t0, filelivro
-#la $t1, teste_repositorio
-#jal salvar_dados
+la $t0, filelivro
+la $t1, teste_repositorio
+jal salvar_dados
 
 jal converter_quantidade_para_inteiro
 move $s0, $v0
