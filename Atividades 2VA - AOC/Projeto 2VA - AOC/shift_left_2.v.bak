@@ -1,0 +1,18 @@
+/* Projeto 2° VA - Arquitetura e Organização de Computadores - 2024.2
+   Alunos: Heitor Leander Feitosa da Silva
+           Joao Victor Morais Barreto da Silva
+           Mariane Elisa dos Santos Souza
+           Samuel Roberto de Carvalho Bezerra
+   Descrição do arquivo: Shift Left 2 (desloca 2 bits a esquerda)
+*/
+
+module shift_left_2 (adress_in, adress_out);
+
+   // Descrição das entradas e sinais:
+   input wire [31:0] adress_in_in;  	// Endereço expandido em 32 bits
+   output wire [31:0] endereco_out; 	// Endereço deslocado 2 bits a esquerda
+
+   // Comportamento:
+   assign adress_out = adress_in; // Multiplica por 4 deslocando 2 bits à esquerda
+
+endmodule
