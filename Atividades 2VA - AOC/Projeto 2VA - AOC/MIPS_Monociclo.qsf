@@ -68,3 +68,5 @@ set_global_assignment -name VERILOG_FILE PC.v
 set_global_assignment -name VERILOG_FILE extensor_de_sinal.v
 set_global_assignment -name VERILOG_FILE shift_left_2.v
 set_global_assignment -name VERILOG_FILE i_mem.v
+set_global_assignment -name VERILOG_FILE regfile.v
+set_global_assignment -name VERILOG_FILE d_mem.v
