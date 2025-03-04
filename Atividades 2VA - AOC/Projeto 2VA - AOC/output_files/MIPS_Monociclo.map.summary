@@ -1,13 +1,13 @@
-Analysis & Synthesis Status : Successful - Sat Mar  1 22:53:27 2025
+Analysis & Synthesis Status : Successful - Mon Mar  3 21:01:51 2025
 Quartus Prime Version : 23.1std.1 Build 993 05/14/2024 SC Lite Edition
 Revision Name : MIPS_Monociclo
-Top-level Entity Name : i_mem
+Top-level Entity Name : d_mem
 Family : MAX 10
-Total logic elements : 147
-    Total combinational functions : 147
+Total logic elements : 0
+    Total combinational functions : 0
     Dedicated logic registers : 0
 Total registers : 0
-Total pins : 64
+Total pins : 98
 Total virtual pins : 0
 Total memory bits : 0
 Embedded Multiplier 9-bit elements : 0

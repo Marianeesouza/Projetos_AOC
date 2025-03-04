@@ -40,13 +40,15 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	wire [31:0] cabo_mux_PC_next_para_PC;      			// cabo de saída do mux_PC_next que conecta com PC contendo o próximo valor do PC
 	wire [31:0] cabo_i_men_out; 					 			// cabo de saída do i_men (esse cabo sera dividido em trocentas partes)
 	wire [31:0] cabo_extensor_de_sinal_out; 	 			// cabo de saída do extensor de sinal que conecta 2 módulos (mux_in_2_ALU e shif_left_2)
-	wire [31:0] cabo_mux_dest_reg_para_regfile      	// cabo de saída do mux_dest_reg que conecta com regfile
+	wire [31:0] cabo_mux_dest_reg_para_regfile;      	// cabo de saída do mux_dest_reg que conecta com regfile
 	wire cabo_and_out;                         			// cabo de saída do and que sinaliza se irá ter um jump
+	wire [31:0] cabo_mux_valor_write_data;					// cabo de saída do mux_valor_write_data que diz qual valor a ser escrito no reg destino
+	wire [31:0] cabo_mux_in_2_ALU;							// cado de saída do mux_in_2_ALU que diz qual o 2º operando da ALU
 	
 	//Declaração do conjunto de cabos do i_men que conecta com 4 módulos (control, regfile, mux_dest_reg, extensor_de_sinal)
 	wire [5:0] cabo_opcode, cabo_funct; 					// cabos dos bits para opcode e funct
 	wire [4:0] cabo_rs, cabo_rt, cabo_rd, cabo_shamt;  // cabos dos bit para rs, rt, rd, shamt
-	wire [15:0] cabo_extensor_de_sinal                 // cabo para o extensor de sinal
+	wire [15:0] cabo_extensor_de_sinal;                 // cabo para o extensor de sinal
 	
 	//separador dos campos da instrução vinda do cabo_i_men_out
 	assign cabo_opcode = cabo_i_men_out[31:26];  				// separa os bits para opcode
@@ -56,12 +58,19 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	assign cabo_shamt = cabo_i_men_out[10:6]; 					// separa os bits para shamt
 	assign cabo_funct = cabo_i_men_out[5:0];   					// separa os bits para funct
 	assign cabo_extensor_de_sinal = cabo_i_men_out[15:0];  	// separa os bits para extensor de sinal
+	
+	// Cabos saídos do banco de registradores
+	wire [31:0] valor_reg1;
+	wire [31:0] valor_reg2;
+	
+	// Cabo do valor lido da memória
+	wire [31:0] cabo_d_mem_out;
 	 
 	//Declaração do conjunto de cabos da unidade de controle:
 	wire RegDst; 
 	wire Branch;
 	wire MemRead;	
-	wire MentoReg;
+	wire MemtoReg;
 	wire [3:0] ALUOp;
 	wire MemWrite; 
 	wire ALUSrc;
@@ -106,6 +115,29 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 		.extensor_out(cabo_extensor_de_sinal_out)  // Saída: 	 imediato estendido para 32 bits
 	);
 	
+	//Declaração da instância da Memória de Dados
+	//MemSize define a quantidade de endereços disponíveis (2^MemSize endereços disponíveis)
+	d_mem #(MemSize(10)) d_mem (
+	.Address(ALU_out), 
+	.WriteData(valor_reg2), 
+	.ReadData(cabo_d_mem_out), 
+	.MemWrite(MemWrite), 
+	.MemRead(MemRead)
+	);
+	
+	//Declaração da instância do Banco de Registradores
+	regfile regfile (
+		.ReadAddr1(cabo_rs), 
+		.ReadAddr2(cabo_rt), 
+		.ReadData1(valor_reg1), 
+		.ReadData2(valor_reg2), 
+		.WriteAddr(cabo_mux_dest_reg_regfile), 
+		.WriteData(cabo_mux_valor_write_data), 
+		.clock(clock), 
+		.reset(reset), 
+		.RegWrite(RegWrite)
+	);
+	
 	//Declaração dos multiplexadores:
 	
 	//Declaração da instância do mux2x1 que une a saída do somador_pc_4 com a saída do somador_pc_jump para definir qual será o próximo valor do pc
@@ -118,10 +150,10 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	
 	//Declaração da instância do mux 2x1 que une a saída de Read data 2 com cabo_extensor_de_sinal_out para definir a caminho da ALU 
 	mux2x1 mux_in_2_ALU (
-		.entrada0(),  	 		  					  	  // Entrada: Cabo do read data 2
-		.entrada1(cabo_extensor_de_sinal_out),   // Entrada: Cabo que que contem a saída do extensor de sinal 
-		.seletor(RegDst),           		 		  // Entrada: Cabo que tem o sinal para definir o 2° operando da ula 
-		.saida(cabo_mux_dest_reg_para_regfile)   // Saída:   Cabo que vai para white data em regfile
+		.entrada0(valor_reg2),  	 		  			// Entrada: Cabo do read data 2
+		.entrada1(cabo_extensor_de_sinal_out),   	// Entrada: Cabo que que contem a saída do extensor de sinal 
+		.seletor(ALUSrc),           		 		  	// Entrada: Cabo que tem o sinal para definir o 2° operando da ula 
+		.saida(cabo_mux_dest_reg_para_regfile)   	// Saída:   Cabo que vai para o 2° operando da ula 
 	);
 	
 	//Declaração da instância do mux 2x1 que define se o reg de destino é o rt ou rd
@@ -130,9 +162,21 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 		.entrada1(cabo_rd),   						  // Entrada: Cabo rd 
 		.seletor(RegDst),           		 		  // Entrada: Cabo que tem o sinal para definir o reg de destino
 		.saida(cabo_mux_dest_reg_regfile)        // Saída:   Cabo que vai para write register em regfile
+	);
+	
+	//Declaração da instância do mux2x1 que diz se o WriteData vem da memória ou da ALU
+	mux2x1 mux_valor_write_data (
+		.entrada0(ALU_out),  	 		  			  	// Entrada: Valor calculado pela ALU
+		.entrada1(d_mem_out),   						// Entrada: Valor lido da memória 
+		.seletor(MemtoReg),           		 		// Entrada: Cabo que tem o sinal para definir qual o valor a ser usado
+		.saida(cabo_mux_valor_write_data)        	// Saída:   Cabo que vai para WriteData em regfile
+	);
+	
+
 	
 	// Inicialização das saídas do programa
 	assign PC_out = cabo_PC_out;
+	assign d_mem_out = cabo_d_mem_out;
 	
 	
 endmodule

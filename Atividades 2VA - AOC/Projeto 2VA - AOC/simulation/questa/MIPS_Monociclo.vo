@@ -17,7 +17,7 @@
 // PROGRAM "Quartus Prime"
 // VERSION "Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition"
 
-// DATE "03/01/2025 22:53:41"
+// DATE "03/03/2025 21:02:02"
 
 // 
 // Device: Altera 10M08DAF484C8G Package FBGA484
@@ -29,77 +29,117 @@
 
 `timescale 1 ps/ 1 ps
 
-module i_mem (
-	endereco_PC,
-	instrucao_out);
-input 	[31:0] endereco_PC;
-output 	[31:0] instrucao_out;
+module d_mem (
+	Address,
+	WriteData,
+	ReadData,
+	MemWrite,
+	MemRead);
+input 	[31:0] Address;
+input 	[31:0] WriteData;
+output 	[31:0] ReadData;
+input 	MemWrite;
+input 	MemRead;
 
 // Design Ports Information
-// endereco_PC[0]	=>  Location: PIN_Y13,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[1]	=>  Location: PIN_AA2,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[10]	=>  Location: PIN_AA6,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[11]	=>  Location: PIN_V14,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[12]	=>  Location: PIN_Y16,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[13]	=>  Location: PIN_H3,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[14]	=>  Location: PIN_AB14,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[15]	=>  Location: PIN_V4,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[16]	=>  Location: PIN_B2,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[17]	=>  Location: PIN_R3,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[18]	=>  Location: PIN_K4,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[19]	=>  Location: PIN_G1,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[20]	=>  Location: PIN_H4,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[21]	=>  Location: PIN_W4,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[22]	=>  Location: PIN_W12,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[23]	=>  Location: PIN_AB9,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[24]	=>  Location: PIN_P13,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[25]	=>  Location: PIN_F7,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[26]	=>  Location: PIN_C3,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[27]	=>  Location: PIN_W13,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[28]	=>  Location: PIN_M8,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[29]	=>  Location: PIN_A2,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[30]	=>  Location: PIN_AB15,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[31]	=>  Location: PIN_C6,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[0]	=>  Location: PIN_A4,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[1]	=>  Location: PIN_K6,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[2]	=>  Location: PIN_K14,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[3]	=>  Location: PIN_D13,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[4]	=>  Location: PIN_A6,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[5]	=>  Location: PIN_L20,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[6]	=>  Location: PIN_K15,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[7]	=>  Location: PIN_B10,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[8]	=>  Location: PIN_E10,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[9]	=>  Location: PIN_J10,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[10]	=>  Location: PIN_C7,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[11]	=>  Location: PIN_E12,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[12]	=>  Location: PIN_A7,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[13]	=>  Location: PIN_B8,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[14]	=>  Location: PIN_H11,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[15]	=>  Location: PIN_B7,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[16]	=>  Location: PIN_J4,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[17]	=>  Location: PIN_E13,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[18]	=>  Location: PIN_J8,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[19]	=>  Location: PIN_J11,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[20]	=>  Location: PIN_C9,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[21]	=>  Location: PIN_J13,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[22]	=>  Location: PIN_B15,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[23]	=>  Location: PIN_C8,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[24]	=>  Location: PIN_J22,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[25]	=>  Location: PIN_D10,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[26]	=>  Location: PIN_E11,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[27]	=>  Location: PIN_D9,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[28]	=>  Location: PIN_D7,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[29]	=>  Location: PIN_A8,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[30]	=>  Location: PIN_M14,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// instrucao_out[31]	=>  Location: PIN_G4,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[6]	=>  Location: PIN_A5,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[8]	=>  Location: PIN_E9,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[9]	=>  Location: PIN_D8,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[2]	=>  Location: PIN_E19,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[3]	=>  Location: PIN_A9,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[4]	=>  Location: PIN_D14,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[5]	=>  Location: PIN_A14,	 I/O Standard: 2.5 V,	 Current Strength: Default
-// endereco_PC[7]	=>  Location: PIN_H12,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[0]	=>  Location: PIN_K9,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[1]	=>  Location: PIN_Y2,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[2]	=>  Location: PIN_D1,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[3]	=>  Location: PIN_W8,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[4]	=>  Location: PIN_A4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[5]	=>  Location: PIN_A5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[6]	=>  Location: PIN_W4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[7]	=>  Location: PIN_P22,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[8]	=>  Location: PIN_F2,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[9]	=>  Location: PIN_A14,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[10]	=>  Location: PIN_E13,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[11]	=>  Location: PIN_A15,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[12]	=>  Location: PIN_K6,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[13]	=>  Location: PIN_H1,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[14]	=>  Location: PIN_H17,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[15]	=>  Location: PIN_R10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[16]	=>  Location: PIN_AB15,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[17]	=>  Location: PIN_R5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[18]	=>  Location: PIN_U18,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[19]	=>  Location: PIN_Y16,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[20]	=>  Location: PIN_AA14,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[21]	=>  Location: PIN_M2,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[22]	=>  Location: PIN_K15,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[23]	=>  Location: PIN_M14,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[24]	=>  Location: PIN_W15,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[25]	=>  Location: PIN_U21,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[26]	=>  Location: PIN_D3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[27]	=>  Location: PIN_D5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[28]	=>  Location: PIN_D8,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[29]	=>  Location: PIN_A2,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[30]	=>  Location: PIN_AA6,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// Address[31]	=>  Location: PIN_C22,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[0]	=>  Location: PIN_M8,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[1]	=>  Location: PIN_G17,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[2]	=>  Location: PIN_F3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[3]	=>  Location: PIN_G20,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[4]	=>  Location: PIN_F7,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[5]	=>  Location: PIN_V13,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[6]	=>  Location: PIN_E22,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[7]	=>  Location: PIN_W13,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[8]	=>  Location: PIN_AB4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[9]	=>  Location: PIN_K14,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[10]	=>  Location: PIN_C2,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[11]	=>  Location: PIN_N18,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[12]	=>  Location: PIN_W17,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[13]	=>  Location: PIN_M9,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[14]	=>  Location: PIN_N9,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[15]	=>  Location: PIN_W5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[16]	=>  Location: PIN_AA7,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[17]	=>  Location: PIN_V4,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[18]	=>  Location: PIN_AA16,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[19]	=>  Location: PIN_D14,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[20]	=>  Location: PIN_AB18,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[21]	=>  Location: PIN_F22,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[22]	=>  Location: PIN_AA5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[23]	=>  Location: PIN_J13,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[24]	=>  Location: PIN_T22,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[25]	=>  Location: PIN_D9,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[26]	=>  Location: PIN_V16,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[27]	=>  Location: PIN_N19,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[28]	=>  Location: PIN_AB17,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[29]	=>  Location: PIN_AB14,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[30]	=>  Location: PIN_C1,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// WriteData[31]	=>  Location: PIN_B3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[0]	=>  Location: PIN_V17,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[1]	=>  Location: PIN_R11,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[2]	=>  Location: PIN_E12,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[3]	=>  Location: PIN_T1,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[4]	=>  Location: PIN_B1,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[5]	=>  Location: PIN_P10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[6]	=>  Location: PIN_T18,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[7]	=>  Location: PIN_G3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[8]	=>  Location: PIN_M22,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[9]	=>  Location: PIN_V10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[10]	=>  Location: PIN_R20,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[11]	=>  Location: PIN_E11,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[12]	=>  Location: PIN_D17,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[13]	=>  Location: PIN_Y14,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[14]	=>  Location: PIN_W12,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[15]	=>  Location: PIN_AA9,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[16]	=>  Location: PIN_P13,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[17]	=>  Location: PIN_W14,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[18]	=>  Location: PIN_AA10,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[19]	=>  Location: PIN_H11,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[20]	=>  Location: PIN_AB5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[21]	=>  Location: PIN_E15,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[22]	=>  Location: PIN_E19,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[23]	=>  Location: PIN_C5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[24]	=>  Location: PIN_J9,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[25]	=>  Location: PIN_F18,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[26]	=>  Location: PIN_L2,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[27]	=>  Location: PIN_AB9,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[28]	=>  Location: PIN_A3,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[29]	=>  Location: PIN_B5,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[30]	=>  Location: PIN_A8,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// ReadData[31]	=>  Location: PIN_R18,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// MemWrite	=>  Location: PIN_U15,	 I/O Standard: 2.5 V,	 Current Strength: Default
+// MemRead	=>  Location: PIN_M20,	 I/O Standard: 2.5 V,	 Current Strength: Default
 
 
 wire gnd;
@@ -113,220 +153,107 @@ assign unknown = 1'bx;
 tri1 devclrn;
 tri1 devpor;
 tri1 devoe;
-wire \endereco_PC[0]~input_o ;
-wire \endereco_PC[1]~input_o ;
-wire \endereco_PC[10]~input_o ;
-wire \endereco_PC[11]~input_o ;
-wire \endereco_PC[12]~input_o ;
-wire \endereco_PC[13]~input_o ;
-wire \endereco_PC[14]~input_o ;
-wire \endereco_PC[15]~input_o ;
-wire \endereco_PC[16]~input_o ;
-wire \endereco_PC[17]~input_o ;
-wire \endereco_PC[18]~input_o ;
-wire \endereco_PC[19]~input_o ;
-wire \endereco_PC[20]~input_o ;
-wire \endereco_PC[21]~input_o ;
-wire \endereco_PC[22]~input_o ;
-wire \endereco_PC[23]~input_o ;
-wire \endereco_PC[24]~input_o ;
-wire \endereco_PC[25]~input_o ;
-wire \endereco_PC[26]~input_o ;
-wire \endereco_PC[27]~input_o ;
-wire \endereco_PC[28]~input_o ;
-wire \endereco_PC[29]~input_o ;
-wire \endereco_PC[30]~input_o ;
-wire \endereco_PC[31]~input_o ;
+wire \Address[0]~input_o ;
+wire \Address[1]~input_o ;
+wire \Address[2]~input_o ;
+wire \Address[3]~input_o ;
+wire \Address[4]~input_o ;
+wire \Address[5]~input_o ;
+wire \Address[6]~input_o ;
+wire \Address[7]~input_o ;
+wire \Address[8]~input_o ;
+wire \Address[9]~input_o ;
+wire \Address[10]~input_o ;
+wire \Address[11]~input_o ;
+wire \Address[12]~input_o ;
+wire \Address[13]~input_o ;
+wire \Address[14]~input_o ;
+wire \Address[15]~input_o ;
+wire \Address[16]~input_o ;
+wire \Address[17]~input_o ;
+wire \Address[18]~input_o ;
+wire \Address[19]~input_o ;
+wire \Address[20]~input_o ;
+wire \Address[21]~input_o ;
+wire \Address[22]~input_o ;
+wire \Address[23]~input_o ;
+wire \Address[24]~input_o ;
+wire \Address[25]~input_o ;
+wire \Address[26]~input_o ;
+wire \Address[27]~input_o ;
+wire \Address[28]~input_o ;
+wire \Address[29]~input_o ;
+wire \Address[30]~input_o ;
+wire \Address[31]~input_o ;
+wire \WriteData[0]~input_o ;
+wire \WriteData[1]~input_o ;
+wire \WriteData[2]~input_o ;
+wire \WriteData[3]~input_o ;
+wire \WriteData[4]~input_o ;
+wire \WriteData[5]~input_o ;
+wire \WriteData[6]~input_o ;
+wire \WriteData[7]~input_o ;
+wire \WriteData[8]~input_o ;
+wire \WriteData[9]~input_o ;
+wire \WriteData[10]~input_o ;
+wire \WriteData[11]~input_o ;
+wire \WriteData[12]~input_o ;
+wire \WriteData[13]~input_o ;
+wire \WriteData[14]~input_o ;
+wire \WriteData[15]~input_o ;
+wire \WriteData[16]~input_o ;
+wire \WriteData[17]~input_o ;
+wire \WriteData[18]~input_o ;
+wire \WriteData[19]~input_o ;
+wire \WriteData[20]~input_o ;
+wire \WriteData[21]~input_o ;
+wire \WriteData[22]~input_o ;
+wire \WriteData[23]~input_o ;
+wire \WriteData[24]~input_o ;
+wire \WriteData[25]~input_o ;
+wire \WriteData[26]~input_o ;
+wire \WriteData[27]~input_o ;
+wire \WriteData[28]~input_o ;
+wire \WriteData[29]~input_o ;
+wire \WriteData[30]~input_o ;
+wire \WriteData[31]~input_o ;
+wire \MemWrite~input_o ;
+wire \MemRead~input_o ;
 wire \~QUARTUS_CREATED_GND~I_combout ;
 wire \~QUARTUS_CREATED_UNVM~~busy ;
 wire \~QUARTUS_CREATED_ADC1~~eoc ;
-wire \instrucao_out[0]~output_o ;
-wire \instrucao_out[1]~output_o ;
-wire \instrucao_out[2]~output_o ;
-wire \instrucao_out[3]~output_o ;
-wire \instrucao_out[4]~output_o ;
-wire \instrucao_out[5]~output_o ;
-wire \instrucao_out[6]~output_o ;
-wire \instrucao_out[7]~output_o ;
-wire \instrucao_out[8]~output_o ;
-wire \instrucao_out[9]~output_o ;
-wire \instrucao_out[10]~output_o ;
-wire \instrucao_out[11]~output_o ;
-wire \instrucao_out[12]~output_o ;
-wire \instrucao_out[13]~output_o ;
-wire \instrucao_out[14]~output_o ;
-wire \instrucao_out[15]~output_o ;
-wire \instrucao_out[16]~output_o ;
-wire \instrucao_out[17]~output_o ;
-wire \instrucao_out[18]~output_o ;
-wire \instrucao_out[19]~output_o ;
-wire \instrucao_out[20]~output_o ;
-wire \instrucao_out[21]~output_o ;
-wire \instrucao_out[22]~output_o ;
-wire \instrucao_out[23]~output_o ;
-wire \instrucao_out[24]~output_o ;
-wire \instrucao_out[25]~output_o ;
-wire \instrucao_out[26]~output_o ;
-wire \instrucao_out[27]~output_o ;
-wire \instrucao_out[28]~output_o ;
-wire \instrucao_out[29]~output_o ;
-wire \instrucao_out[30]~output_o ;
-wire \instrucao_out[31]~output_o ;
-wire \endereco_PC[4]~input_o ;
-wire \endereco_PC[5]~input_o ;
-wire \endereco_PC[3]~input_o ;
-wire \endereco_PC[2]~input_o ;
-wire \memoria_ROM~25_combout ;
-wire \endereco_PC[8]~input_o ;
-wire \endereco_PC[6]~input_o ;
-wire \endereco_PC[7]~input_o ;
-wire \endereco_PC[9]~input_o ;
-wire \memoria_ROM~24_combout ;
-wire \memoria_ROM~22_combout ;
-wire \memoria_ROM~20_combout ;
-wire \memoria_ROM~21_combout ;
-wire \memoria_ROM~23_combout ;
-wire \memoria_ROM~26_combout ;
-wire \memoria_ROM~28_combout ;
-wire \memoria_ROM~29_combout ;
-wire \memoria_ROM~31_combout ;
-wire \memoria_ROM~27_combout ;
-wire \memoria_ROM~30_combout ;
-wire \memoria_ROM~32_combout ;
-wire \memoria_ROM~34_combout ;
-wire \memoria_ROM~35_combout ;
-wire \memoria_ROM~33_combout ;
-wire \memoria_ROM~36_combout ;
-wire \memoria_ROM~37_combout ;
-wire \memoria_ROM~38_combout ;
-wire \memoria_ROM~41_combout ;
-wire \memoria_ROM~40_combout ;
-wire \memoria_ROM~39_combout ;
-wire \memoria_ROM~43_combout ;
-wire \memoria_ROM~42_combout ;
-wire \memoria_ROM~44_combout ;
-wire \memoria_ROM~45_combout ;
-wire \memoria_ROM~46_combout ;
-wire \memoria_ROM~47_combout ;
-wire \memoria_ROM~48_combout ;
-wire \memoria_ROM~49_combout ;
-wire \memoria_ROM~50_combout ;
-wire \memoria_ROM~157_combout ;
-wire \memoria_ROM~51_combout ;
-wire \memoria_ROM~52_combout ;
-wire \memoria_ROM~53_combout ;
-wire \memoria_ROM~55_combout ;
-wire \memoria_ROM~54_combout ;
-wire \memoria_ROM~56_combout ;
-wire \memoria_ROM~58_combout ;
-wire \memoria_ROM~57_combout ;
-wire \memoria_ROM~59_combout ;
-wire \memoria_ROM~61_combout ;
-wire \memoria_ROM~60_combout ;
-wire \memoria_ROM~62_combout ;
-wire \memoria_ROM~64_combout ;
-wire \memoria_ROM~63_combout ;
-wire \memoria_ROM~65_combout ;
-wire \memoria_ROM~66_combout ;
-wire \memoria_ROM~68_combout ;
-wire \memoria_ROM~69_combout ;
-wire \memoria_ROM~70_combout ;
-wire \memoria_ROM~67_combout ;
-wire \memoria_ROM~71_combout ;
-wire \memoria_ROM~158_combout ;
-wire \memoria_ROM~76_combout ;
-wire \memoria_ROM~74_combout ;
-wire \memoria_ROM~72_combout ;
-wire \memoria_ROM~73_combout ;
-wire \memoria_ROM~75_combout ;
-wire \memoria_ROM~77_combout ;
-wire \memoria_ROM~79_combout ;
-wire \memoria_ROM~78_combout ;
-wire \memoria_ROM~80_combout ;
-wire \memoria_ROM~81_combout ;
-wire \memoria_ROM~159_combout ;
-wire \memoria_ROM~85_combout ;
-wire \memoria_ROM~83_combout ;
-wire \memoria_ROM~82_combout ;
-wire \memoria_ROM~84_combout ;
-wire \memoria_ROM~86_combout ;
-wire \memoria_ROM~160_combout ;
-wire \memoria_ROM~88_combout ;
-wire \memoria_ROM~87_combout ;
-wire \memoria_ROM~89_combout ;
-wire \memoria_ROM~91_combout ;
-wire \memoria_ROM~90_combout ;
-wire \memoria_ROM~92_combout ;
-wire \memoria_ROM~94_combout ;
-wire \memoria_ROM~95_combout ;
-wire \memoria_ROM~93_combout ;
-wire \memoria_ROM~96_combout ;
-wire \memoria_ROM~97_combout ;
-wire \memoria_ROM~98_combout ;
-wire \memoria_ROM~99_combout ;
-wire \memoria_ROM~100_combout ;
-wire \memoria_ROM~101_combout ;
-wire \memoria_ROM~102_combout ;
-wire \memoria_ROM~103_combout ;
-wire \memoria_ROM~161_combout ;
-wire \memoria_ROM~106_combout ;
-wire \memoria_ROM~104_combout ;
-wire \memoria_ROM~105_combout ;
-wire \memoria_ROM~107_combout ;
-wire \memoria_ROM~108_combout ;
-wire \memoria_ROM~109_combout ;
-wire \memoria_ROM~110_combout ;
-wire \memoria_ROM~112_combout ;
-wire \memoria_ROM~113_combout ;
-wire \memoria_ROM~114_combout ;
-wire \memoria_ROM~115_combout ;
-wire \memoria_ROM~111_combout ;
-wire \memoria_ROM~116_combout ;
-wire \memoria_ROM~162_combout ;
-wire \memoria_ROM~118_combout ;
-wire \memoria_ROM~117_combout ;
-wire \memoria_ROM~119_combout ;
-wire \memoria_ROM~120_combout ;
-wire \memoria_ROM~121_combout ;
-wire \memoria_ROM~126_combout ;
-wire \memoria_ROM~122_combout ;
-wire \memoria_ROM~123_combout ;
-wire \memoria_ROM~124_combout ;
-wire \memoria_ROM~125_combout ;
-wire \memoria_ROM~127_combout ;
-wire \memoria_ROM~163_combout ;
-wire \memoria_ROM~128_combout ;
-wire \memoria_ROM~129_combout ;
-wire \memoria_ROM~130_combout ;
-wire \memoria_ROM~131_combout ;
-wire \memoria_ROM~132_combout ;
-wire \memoria_ROM~133_combout ;
-wire \memoria_ROM~134_combout ;
-wire \memoria_ROM~135_combout ;
-wire \memoria_ROM~136_combout ;
-wire \memoria_ROM~138_combout ;
-wire \memoria_ROM~137_combout ;
-wire \memoria_ROM~139_combout ;
-wire \memoria_ROM~140_combout ;
-wire \memoria_ROM~164_combout ;
-wire \memoria_ROM~141_combout ;
-wire \memoria_ROM~142_combout ;
-wire \memoria_ROM~143_combout ;
-wire \memoria_ROM~144_combout ;
-wire \memoria_ROM~165_combout ;
-wire \memoria_ROM~145_combout ;
-wire \memoria_ROM~146_combout ;
-wire \memoria_ROM~147_combout ;
-wire \memoria_ROM~148_combout ;
-wire \memoria_ROM~149_combout ;
-wire \memoria_ROM~150_combout ;
-wire \memoria_ROM~151_combout ;
-wire \memoria_ROM~152_combout ;
-wire \memoria_ROM~153_combout ;
-wire \memoria_ROM~154_combout ;
-wire \memoria_ROM~155_combout ;
-wire \memoria_ROM~156_combout ;
-wire \memoria_ROM~166_combout ;
+wire \ReadData[0]~output_o ;
+wire \ReadData[1]~output_o ;
+wire \ReadData[2]~output_o ;
+wire \ReadData[3]~output_o ;
+wire \ReadData[4]~output_o ;
+wire \ReadData[5]~output_o ;
+wire \ReadData[6]~output_o ;
+wire \ReadData[7]~output_o ;
+wire \ReadData[8]~output_o ;
+wire \ReadData[9]~output_o ;
+wire \ReadData[10]~output_o ;
+wire \ReadData[11]~output_o ;
+wire \ReadData[12]~output_o ;
+wire \ReadData[13]~output_o ;
+wire \ReadData[14]~output_o ;
+wire \ReadData[15]~output_o ;
+wire \ReadData[16]~output_o ;
+wire \ReadData[17]~output_o ;
+wire \ReadData[18]~output_o ;
+wire \ReadData[19]~output_o ;
+wire \ReadData[20]~output_o ;
+wire \ReadData[21]~output_o ;
+wire \ReadData[22]~output_o ;
+wire \ReadData[23]~output_o ;
+wire \ReadData[24]~output_o ;
+wire \ReadData[25]~output_o ;
+wire \ReadData[26]~output_o ;
+wire \ReadData[27]~output_o ;
+wire \ReadData[28]~output_o ;
+wire \ReadData[29]~output_o ;
+wire \ReadData[30]~output_o ;
+wire \ReadData[31]~output_o ;
 
 
 hard_block auto_generated_inst(
@@ -334,7 +261,7 @@ hard_block auto_generated_inst(
 	.devclrn(devclrn),
 	.devoe(devoe));
 
-// Location: LCCOMB_X11_Y18_N16
+// Location: LCCOMB_X11_Y12_N16
 fiftyfivenm_lcell_comb \~QUARTUS_CREATED_GND~I (
 // Equation(s):
 // \~QUARTUS_CREATED_GND~I_combout  = GND
@@ -351,3341 +278,1212 @@ defparam \~QUARTUS_CREATED_GND~I .lut_mask = 16'h0000;
 defparam \~QUARTUS_CREATED_GND~I .sum_lutc_input = "datac";
 // synopsys translate_on
 
-// Location: IOOBUF_X13_Y25_N2
-fiftyfivenm_io_obuf \instrucao_out[0]~output (
-	.i(\memoria_ROM~26_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[0]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[0]~output .bus_hold = "false";
-defparam \instrucao_out[0]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X10_Y19_N23
-fiftyfivenm_io_obuf \instrucao_out[1]~output (
-	.i(\memoria_ROM~32_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[1]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[1]~output .bus_hold = "false";
-defparam \instrucao_out[1]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X31_Y21_N23
-fiftyfivenm_io_obuf \instrucao_out[2]~output (
-	.i(\memoria_ROM~38_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[2]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[2]~output .bus_hold = "false";
-defparam \instrucao_out[2]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X22_Y25_N2
-fiftyfivenm_io_obuf \instrucao_out[3]~output (
-	.i(\memoria_ROM~44_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[3]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[3]~output .bus_hold = "false";
-defparam \instrucao_out[3]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X15_Y25_N9
-fiftyfivenm_io_obuf \instrucao_out[4]~output (
-	.i(\memoria_ROM~157_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[4]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[4]~output .bus_hold = "false";
-defparam \instrucao_out[4]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X31_Y19_N2
-fiftyfivenm_io_obuf \instrucao_out[5]~output (
-	.i(\memoria_ROM~56_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[5]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[5]~output .bus_hold = "false";
-defparam \instrucao_out[5]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X31_Y21_N16
-fiftyfivenm_io_obuf \instrucao_out[6]~output (
-	.i(\memoria_ROM~59_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[6]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[6]~output .bus_hold = "false";
-defparam \instrucao_out[6]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X19_Y25_N2
-fiftyfivenm_io_obuf \instrucao_out[7]~output (
-	.i(\memoria_ROM~62_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[7]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[7]~output .bus_hold = "false";
-defparam \instrucao_out[7]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X17_Y25_N2
-fiftyfivenm_io_obuf \instrucao_out[8]~output (
-	.i(\memoria_ROM~65_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[8]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[8]~output .bus_hold = "false";
-defparam \instrucao_out[8]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X17_Y25_N23
-fiftyfivenm_io_obuf \instrucao_out[9]~output (
-	.i(\memoria_ROM~65_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[9]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[9]~output .bus_hold = "false";
-defparam \instrucao_out[9]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X17_Y25_N16
-fiftyfivenm_io_obuf \instrucao_out[10]~output (
-	.i(\memoria_ROM~66_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[10]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[10]~output .bus_hold = "false";
-defparam \instrucao_out[10]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X24_Y25_N30
-fiftyfivenm_io_obuf \instrucao_out[11]~output (
-	.i(\memoria_ROM~158_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[11]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[11]~output .bus_hold = "false";
-defparam \instrucao_out[11]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X22_Y25_N23
-fiftyfivenm_io_obuf \instrucao_out[12]~output (
-	.i(\memoria_ROM~77_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[12]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[12]~output .bus_hold = "false";
-defparam \instrucao_out[12]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X19_Y25_N23
-fiftyfivenm_io_obuf \instrucao_out[13]~output (
-	.i(\memoria_ROM~159_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[13]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[13]~output .bus_hold = "false";
-defparam \instrucao_out[13]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X17_Y25_N30
-fiftyfivenm_io_obuf \instrucao_out[14]~output (
-	.i(\memoria_ROM~160_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[14]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[14]~output .bus_hold = "false";
-defparam \instrucao_out[14]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X15_Y25_N2
-fiftyfivenm_io_obuf \instrucao_out[15]~output (
-	.i(\memoria_ROM~92_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[15]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[15]~output .bus_hold = "false";
-defparam \instrucao_out[15]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X10_Y20_N16
-fiftyfivenm_io_obuf \instrucao_out[16]~output (
-	.i(\memoria_ROM~98_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[16]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[16]~output .bus_hold = "false";
-defparam \instrucao_out[16]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X24_Y25_N23
-fiftyfivenm_io_obuf \instrucao_out[17]~output (
-	.i(\memoria_ROM~161_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[17]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[17]~output .bus_hold = "false";
-defparam \instrucao_out[17]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X10_Y21_N16
-fiftyfivenm_io_obuf \instrucao_out[18]~output (
-	.i(\memoria_ROM~110_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[18]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[18]~output .bus_hold = "false";
-defparam \instrucao_out[18]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X22_Y25_N16
-fiftyfivenm_io_obuf \instrucao_out[19]~output (
-	.i(\memoria_ROM~162_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[19]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[19]~output .bus_hold = "false";
-defparam \instrucao_out[19]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X19_Y25_N9
-fiftyfivenm_io_obuf \instrucao_out[20]~output (
-	.i(\memoria_ROM~121_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[20]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[20]~output .bus_hold = "false";
-defparam \instrucao_out[20]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X27_Y25_N2
-fiftyfivenm_io_obuf \instrucao_out[21]~output (
-	.i(\memoria_ROM~163_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[21]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[21]~output .bus_hold = "false";
-defparam \instrucao_out[21]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X27_Y25_N16
-fiftyfivenm_io_obuf \instrucao_out[22]~output (
-	.i(\memoria_ROM~129_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[22]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[22]~output .bus_hold = "false";
-defparam \instrucao_out[22]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X17_Y25_N9
-fiftyfivenm_io_obuf \instrucao_out[23]~output (
-	.i(\memoria_ROM~131_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[23]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[23]~output .bus_hold = "false";
-defparam \instrucao_out[23]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X31_Y11_N9
-fiftyfivenm_io_obuf \instrucao_out[24]~output (
-	.i(\memoria_ROM~136_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[24]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[24]~output .bus_hold = "false";
-defparam \instrucao_out[24]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X13_Y25_N9
-fiftyfivenm_io_obuf \instrucao_out[25]~output (
-	.i(\memoria_ROM~164_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[25]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[25]~output .bus_hold = "false";
-defparam \instrucao_out[25]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X19_Y25_N30
-fiftyfivenm_io_obuf \instrucao_out[26]~output (
-	.i(\memoria_ROM~165_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[26]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[26]~output .bus_hold = "false";
-defparam \instrucao_out[26]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X15_Y25_N23
-fiftyfivenm_io_obuf \instrucao_out[27]~output (
-	.i(\memoria_ROM~148_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[27]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[27]~output .bus_hold = "false";
-defparam \instrucao_out[27]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X13_Y25_N30
-fiftyfivenm_io_obuf \instrucao_out[28]~output (
-	.i(\memoria_ROM~151_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[28]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[28]~output .bus_hold = "false";
-defparam \instrucao_out[28]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X22_Y25_N30
-fiftyfivenm_io_obuf \instrucao_out[29]~output (
-	.i(\memoria_ROM~166_combout ),
-	.oe(vcc),
-	.seriesterminationcontrol(16'b0000000000000000),
-	.devoe(devoe),
-	.o(\instrucao_out[29]~output_o ),
-	.obar());
-// synopsys translate_off
-defparam \instrucao_out[29]~output .bus_hold = "false";
-defparam \instrucao_out[29]~output .open_drain_output = "false";
-// synopsys translate_on
-
-// Location: IOOBUF_X31_Y13_N16
-fiftyfivenm_io_obuf \instrucao_out[30]~output (
+// Location: IOOBUF_X29_Y0_N2
+fiftyfivenm_io_obuf \ReadData[0]~output (
 	.i(gnd),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
-	.o(\instrucao_out[30]~output_o ),
+	.o(\ReadData[0]~output_o ),
 	.obar());
 // synopsys translate_off
-defparam \instrucao_out[30]~output .bus_hold = "false";
-defparam \instrucao_out[30]~output .open_drain_output = "false";
+defparam \ReadData[0]~output .bus_hold = "false";
+defparam \ReadData[0]~output .open_drain_output = "false";
 // synopsys translate_on
 
-// Location: IOOBUF_X10_Y21_N2
-fiftyfivenm_io_obuf \instrucao_out[31]~output (
-	.i(\memoria_ROM~145_combout ),
+// Location: IOOBUF_X17_Y0_N30
+fiftyfivenm_io_obuf \ReadData[1]~output (
+	.i(gnd),
 	.oe(vcc),
 	.seriesterminationcontrol(16'b0000000000000000),
 	.devoe(devoe),
-	.o(\instrucao_out[31]~output_o ),
+	.o(\ReadData[1]~output_o ),
 	.obar());
 // synopsys translate_off
-defparam \instrucao_out[31]~output .bus_hold = "false";
-defparam \instrucao_out[31]~output .open_drain_output = "false";
+defparam \ReadData[1]~output .bus_hold = "false";
+defparam \ReadData[1]~output .open_drain_output = "false";
 // synopsys translate_on
 
-// Location: IOIBUF_X24_Y25_N15
-fiftyfivenm_io_ibuf \endereco_PC[4]~input (
-	.i(endereco_PC[4]),
+// Location: IOOBUF_X24_Y25_N30
+fiftyfivenm_io_obuf \ReadData[2]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[2]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[2]~output .bus_hold = "false";
+defparam \ReadData[2]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X0_Y4_N2
+fiftyfivenm_io_obuf \ReadData[3]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[3]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[3]~output .bus_hold = "false";
+defparam \ReadData[3]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X1_Y10_N2
+fiftyfivenm_io_obuf \ReadData[4]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[4]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[4]~output .bus_hold = "false";
+defparam \ReadData[4]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X11_Y0_N2
+fiftyfivenm_io_obuf \ReadData[5]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[5]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[5]~output .bus_hold = "false";
+defparam \ReadData[5]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X31_Y3_N16
+fiftyfivenm_io_obuf \ReadData[6]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[6]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[6]~output .bus_hold = "false";
+defparam \ReadData[6]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X10_Y20_N9
+fiftyfivenm_io_obuf \ReadData[7]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[7]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[7]~output .bus_hold = "false";
+defparam \ReadData[7]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X31_Y7_N2
+fiftyfivenm_io_obuf \ReadData[8]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[8]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[8]~output .bus_hold = "false";
+defparam \ReadData[8]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X15_Y0_N16
+fiftyfivenm_io_obuf \ReadData[9]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[9]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[9]~output .bus_hold = "false";
+defparam \ReadData[9]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X31_Y3_N2
+fiftyfivenm_io_obuf \ReadData[10]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[10]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[10]~output .bus_hold = "false";
+defparam \ReadData[10]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X19_Y25_N30
+fiftyfivenm_io_obuf \ReadData[11]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[11]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[11]~output .bus_hold = "false";
+defparam \ReadData[11]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X29_Y25_N16
+fiftyfivenm_io_obuf \ReadData[12]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[12]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[12]~output .bus_hold = "false";
+defparam \ReadData[12]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X24_Y0_N16
+fiftyfivenm_io_obuf \ReadData[13]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[13]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[13]~output .bus_hold = "false";
+defparam \ReadData[13]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X19_Y0_N23
+fiftyfivenm_io_obuf \ReadData[14]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[14]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[14]~output .bus_hold = "false";
+defparam \ReadData[14]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X17_Y0_N16
+fiftyfivenm_io_obuf \ReadData[15]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[15]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[15]~output .bus_hold = "false";
+defparam \ReadData[15]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X22_Y0_N9
+fiftyfivenm_io_obuf \ReadData[16]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[16]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[16]~output .bus_hold = "false";
+defparam \ReadData[16]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X19_Y0_N2
+fiftyfivenm_io_obuf \ReadData[17]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[17]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[17]~output .bus_hold = "false";
+defparam \ReadData[17]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X19_Y0_N30
+fiftyfivenm_io_obuf \ReadData[18]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[18]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[18]~output .bus_hold = "false";
+defparam \ReadData[18]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X17_Y25_N30
+fiftyfivenm_io_obuf \ReadData[19]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[19]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[19]~output .bus_hold = "false";
+defparam \ReadData[19]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X13_Y0_N23
+fiftyfivenm_io_obuf \ReadData[20]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[20]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[20]~output .bus_hold = "false";
+defparam \ReadData[20]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X29_Y25_N9
+fiftyfivenm_io_obuf \ReadData[21]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[21]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[21]~output .bus_hold = "false";
+defparam \ReadData[21]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X31_Y20_N23
+fiftyfivenm_io_obuf \ReadData[22]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[22]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[22]~output .bus_hold = "false";
+defparam \ReadData[22]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X3_Y10_N2
+fiftyfivenm_io_obuf \ReadData[23]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[23]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[23]~output .bus_hold = "false";
+defparam \ReadData[23]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X10_Y21_N23
+fiftyfivenm_io_obuf \ReadData[24]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[24]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[24]~output .bus_hold = "false";
+defparam \ReadData[24]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X31_Y20_N16
+fiftyfivenm_io_obuf \ReadData[25]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[25]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[25]~output .bus_hold = "false";
+defparam \ReadData[25]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X10_Y16_N9
+fiftyfivenm_io_obuf \ReadData[26]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[26]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[26]~output .bus_hold = "false";
+defparam \ReadData[26]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X17_Y0_N9
+fiftyfivenm_io_obuf \ReadData[27]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[27]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[27]~output .bus_hold = "false";
+defparam \ReadData[27]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X11_Y25_N23
+fiftyfivenm_io_obuf \ReadData[28]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[28]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[28]~output .bus_hold = "false";
+defparam \ReadData[28]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X6_Y10_N9
+fiftyfivenm_io_obuf \ReadData[29]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[29]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[29]~output .bus_hold = "false";
+defparam \ReadData[29]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X22_Y25_N30
+fiftyfivenm_io_obuf \ReadData[30]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[30]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[30]~output .bus_hold = "false";
+defparam \ReadData[30]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOOBUF_X31_Y6_N23
+fiftyfivenm_io_obuf \ReadData[31]~output (
+	.i(gnd),
+	.oe(vcc),
+	.seriesterminationcontrol(16'b0000000000000000),
+	.devoe(devoe),
+	.o(\ReadData[31]~output_o ),
+	.obar());
+// synopsys translate_off
+defparam \ReadData[31]~output .bus_hold = "false";
+defparam \ReadData[31]~output .open_drain_output = "false";
+// synopsys translate_on
+
+// Location: IOIBUF_X10_Y18_N22
+fiftyfivenm_io_ibuf \Address[0]~input (
+	.i(Address[0]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[4]~input_o ));
+	.o(\Address[0]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[4]~input .bus_hold = "false";
-defparam \endereco_PC[4]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[4]~input .simulate_z_as = "z";
+defparam \Address[0]~input .bus_hold = "false";
+defparam \Address[0]~input .listen_to_nsleep_signal = "false";
+defparam \Address[0]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X24_Y25_N1
-fiftyfivenm_io_ibuf \endereco_PC[5]~input (
-	.i(endereco_PC[5]),
+// Location: IOIBUF_X6_Y0_N29
+fiftyfivenm_io_ibuf \Address[1]~input (
+	.i(Address[1]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[5]~input_o ));
+	.o(\Address[1]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[5]~input .bus_hold = "false";
-defparam \endereco_PC[5]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[5]~input .simulate_z_as = "z";
+defparam \Address[1]~input .bus_hold = "false";
+defparam \Address[1]~input .listen_to_nsleep_signal = "false";
+defparam \Address[1]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X19_Y25_N15
-fiftyfivenm_io_ibuf \endereco_PC[3]~input (
-	.i(endereco_PC[3]),
+// Location: IOIBUF_X10_Y17_N8
+fiftyfivenm_io_ibuf \Address[2]~input (
+	.i(Address[2]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[3]~input_o ));
+	.o(\Address[2]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[3]~input .bus_hold = "false";
-defparam \endereco_PC[3]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[3]~input .simulate_z_as = "z";
+defparam \Address[2]~input .bus_hold = "false";
+defparam \Address[2]~input .listen_to_nsleep_signal = "false";
+defparam \Address[2]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X31_Y20_N22
-fiftyfivenm_io_ibuf \endereco_PC[2]~input (
-	.i(endereco_PC[2]),
+// Location: IOIBUF_X11_Y0_N29
+fiftyfivenm_io_ibuf \Address[3]~input (
+	.i(Address[3]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[2]~input_o ));
+	.o(\Address[3]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[2]~input .bus_hold = "false";
-defparam \endereco_PC[2]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[2]~input .simulate_z_as = "z";
+defparam \Address[3]~input .bus_hold = "false";
+defparam \Address[3]~input .listen_to_nsleep_signal = "false";
+defparam \Address[3]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: LCCOMB_X16_Y21_N0
-fiftyfivenm_lcell_comb \memoria_ROM~25 (
-// Equation(s):
-// \memoria_ROM~25_combout  = (\endereco_PC[3]~input_o  & ((\endereco_PC[5]~input_o  & ((\endereco_PC[2]~input_o ))) # (!\endereco_PC[5]~input_o  & ((\endereco_PC[4]~input_o ) # (!\endereco_PC[2]~input_o ))))) # (!\endereco_PC[3]~input_o  & 
-// (\endereco_PC[4]~input_o  $ (((\endereco_PC[5]~input_o ) # (\endereco_PC[2]~input_o )))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[5]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~25_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~25 .lut_mask = 16'hE536;
-defparam \memoria_ROM~25 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: IOIBUF_X13_Y25_N15
-fiftyfivenm_io_ibuf \endereco_PC[8]~input (
-	.i(endereco_PC[8]),
+// Location: IOIBUF_X13_Y25_N1
+fiftyfivenm_io_ibuf \Address[4]~input (
+	.i(Address[4]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[8]~input_o ));
+	.o(\Address[4]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[8]~input .bus_hold = "false";
-defparam \endereco_PC[8]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[8]~input .simulate_z_as = "z";
+defparam \Address[4]~input .bus_hold = "false";
+defparam \Address[4]~input .listen_to_nsleep_signal = "false";
+defparam \Address[4]~input .simulate_z_as = "z";
 // synopsys translate_on
 
 // Location: IOIBUF_X15_Y25_N29
-fiftyfivenm_io_ibuf \endereco_PC[6]~input (
-	.i(endereco_PC[6]),
+fiftyfivenm_io_ibuf \Address[5]~input (
+	.i(Address[5]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[6]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[6]~input .bus_hold = "false";
-defparam \endereco_PC[6]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[6]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X22_Y25_N8
-fiftyfivenm_io_ibuf \endereco_PC[7]~input (
-	.i(endereco_PC[7]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[7]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[7]~input .bus_hold = "false";
-defparam \endereco_PC[7]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[7]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X15_Y25_N15
-fiftyfivenm_io_ibuf \endereco_PC[9]~input (
-	.i(endereco_PC[9]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[9]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[9]~input .bus_hold = "false";
-defparam \endereco_PC[9]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[9]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N22
-fiftyfivenm_lcell_comb \memoria_ROM~24 (
-// Equation(s):
-// \memoria_ROM~24_combout  = (!\endereco_PC[8]~input_o  & (!\endereco_PC[6]~input_o  & (!\endereco_PC[7]~input_o  & !\endereco_PC[9]~input_o )))
-
-	.dataa(\endereco_PC[8]~input_o ),
-	.datab(\endereco_PC[6]~input_o ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\endereco_PC[9]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~24_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~24 .lut_mask = 16'h0001;
-defparam \memoria_ROM~24 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N10
-fiftyfivenm_lcell_comb \memoria_ROM~22 (
-// Equation(s):
-// \memoria_ROM~22_combout  = (\endereco_PC[5]~input_o  & ((\endereco_PC[4]~input_o ) # ((\endereco_PC[3]~input_o  & !\endereco_PC[2]~input_o )))) # (!\endereco_PC[5]~input_o  & (\endereco_PC[2]~input_o  & ((!\endereco_PC[3]~input_o ) # 
-// (!\endereco_PC[4]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[5]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~22_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~22 .lut_mask = 16'h9BC8;
-defparam \memoria_ROM~22 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N8
-fiftyfivenm_lcell_comb \memoria_ROM~20 (
-// Equation(s):
-// \memoria_ROM~20_combout  = (!\endereco_PC[9]~input_o  & (!\endereco_PC[8]~input_o  & \endereco_PC[6]~input_o ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\endereco_PC[6]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~20_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~20 .lut_mask = 16'h0300;
-defparam \memoria_ROM~20 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N24
-fiftyfivenm_lcell_comb \memoria_ROM~21 (
-// Equation(s):
-// \memoria_ROM~21_combout  = (\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o  $ (\endereco_PC[3]~input_o  $ (!\endereco_PC[2]~input_o )))) # (!\endereco_PC[5]~input_o  & (!\endereco_PC[4]~input_o  & (\endereco_PC[3]~input_o )))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[5]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~21_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~21 .lut_mask = 16'h5894;
-defparam \memoria_ROM~21 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N20
-fiftyfivenm_lcell_comb \memoria_ROM~23 (
-// Equation(s):
-// \memoria_ROM~23_combout  = (\memoria_ROM~20_combout  & ((\endereco_PC[7]~input_o  & (!\memoria_ROM~22_combout )) # (!\endereco_PC[7]~input_o  & ((\memoria_ROM~21_combout )))))
-
-	.dataa(\memoria_ROM~22_combout ),
-	.datab(\memoria_ROM~20_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~21_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~23_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~23 .lut_mask = 16'h4C40;
-defparam \memoria_ROM~23 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N26
-fiftyfivenm_lcell_comb \memoria_ROM~26 (
-// Equation(s):
-// \memoria_ROM~26_combout  = (\memoria_ROM~23_combout ) # ((!\memoria_ROM~25_combout  & \memoria_ROM~24_combout ))
-
-	.dataa(gnd),
-	.datab(\memoria_ROM~25_combout ),
-	.datac(\memoria_ROM~24_combout ),
-	.datad(\memoria_ROM~23_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~26_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~26 .lut_mask = 16'hFF30;
-defparam \memoria_ROM~26 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N0
-fiftyfivenm_lcell_comb \memoria_ROM~28 (
-// Equation(s):
-// \memoria_ROM~28_combout  = (\endereco_PC[7]~input_o  & (\endereco_PC[4]~input_o )) # (!\endereco_PC[7]~input_o  & ((\endereco_PC[5]~input_o ) # ((\endereco_PC[4]~input_o  & !\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~28_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~28 .lut_mask = 16'hD8DC;
-defparam \memoria_ROM~28 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N18
-fiftyfivenm_lcell_comb \memoria_ROM~29 (
-// Equation(s):
-// \memoria_ROM~29_combout  = (\endereco_PC[4]~input_o  & ((\endereco_PC[2]~input_o ) # ((!\endereco_PC[7]~input_o  & \endereco_PC[5]~input_o )))) # (!\endereco_PC[4]~input_o  & (\endereco_PC[7]~input_o  & ((!\endereco_PC[2]~input_o ) # 
-// (!\endereco_PC[5]~input_o ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~29_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~29 .lut_mask = 16'hCE62;
-defparam \memoria_ROM~29 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N6
-fiftyfivenm_lcell_comb \memoria_ROM~31 (
-// Equation(s):
-// \memoria_ROM~31_combout  = (\memoria_ROM~29_combout  & (\memoria_ROM~28_combout  $ (((\endereco_PC[3]~input_o ) # (\endereco_PC[2]~input_o ))))) # (!\memoria_ROM~29_combout  & (\endereco_PC[2]~input_o  & ((\memoria_ROM~28_combout ) # 
-// (!\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[3]~input_o ),
-	.datab(\memoria_ROM~28_combout ),
-	.datac(\memoria_ROM~29_combout ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~31_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~31 .lut_mask = 16'h3D60;
-defparam \memoria_ROM~31 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N10
-fiftyfivenm_lcell_comb \memoria_ROM~27 (
-// Equation(s):
-// \memoria_ROM~27_combout  = (!\endereco_PC[8]~input_o  & !\endereco_PC[9]~input_o )
-
-	.dataa(gnd),
-	.datab(gnd),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\endereco_PC[9]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~27_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~27 .lut_mask = 16'h000F;
-defparam \memoria_ROM~27 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N20
-fiftyfivenm_lcell_comb \memoria_ROM~30 (
-// Equation(s):
-// \memoria_ROM~30_combout  = (\endereco_PC[2]~input_o  & ((\endereco_PC[3]~input_o ) # ((\memoria_ROM~29_combout )))) # (!\endereco_PC[2]~input_o  & ((\memoria_ROM~28_combout ) # (\endereco_PC[3]~input_o  $ (\memoria_ROM~29_combout ))))
-
-	.dataa(\endereco_PC[3]~input_o ),
-	.datab(\memoria_ROM~28_combout ),
-	.datac(\memoria_ROM~29_combout ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~30_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~30 .lut_mask = 16'hFADE;
-defparam \memoria_ROM~30 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N8
-fiftyfivenm_lcell_comb \memoria_ROM~32 (
-// Equation(s):
-// \memoria_ROM~32_combout  = (\memoria_ROM~27_combout  & (\memoria_ROM~31_combout  $ (((!\endereco_PC[6]~input_o  & !\memoria_ROM~30_combout )))))
-
-	.dataa(\memoria_ROM~31_combout ),
-	.datab(\endereco_PC[6]~input_o ),
-	.datac(\memoria_ROM~27_combout ),
-	.datad(\memoria_ROM~30_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~32_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~32 .lut_mask = 16'hA090;
-defparam \memoria_ROM~32 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N10
-fiftyfivenm_lcell_comb \memoria_ROM~34 (
-// Equation(s):
-// \memoria_ROM~34_combout  = (\endereco_PC[5]~input_o  & ((\endereco_PC[6]~input_o ) # ((!\endereco_PC[2]~input_o  & !\endereco_PC[3]~input_o )))) # (!\endereco_PC[5]~input_o  & (((\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[2]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~34_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~34 .lut_mask = 16'hAFB0;
-defparam \memoria_ROM~34 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N20
-fiftyfivenm_lcell_comb \memoria_ROM~35 (
-// Equation(s):
-// \memoria_ROM~35_combout  = (\endereco_PC[6]~input_o  & ((\endereco_PC[2]~input_o ) # ((!\endereco_PC[5]~input_o )))) # (!\endereco_PC[6]~input_o  & (((\endereco_PC[5]~input_o  & !\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[2]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~35_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~35 .lut_mask = 16'h8ADA;
-defparam \memoria_ROM~35 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N24
-fiftyfivenm_lcell_comb \memoria_ROM~33 (
-// Equation(s):
-// \memoria_ROM~33_combout  = (\endereco_PC[5]~input_o  & (\endereco_PC[3]~input_o  $ (((\endereco_PC[2]~input_o ) # (!\endereco_PC[6]~input_o ))))) # (!\endereco_PC[5]~input_o  & (((\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[2]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~33_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~33 .lut_mask = 16'h2CDC;
-defparam \memoria_ROM~33 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N14
-fiftyfivenm_lcell_comb \memoria_ROM~36 (
-// Equation(s):
-// \memoria_ROM~36_combout  = (\memoria_ROM~34_combout  & ((\memoria_ROM~35_combout  & (\endereco_PC[7]~input_o )) # (!\memoria_ROM~35_combout  & ((\memoria_ROM~33_combout ) # (!\endereco_PC[7]~input_o ))))) # (!\memoria_ROM~34_combout  & 
-// (\memoria_ROM~35_combout  $ ((\endereco_PC[7]~input_o ))))
-
-	.dataa(\memoria_ROM~34_combout ),
-	.datab(\memoria_ROM~35_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~33_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~36_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~36 .lut_mask = 16'hB696;
-defparam \memoria_ROM~36 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N0
-fiftyfivenm_lcell_comb \memoria_ROM~37 (
-// Equation(s):
-// \memoria_ROM~37_combout  = (\memoria_ROM~33_combout  & (\memoria_ROM~34_combout  $ (((!\endereco_PC[7]~input_o ))))) # (!\memoria_ROM~33_combout  & (\memoria_ROM~35_combout  & ((\memoria_ROM~34_combout ) # (\endereco_PC[7]~input_o ))))
-
-	.dataa(\memoria_ROM~34_combout ),
-	.datab(\memoria_ROM~35_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~33_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~37_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~37 .lut_mask = 16'hA5C8;
-defparam \memoria_ROM~37 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N18
-fiftyfivenm_lcell_comb \memoria_ROM~38 (
-// Equation(s):
-// \memoria_ROM~38_combout  = (\memoria_ROM~27_combout  & (\memoria_ROM~36_combout  $ (((\endereco_PC[4]~input_o ) # (!\memoria_ROM~37_combout )))))
-
-	.dataa(\memoria_ROM~27_combout ),
-	.datab(\memoria_ROM~36_combout ),
-	.datac(\endereco_PC[4]~input_o ),
-	.datad(\memoria_ROM~37_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~38_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~38 .lut_mask = 16'h2822;
-defparam \memoria_ROM~38 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N16
-fiftyfivenm_lcell_comb \memoria_ROM~41 (
-// Equation(s):
-// \memoria_ROM~41_combout  = (\endereco_PC[6]~input_o  & (\endereco_PC[4]~input_o  $ (((\endereco_PC[7]~input_o ))))) # (!\endereco_PC[6]~input_o  & (((\endereco_PC[2]~input_o  & \endereco_PC[7]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[7]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~41_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~41 .lut_mask = 16'h7288;
-defparam \memoria_ROM~41 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N22
-fiftyfivenm_lcell_comb \memoria_ROM~40 (
-// Equation(s):
-// \memoria_ROM~40_combout  = (\endereco_PC[4]~input_o  & (\endereco_PC[7]~input_o  & (\endereco_PC[6]~input_o  $ (\endereco_PC[2]~input_o )))) # (!\endereco_PC[4]~input_o  & (\endereco_PC[6]~input_o  $ (((\endereco_PC[7]~input_o )))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[7]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~40_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~40 .lut_mask = 16'h5922;
-defparam \memoria_ROM~40 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N12
-fiftyfivenm_lcell_comb \memoria_ROM~39 (
-// Equation(s):
-// \memoria_ROM~39_combout  = (\endereco_PC[6]~input_o  & ((\endereco_PC[2]~input_o  & ((!\endereco_PC[7]~input_o ) # (!\endereco_PC[4]~input_o ))) # (!\endereco_PC[2]~input_o  & ((\endereco_PC[7]~input_o ))))) # (!\endereco_PC[6]~input_o  & 
-// (\endereco_PC[4]~input_o  $ (\endereco_PC[2]~input_o  $ (\endereco_PC[7]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[7]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~39_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~39 .lut_mask = 16'h6BB4;
-defparam \memoria_ROM~39 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N28
-fiftyfivenm_lcell_comb \memoria_ROM~43 (
-// Equation(s):
-// \memoria_ROM~43_combout  = (\memoria_ROM~41_combout  & ((\memoria_ROM~39_combout  & ((!\memoria_ROM~40_combout ))) # (!\memoria_ROM~39_combout  & (!\endereco_PC[3]~input_o )))) # (!\memoria_ROM~41_combout  & (\memoria_ROM~40_combout  & 
-// (\endereco_PC[3]~input_o  $ (\memoria_ROM~39_combout ))))
-
-	.dataa(\endereco_PC[3]~input_o ),
-	.datab(\memoria_ROM~41_combout ),
-	.datac(\memoria_ROM~40_combout ),
-	.datad(\memoria_ROM~39_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~43_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~43 .lut_mask = 16'h1C64;
-defparam \memoria_ROM~43 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N2
-fiftyfivenm_lcell_comb \memoria_ROM~42 (
-// Equation(s):
-// \memoria_ROM~42_combout  = (\memoria_ROM~41_combout  & (\endereco_PC[3]~input_o  $ ((\memoria_ROM~40_combout )))) # (!\memoria_ROM~41_combout  & ((\memoria_ROM~39_combout ) # (\endereco_PC[3]~input_o  $ (\memoria_ROM~40_combout ))))
-
-	.dataa(\endereco_PC[3]~input_o ),
-	.datab(\memoria_ROM~41_combout ),
-	.datac(\memoria_ROM~40_combout ),
-	.datad(\memoria_ROM~39_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~42_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~42 .lut_mask = 16'h7B5A;
-defparam \memoria_ROM~42 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N30
-fiftyfivenm_lcell_comb \memoria_ROM~44 (
-// Equation(s):
-// \memoria_ROM~44_combout  = (\memoria_ROM~27_combout  & (\memoria_ROM~43_combout  $ (((!\endereco_PC[5]~input_o  & !\memoria_ROM~42_combout )))))
-
-	.dataa(\memoria_ROM~27_combout ),
-	.datab(\memoria_ROM~43_combout ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\memoria_ROM~42_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~44_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~44 .lut_mask = 16'h8882;
-defparam \memoria_ROM~44 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N16
-fiftyfivenm_lcell_comb \memoria_ROM~45 (
-// Equation(s):
-// \memoria_ROM~45_combout  = (\endereco_PC[2]~input_o  & (\endereco_PC[3]~input_o  $ (((\endereco_PC[5]~input_o ) # (!\endereco_PC[4]~input_o ))))) # (!\endereco_PC[2]~input_o  & ((\endereco_PC[5]~input_o  & (!\endereco_PC[4]~input_o  & 
-// \endereco_PC[3]~input_o )) # (!\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o  & !\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~45_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~45 .lut_mask = 16'h42B4;
-defparam \memoria_ROM~45 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N26
-fiftyfivenm_lcell_comb \memoria_ROM~46 (
-// Equation(s):
-// \memoria_ROM~46_combout  = (\endereco_PC[4]~input_o  & (\endereco_PC[5]~input_o  & ((!\endereco_PC[3]~input_o )))) # (!\endereco_PC[4]~input_o  & (\endereco_PC[3]~input_o  & ((!\endereco_PC[2]~input_o ) # (!\endereco_PC[5]~input_o ))))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~46_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~46 .lut_mask = 16'h1388;
-defparam \memoria_ROM~46 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N28
-fiftyfivenm_lcell_comb \memoria_ROM~47 (
-// Equation(s):
-// \memoria_ROM~47_combout  = (\endereco_PC[2]~input_o  & (\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o  & \endereco_PC[3]~input_o ))) # (!\endereco_PC[2]~input_o  & (!\endereco_PC[3]~input_o  & (\endereco_PC[5]~input_o  $ (\endereco_PC[4]~input_o 
-// ))))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~47_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~47 .lut_mask = 16'h8006;
-defparam \memoria_ROM~47 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N30
-fiftyfivenm_lcell_comb \memoria_ROM~48 (
-// Equation(s):
-// \memoria_ROM~48_combout  = (\endereco_PC[7]~input_o  & ((\memoria_ROM~46_combout ) # ((\endereco_PC[6]~input_o )))) # (!\endereco_PC[7]~input_o  & (((\memoria_ROM~47_combout  & !\endereco_PC[6]~input_o ))))
-
-	.dataa(\memoria_ROM~46_combout ),
-	.datab(\memoria_ROM~47_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\endereco_PC[6]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~48_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~48 .lut_mask = 16'hF0AC;
-defparam \memoria_ROM~48 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N0
-fiftyfivenm_lcell_comb \memoria_ROM~49 (
-// Equation(s):
-// \memoria_ROM~49_combout  = (\endereco_PC[4]~input_o  & (!\endereco_PC[3]~input_o  & ((!\endereco_PC[2]~input_o ) # (!\endereco_PC[5]~input_o )))) # (!\endereco_PC[4]~input_o  & ((\endereco_PC[5]~input_o ) # ((\endereco_PC[2]~input_o ) # 
-// (\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~49_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~49 .lut_mask = 16'h337E;
-defparam \memoria_ROM~49 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N18
-fiftyfivenm_lcell_comb \memoria_ROM~50 (
-// Equation(s):
-// \memoria_ROM~50_combout  = (\endereco_PC[6]~input_o  & ((\memoria_ROM~48_combout  & ((\memoria_ROM~49_combout ))) # (!\memoria_ROM~48_combout  & (\memoria_ROM~45_combout )))) # (!\endereco_PC[6]~input_o  & (((\memoria_ROM~48_combout ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\memoria_ROM~45_combout ),
-	.datac(\memoria_ROM~48_combout ),
-	.datad(\memoria_ROM~49_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~50_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~50 .lut_mask = 16'hF858;
-defparam \memoria_ROM~50 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N6
-fiftyfivenm_lcell_comb \memoria_ROM~157 (
-// Equation(s):
-// \memoria_ROM~157_combout  = (!\endereco_PC[8]~input_o  & (!\endereco_PC[9]~input_o  & \memoria_ROM~50_combout ))
-
-	.dataa(\endereco_PC[8]~input_o ),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(gnd),
-	.datad(\memoria_ROM~50_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~157_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~157 .lut_mask = 16'h1100;
-defparam \memoria_ROM~157 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N26
-fiftyfivenm_lcell_comb \memoria_ROM~51 (
-// Equation(s):
-// \memoria_ROM~51_combout  = (\endereco_PC[7]~input_o  & (\endereco_PC[5]~input_o  $ (((\endereco_PC[4]~input_o ) # (!\endereco_PC[2]~input_o ))))) # (!\endereco_PC[7]~input_o  & ((\endereco_PC[4]~input_o  & (\endereco_PC[5]~input_o )) # 
-// (!\endereco_PC[4]~input_o  & (!\endereco_PC[5]~input_o  & \endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~51_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~51 .lut_mask = 16'h694A;
-defparam \memoria_ROM~51 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N28
-fiftyfivenm_lcell_comb \memoria_ROM~52 (
-// Equation(s):
-// \memoria_ROM~52_combout  = (\endereco_PC[7]~input_o  & (\endereco_PC[5]~input_o  $ (((!\endereco_PC[4]~input_o  & !\endereco_PC[2]~input_o ))))) # (!\endereco_PC[7]~input_o  & ((\endereco_PC[4]~input_o  & (!\endereco_PC[5]~input_o  & 
-// \endereco_PC[2]~input_o )) # (!\endereco_PC[4]~input_o  & (\endereco_PC[5]~input_o ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~52_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~52 .lut_mask = 16'hB492;
-defparam \memoria_ROM~52 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N14
-fiftyfivenm_lcell_comb \memoria_ROM~53 (
-// Equation(s):
-// \memoria_ROM~53_combout  = (\endereco_PC[7]~input_o  & ((\endereco_PC[5]~input_o ) # (\endereco_PC[4]~input_o  $ (\endereco_PC[2]~input_o )))) # (!\endereco_PC[7]~input_o  & (\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o  $ (\endereco_PC[2]~input_o 
-// ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~53_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~53 .lut_mask = 16'hB2E8;
-defparam \memoria_ROM~53 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N10
-fiftyfivenm_lcell_comb \memoria_ROM~55 (
-// Equation(s):
-// \memoria_ROM~55_combout  = (\endereco_PC[3]~input_o  & (\memoria_ROM~52_combout  $ (((!\memoria_ROM~51_combout  & \memoria_ROM~53_combout ))))) # (!\endereco_PC[3]~input_o  & ((\memoria_ROM~53_combout ) # ((\memoria_ROM~51_combout  & 
-// !\memoria_ROM~52_combout ))))
-
-	.dataa(\memoria_ROM~51_combout ),
-	.datab(\memoria_ROM~52_combout ),
-	.datac(\memoria_ROM~53_combout ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~55_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~55 .lut_mask = 16'h9CF2;
-defparam \memoria_ROM~55 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N16
-fiftyfivenm_lcell_comb \memoria_ROM~54 (
-// Equation(s):
-// \memoria_ROM~54_combout  = (\memoria_ROM~53_combout  & (\memoria_ROM~52_combout  $ (((\memoria_ROM~51_combout  & !\endereco_PC[3]~input_o ))))) # (!\memoria_ROM~53_combout  & ((\memoria_ROM~51_combout  & (\memoria_ROM~52_combout  & 
-// !\endereco_PC[3]~input_o )) # (!\memoria_ROM~51_combout  & ((\endereco_PC[3]~input_o )))))
-
-	.dataa(\memoria_ROM~51_combout ),
-	.datab(\memoria_ROM~52_combout ),
-	.datac(\memoria_ROM~53_combout ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~54_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~54 .lut_mask = 16'hC568;
-defparam \memoria_ROM~54 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N12
-fiftyfivenm_lcell_comb \memoria_ROM~56 (
-// Equation(s):
-// \memoria_ROM~56_combout  = (\memoria_ROM~27_combout  & ((\endereco_PC[6]~input_o  & (\memoria_ROM~55_combout )) # (!\endereco_PC[6]~input_o  & ((\memoria_ROM~54_combout )))))
-
-	.dataa(\memoria_ROM~55_combout ),
-	.datab(\endereco_PC[6]~input_o ),
-	.datac(\memoria_ROM~27_combout ),
-	.datad(\memoria_ROM~54_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~56_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~56 .lut_mask = 16'hB080;
-defparam \memoria_ROM~56 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N2
-fiftyfivenm_lcell_comb \memoria_ROM~58 (
-// Equation(s):
-// \memoria_ROM~58_combout  = (\endereco_PC[5]~input_o  & ((\endereco_PC[3]~input_o ) # (\endereco_PC[2]~input_o  $ (!\endereco_PC[7]~input_o )))) # (!\endereco_PC[5]~input_o  & (\endereco_PC[3]~input_o  $ (((\endereco_PC[2]~input_o  & 
-// !\endereco_PC[7]~input_o )))))
-
-	.dataa(\endereco_PC[2]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~58_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~58 .lut_mask = 16'hFD92;
-defparam \memoria_ROM~58 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N24
-fiftyfivenm_lcell_comb \memoria_ROM~57 (
-// Equation(s):
-// \memoria_ROM~57_combout  = (\endereco_PC[3]~input_o  & (((\endereco_PC[7]~input_o ) # (\endereco_PC[5]~input_o )))) # (!\endereco_PC[3]~input_o  & (\endereco_PC[2]~input_o  & ((\endereco_PC[5]~input_o ) # (!\endereco_PC[7]~input_o ))))
-
-	.dataa(\endereco_PC[2]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~57_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~57 .lut_mask = 16'hFCA2;
-defparam \memoria_ROM~57 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N12
-fiftyfivenm_lcell_comb \memoria_ROM~59 (
-// Equation(s):
-// \memoria_ROM~59_combout  = (\memoria_ROM~20_combout  & ((\endereco_PC[4]~input_o  & (!\memoria_ROM~58_combout )) # (!\endereco_PC[4]~input_o  & ((\memoria_ROM~57_combout )))))
-
-	.dataa(\memoria_ROM~20_combout ),
-	.datab(\memoria_ROM~58_combout ),
-	.datac(\endereco_PC[4]~input_o ),
-	.datad(\memoria_ROM~57_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~59_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~59 .lut_mask = 16'h2A20;
-defparam \memoria_ROM~59 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N8
-fiftyfivenm_lcell_comb \memoria_ROM~61 (
-// Equation(s):
-// \memoria_ROM~61_combout  = (\endereco_PC[7]~input_o  & (!\endereco_PC[3]~input_o  & ((!\endereco_PC[5]~input_o ) # (!\endereco_PC[2]~input_o )))) # (!\endereco_PC[7]~input_o  & (\endereco_PC[3]~input_o  $ (((!\endereco_PC[2]~input_o  & 
-// \endereco_PC[5]~input_o )))))
-
-	.dataa(\endereco_PC[2]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~61_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~61 .lut_mask = 16'h235C;
-defparam \memoria_ROM~61 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N6
-fiftyfivenm_lcell_comb \memoria_ROM~60 (
-// Equation(s):
-// \memoria_ROM~60_combout  = (\endereco_PC[7]~input_o  & (!\endereco_PC[3]~input_o  & ((!\endereco_PC[5]~input_o ) # (!\endereco_PC[2]~input_o )))) # (!\endereco_PC[7]~input_o  & (\endereco_PC[2]~input_o  & (\endereco_PC[5]~input_o  $ 
-// (\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[2]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~60_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~60 .lut_mask = 16'h026C;
-defparam \memoria_ROM~60 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N18
-fiftyfivenm_lcell_comb \memoria_ROM~62 (
-// Equation(s):
-// \memoria_ROM~62_combout  = (\memoria_ROM~20_combout  & ((\endereco_PC[4]~input_o  & ((\memoria_ROM~60_combout ))) # (!\endereco_PC[4]~input_o  & (!\memoria_ROM~61_combout ))))
-
-	.dataa(\memoria_ROM~20_combout ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\memoria_ROM~61_combout ),
-	.datad(\memoria_ROM~60_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~62_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~62 .lut_mask = 16'h8A02;
-defparam \memoria_ROM~62 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N14
-fiftyfivenm_lcell_comb \memoria_ROM~64 (
-// Equation(s):
-// \memoria_ROM~64_combout  = (\endereco_PC[2]~input_o  & (\endereco_PC[3]~input_o  $ (((\endereco_PC[5]~input_o ) # (!\endereco_PC[4]~input_o ))))) # (!\endereco_PC[2]~input_o  & (\endereco_PC[5]~input_o  & (!\endereco_PC[4]~input_o  & 
-// \endereco_PC[3]~input_o )))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~64_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~64 .lut_mask = 16'h42B0;
-defparam \memoria_ROM~64 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N12
-fiftyfivenm_lcell_comb \memoria_ROM~63 (
-// Equation(s):
-// \memoria_ROM~63_combout  = \endereco_PC[4]~input_o  $ (((\endereco_PC[3]~input_o ) # ((\endereco_PC[5]~input_o  & \endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~63_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~63 .lut_mask = 16'h336C;
-defparam \memoria_ROM~63 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N4
-fiftyfivenm_lcell_comb \memoria_ROM~65 (
-// Equation(s):
-// \memoria_ROM~65_combout  = (\memoria_ROM~20_combout  & ((\endereco_PC[7]~input_o  & ((\memoria_ROM~63_combout ))) # (!\endereco_PC[7]~input_o  & (\memoria_ROM~64_combout ))))
-
-	.dataa(\memoria_ROM~64_combout ),
-	.datab(\memoria_ROM~63_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~20_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~65_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~65 .lut_mask = 16'hCA00;
-defparam \memoria_ROM~65 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N14
-fiftyfivenm_lcell_comb \memoria_ROM~66 (
-// Equation(s):
-// \memoria_ROM~66_combout  = (\memoria_ROM~20_combout  & ((\endereco_PC[7]~input_o  & ((\memoria_ROM~49_combout ))) # (!\endereco_PC[7]~input_o  & (\memoria_ROM~64_combout ))))
-
-	.dataa(\memoria_ROM~64_combout ),
-	.datab(\memoria_ROM~49_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~20_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~66_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~66 .lut_mask = 16'hCA00;
-defparam \memoria_ROM~66 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N14
-fiftyfivenm_lcell_comb \memoria_ROM~68 (
-// Equation(s):
-// \memoria_ROM~68_combout  = (\endereco_PC[2]~input_o  & (!\endereco_PC[7]~input_o  & (!\endereco_PC[5]~input_o  & \endereco_PC[3]~input_o )))
-
-	.dataa(\endereco_PC[2]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~68_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~68 .lut_mask = 16'h0200;
-defparam \memoria_ROM~68 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N0
-fiftyfivenm_lcell_comb \memoria_ROM~69 (
-// Equation(s):
-// \memoria_ROM~69_combout  = (\endereco_PC[2]~input_o  & (\endereco_PC[5]~input_o  & ((\endereco_PC[3]~input_o ) # (!\endereco_PC[7]~input_o )))) # (!\endereco_PC[2]~input_o  & (!\endereco_PC[7]~input_o  & (!\endereco_PC[5]~input_o  & 
-// \endereco_PC[3]~input_o )))
-
-	.dataa(\endereco_PC[2]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~69_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~69 .lut_mask = 16'hA120;
-defparam \memoria_ROM~69 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N10
-fiftyfivenm_lcell_comb \memoria_ROM~70 (
-// Equation(s):
-// \memoria_ROM~70_combout  = (\endereco_PC[6]~input_o  & (\endereco_PC[4]~input_o )) # (!\endereco_PC[6]~input_o  & ((\endereco_PC[4]~input_o  & (\memoria_ROM~68_combout )) # (!\endereco_PC[4]~input_o  & ((\memoria_ROM~69_combout )))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\memoria_ROM~68_combout ),
-	.datad(\memoria_ROM~69_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~70_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~70 .lut_mask = 16'hD9C8;
-defparam \memoria_ROM~70 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N20
-fiftyfivenm_lcell_comb \memoria_ROM~67 (
-// Equation(s):
-// \memoria_ROM~67_combout  = (\endereco_PC[3]~input_o  & (((\endereco_PC[7]~input_o ) # (\endereco_PC[5]~input_o )))) # (!\endereco_PC[3]~input_o  & ((\endereco_PC[2]~input_o ) # ((\endereco_PC[7]~input_o  & \endereco_PC[5]~input_o ))))
-
-	.dataa(\endereco_PC[2]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~67_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~67 .lut_mask = 16'hFCEA;
-defparam \memoria_ROM~67 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N4
-fiftyfivenm_lcell_comb \memoria_ROM~71 (
-// Equation(s):
-// \memoria_ROM~71_combout  = (\memoria_ROM~70_combout  & (((\memoria_ROM~60_combout ) # (!\endereco_PC[6]~input_o )))) # (!\memoria_ROM~70_combout  & (\memoria_ROM~67_combout  & (\endereco_PC[6]~input_o )))
-
-	.dataa(\memoria_ROM~70_combout ),
-	.datab(\memoria_ROM~67_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\memoria_ROM~60_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~71_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~71 .lut_mask = 16'hEA4A;
-defparam \memoria_ROM~71 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N22
-fiftyfivenm_lcell_comb \memoria_ROM~158 (
-// Equation(s):
-// \memoria_ROM~158_combout  = (!\endereco_PC[9]~input_o  & (!\endereco_PC[8]~input_o  & \memoria_ROM~71_combout ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\memoria_ROM~71_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~158_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~158 .lut_mask = 16'h0300;
-defparam \memoria_ROM~158 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N26
-fiftyfivenm_lcell_comb \memoria_ROM~76 (
-// Equation(s):
-// \memoria_ROM~76_combout  = (\endereco_PC[3]~input_o  & (!\endereco_PC[4]~input_o  & ((\endereco_PC[7]~input_o ) # (!\endereco_PC[2]~input_o )))) # (!\endereco_PC[3]~input_o  & (\endereco_PC[2]~input_o  $ (((\endereco_PC[4]~input_o  & 
-// \endereco_PC[7]~input_o )))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~76_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~76 .lut_mask = 16'h4758;
-defparam \memoria_ROM~76 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N16
-fiftyfivenm_lcell_comb \memoria_ROM~74 (
-// Equation(s):
-// \memoria_ROM~74_combout  = (\endereco_PC[7]~input_o  & (\endereco_PC[4]~input_o  $ ((\endereco_PC[3]~input_o )))) # (!\endereco_PC[7]~input_o  & (\endereco_PC[2]~input_o  & (\endereco_PC[4]~input_o  $ (!\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~74_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~74 .lut_mask = 16'h6948;
-defparam \memoria_ROM~74 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N8
-fiftyfivenm_lcell_comb \memoria_ROM~72 (
-// Equation(s):
-// \memoria_ROM~72_combout  = (\endereco_PC[3]~input_o  & (!\endereco_PC[4]~input_o  & (\endereco_PC[2]~input_o  & \endereco_PC[7]~input_o ))) # (!\endereco_PC[3]~input_o  & (!\endereco_PC[7]~input_o  & (\endereco_PC[4]~input_o  $ (\endereco_PC[2]~input_o 
-// ))))
-
-	.dataa(\endereco_PC[3]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[7]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~72_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~72 .lut_mask = 16'h2014;
-defparam \memoria_ROM~72 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y19_N24
-fiftyfivenm_lcell_comb \memoria_ROM~73 (
-// Equation(s):
-// \memoria_ROM~73_combout  = (\memoria_ROM~27_combout  & (!\endereco_PC[6]~input_o  & (\endereco_PC[5]~input_o  & \memoria_ROM~72_combout )))
-
-	.dataa(\memoria_ROM~27_combout ),
-	.datab(\endereco_PC[6]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\memoria_ROM~72_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~73_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~73 .lut_mask = 16'h2000;
-defparam \memoria_ROM~73 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y19_N10
-fiftyfivenm_lcell_comb \memoria_ROM~75 (
-// Equation(s):
-// \memoria_ROM~75_combout  = (\memoria_ROM~73_combout ) # ((\memoria_ROM~20_combout  & (\memoria_ROM~74_combout  & !\endereco_PC[5]~input_o )))
-
-	.dataa(\memoria_ROM~20_combout ),
-	.datab(\memoria_ROM~74_combout ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\memoria_ROM~73_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~75_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~75 .lut_mask = 16'hFF08;
-defparam \memoria_ROM~75 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y19_N28
-fiftyfivenm_lcell_comb \memoria_ROM~77 (
-// Equation(s):
-// \memoria_ROM~77_combout  = (\memoria_ROM~75_combout ) # ((\memoria_ROM~20_combout  & (\memoria_ROM~76_combout  & \endereco_PC[5]~input_o )))
-
-	.dataa(\memoria_ROM~20_combout ),
-	.datab(\memoria_ROM~76_combout ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\memoria_ROM~75_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~77_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~77 .lut_mask = 16'hFF80;
-defparam \memoria_ROM~77 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N22
-fiftyfivenm_lcell_comb \memoria_ROM~79 (
-// Equation(s):
-// \memoria_ROM~79_combout  = (!\endereco_PC[4]~input_o  & (!\endereco_PC[7]~input_o  & (!\endereco_PC[3]~input_o  & \endereco_PC[2]~input_o )))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~79_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~79 .lut_mask = 16'h0100;
-defparam \memoria_ROM~79 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N4
-fiftyfivenm_lcell_comb \memoria_ROM~78 (
-// Equation(s):
-// \memoria_ROM~78_combout  = (\endereco_PC[4]~input_o  & (!\endereco_PC[2]~input_o  & (\endereco_PC[7]~input_o  $ (!\endereco_PC[3]~input_o )))) # (!\endereco_PC[4]~input_o  & (!\endereco_PC[7]~input_o  & (\endereco_PC[3]~input_o )))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~78_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~78 .lut_mask = 16'h1092;
-defparam \memoria_ROM~78 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N0
-fiftyfivenm_lcell_comb \memoria_ROM~80 (
-// Equation(s):
-// \memoria_ROM~80_combout  = (\endereco_PC[6]~input_o  & (((\endereco_PC[5]~input_o )))) # (!\endereco_PC[6]~input_o  & ((\endereco_PC[5]~input_o  & ((\memoria_ROM~78_combout ))) # (!\endereco_PC[5]~input_o  & (\memoria_ROM~79_combout ))))
-
-	.dataa(\memoria_ROM~79_combout ),
-	.datab(\memoria_ROM~78_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\endereco_PC[5]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~80_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~80 .lut_mask = 16'hFC0A;
-defparam \memoria_ROM~80 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N2
-fiftyfivenm_lcell_comb \memoria_ROM~81 (
-// Equation(s):
-// \memoria_ROM~81_combout  = (\memoria_ROM~80_combout  & ((\memoria_ROM~76_combout ) # ((!\endereco_PC[6]~input_o )))) # (!\memoria_ROM~80_combout  & (((\endereco_PC[6]~input_o  & \memoria_ROM~74_combout ))))
-
-	.dataa(\memoria_ROM~76_combout ),
-	.datab(\memoria_ROM~80_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\memoria_ROM~74_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~81_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~81 .lut_mask = 16'hBC8C;
-defparam \memoria_ROM~81 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N0
-fiftyfivenm_lcell_comb \memoria_ROM~159 (
-// Equation(s):
-// \memoria_ROM~159_combout  = (!\endereco_PC[8]~input_o  & (!\endereco_PC[9]~input_o  & \memoria_ROM~81_combout ))
-
-	.dataa(\endereco_PC[8]~input_o ),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\memoria_ROM~81_combout ),
-	.datad(gnd),
-	.cin(gnd),
-	.combout(\memoria_ROM~159_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~159 .lut_mask = 16'h1010;
-defparam \memoria_ROM~159 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N10
-fiftyfivenm_lcell_comb \memoria_ROM~85 (
-// Equation(s):
-// \memoria_ROM~85_combout  = (\endereco_PC[4]~input_o  & (((!\endereco_PC[3]~input_o )))) # (!\endereco_PC[4]~input_o  & ((\endereco_PC[3]~input_o  & ((\endereco_PC[7]~input_o ) # (!\endereco_PC[2]~input_o ))) # (!\endereco_PC[3]~input_o  & 
-// ((\endereco_PC[2]~input_o )))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~85_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~85 .lut_mask = 16'h4F5A;
-defparam \memoria_ROM~85 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N6
-fiftyfivenm_lcell_comb \memoria_ROM~83 (
-// Equation(s):
-// \memoria_ROM~83_combout  = (!\endereco_PC[7]~input_o  & (\endereco_PC[3]~input_o  & ((\endereco_PC[4]~input_o ) # (!\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~83_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~83 .lut_mask = 16'h2030;
-defparam \memoria_ROM~83 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N28
-fiftyfivenm_lcell_comb \memoria_ROM~82 (
-// Equation(s):
-// \memoria_ROM~82_combout  = (\endereco_PC[7]~input_o  & (\endereco_PC[3]~input_o  & ((\endereco_PC[4]~input_o ) # (\endereco_PC[2]~input_o )))) # (!\endereco_PC[7]~input_o  & (\endereco_PC[4]~input_o  $ (((\endereco_PC[3]~input_o ) # 
-// (\endereco_PC[2]~input_o )))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~82_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~82 .lut_mask = 16'hD192;
-defparam \memoria_ROM~82 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N24
-fiftyfivenm_lcell_comb \memoria_ROM~84 (
-// Equation(s):
-// \memoria_ROM~84_combout  = (\endereco_PC[6]~input_o  & (((\endereco_PC[5]~input_o )))) # (!\endereco_PC[6]~input_o  & ((\endereco_PC[5]~input_o  & ((\memoria_ROM~82_combout ))) # (!\endereco_PC[5]~input_o  & (\memoria_ROM~83_combout ))))
-
-	.dataa(\memoria_ROM~83_combout ),
-	.datab(\memoria_ROM~82_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\endereco_PC[5]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~84_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~84 .lut_mask = 16'hFC0A;
-defparam \memoria_ROM~84 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N20
-fiftyfivenm_lcell_comb \memoria_ROM~86 (
-// Equation(s):
-// \memoria_ROM~86_combout  = (\memoria_ROM~84_combout  & ((\memoria_ROM~85_combout ) # ((!\endereco_PC[6]~input_o )))) # (!\memoria_ROM~84_combout  & (((\endereco_PC[6]~input_o  & \memoria_ROM~74_combout ))))
-
-	.dataa(\memoria_ROM~85_combout ),
-	.datab(\memoria_ROM~84_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\memoria_ROM~74_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~86_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~86 .lut_mask = 16'hBC8C;
-defparam \memoria_ROM~86 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N2
-fiftyfivenm_lcell_comb \memoria_ROM~160 (
-// Equation(s):
-// \memoria_ROM~160_combout  = (!\endereco_PC[8]~input_o  & (!\endereco_PC[9]~input_o  & \memoria_ROM~86_combout ))
-
-	.dataa(\endereco_PC[8]~input_o ),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\memoria_ROM~86_combout ),
-	.datad(gnd),
-	.cin(gnd),
-	.combout(\memoria_ROM~160_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~160 .lut_mask = 16'h1010;
-defparam \memoria_ROM~160 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N30
-fiftyfivenm_lcell_comb \memoria_ROM~88 (
-// Equation(s):
-// \memoria_ROM~88_combout  = (\endereco_PC[5]~input_o  & (((!\endereco_PC[3]~input_o  & !\endereco_PC[2]~input_o )))) # (!\endereco_PC[5]~input_o  & (\endereco_PC[7]~input_o  $ ((\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[5]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~88_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~88 .lut_mask = 16'h121E;
-defparam \memoria_ROM~88 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N28
-fiftyfivenm_lcell_comb \memoria_ROM~87 (
-// Equation(s):
-// \memoria_ROM~87_combout  = (\endereco_PC[5]~input_o  & (!\endereco_PC[3]~input_o  & (\endereco_PC[7]~input_o  $ (\endereco_PC[2]~input_o )))) # (!\endereco_PC[5]~input_o  & (\endereco_PC[7]~input_o  $ ((\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[5]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~87_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~87 .lut_mask = 16'h161A;
-defparam \memoria_ROM~87 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N16
-fiftyfivenm_lcell_comb \memoria_ROM~89 (
-// Equation(s):
-// \memoria_ROM~89_combout  = (\memoria_ROM~20_combout  & ((\endereco_PC[4]~input_o  & ((\memoria_ROM~87_combout ))) # (!\endereco_PC[4]~input_o  & (!\memoria_ROM~88_combout ))))
-
-	.dataa(\memoria_ROM~88_combout ),
-	.datab(\memoria_ROM~87_combout ),
-	.datac(\memoria_ROM~20_combout ),
-	.datad(\endereco_PC[4]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~89_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~89 .lut_mask = 16'hC050;
-defparam \memoria_ROM~89 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N4
-fiftyfivenm_lcell_comb \memoria_ROM~91 (
-// Equation(s):
-// \memoria_ROM~91_combout  = (!\endereco_PC[7]~input_o  & (!\endereco_PC[5]~input_o  & (\endereco_PC[3]~input_o  $ (\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[5]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~91_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~91 .lut_mask = 16'h0110;
-defparam \memoria_ROM~91 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N18
-fiftyfivenm_lcell_comb \memoria_ROM~90 (
-// Equation(s):
-// \memoria_ROM~90_combout  = (!\endereco_PC[9]~input_o  & (!\endereco_PC[6]~input_o  & !\endereco_PC[8]~input_o ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\endereco_PC[8]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~90_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~90 .lut_mask = 16'h0003;
-defparam \memoria_ROM~90 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N14
-fiftyfivenm_lcell_comb \memoria_ROM~92 (
-// Equation(s):
-// \memoria_ROM~92_combout  = (\memoria_ROM~89_combout ) # ((!\endereco_PC[4]~input_o  & (\memoria_ROM~91_combout  & \memoria_ROM~90_combout )))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\memoria_ROM~89_combout ),
-	.datac(\memoria_ROM~91_combout ),
-	.datad(\memoria_ROM~90_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~92_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~92 .lut_mask = 16'hDCCC;
-defparam \memoria_ROM~92 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N10
-fiftyfivenm_lcell_comb \memoria_ROM~94 (
-// Equation(s):
-// \memoria_ROM~94_combout  = (\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o  $ (\endereco_PC[3]~input_o )))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(gnd),
-	.datac(\endereco_PC[4]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~94_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~94 .lut_mask = 16'h0AA0;
-defparam \memoria_ROM~94 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N4
-fiftyfivenm_lcell_comb \memoria_ROM~95 (
-// Equation(s):
-// \memoria_ROM~95_combout  = (\endereco_PC[6]~input_o  & ((\endereco_PC[4]~input_o ) # ((\endereco_PC[5]~input_o ) # (\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~95_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~95 .lut_mask = 16'hAAA8;
-defparam \memoria_ROM~95 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N24
-fiftyfivenm_lcell_comb \memoria_ROM~93 (
-// Equation(s):
-// \memoria_ROM~93_combout  = (\endereco_PC[4]~input_o  & ((\endereco_PC[6]~input_o  & (\endereco_PC[5]~input_o  $ (\endereco_PC[3]~input_o ))) # (!\endereco_PC[6]~input_o  & ((\endereco_PC[5]~input_o ) # (!\endereco_PC[3]~input_o ))))) # 
-// (!\endereco_PC[4]~input_o  & (!\endereco_PC[3]~input_o  & (\endereco_PC[6]~input_o  $ (\endereco_PC[5]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~93_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~93 .lut_mask = 16'h48D6;
-defparam \memoria_ROM~93 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N6
-fiftyfivenm_lcell_comb \memoria_ROM~96 (
-// Equation(s):
-// \memoria_ROM~96_combout  = (\memoria_ROM~95_combout  & (((!\memoria_ROM~93_combout ) # (!\endereco_PC[2]~input_o )))) # (!\memoria_ROM~95_combout  & ((\memoria_ROM~94_combout  & (!\endereco_PC[2]~input_o  & \memoria_ROM~93_combout )) # 
-// (!\memoria_ROM~94_combout  & (\endereco_PC[2]~input_o ))))
-
-	.dataa(\memoria_ROM~94_combout ),
-	.datab(\memoria_ROM~95_combout ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\memoria_ROM~93_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~96_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~96 .lut_mask = 16'h1EDC;
-defparam \memoria_ROM~96 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N8
-fiftyfivenm_lcell_comb \memoria_ROM~97 (
-// Equation(s):
-// \memoria_ROM~97_combout  = (\endereco_PC[2]~input_o  & (\memoria_ROM~95_combout  & (\memoria_ROM~94_combout  $ (!\memoria_ROM~93_combout )))) # (!\endereco_PC[2]~input_o  & (!\memoria_ROM~94_combout  & ((\memoria_ROM~93_combout ))))
-
-	.dataa(\memoria_ROM~94_combout ),
-	.datab(\memoria_ROM~95_combout ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\memoria_ROM~93_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~97_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~97 .lut_mask = 16'h8540;
-defparam \memoria_ROM~97 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N2
-fiftyfivenm_lcell_comb \memoria_ROM~98 (
-// Equation(s):
-// \memoria_ROM~98_combout  = (\memoria_ROM~27_combout  & ((\endereco_PC[7]~input_o  & (!\memoria_ROM~96_combout )) # (!\endereco_PC[7]~input_o  & ((!\memoria_ROM~97_combout )))))
-
-	.dataa(\memoria_ROM~96_combout ),
-	.datab(\memoria_ROM~97_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~27_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~98_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~98 .lut_mask = 16'h5300;
-defparam \memoria_ROM~98 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N8
-fiftyfivenm_lcell_comb \memoria_ROM~99 (
-// Equation(s):
-// \memoria_ROM~99_combout  = (\endereco_PC[4]~input_o  & (\endereco_PC[5]~input_o  & \endereco_PC[2]~input_o ))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(gnd),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~99_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~99 .lut_mask = 16'hA000;
-defparam \memoria_ROM~99 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N26
-fiftyfivenm_lcell_comb \memoria_ROM~100 (
-// Equation(s):
-// \memoria_ROM~100_combout  = (\endereco_PC[5]~input_o  & ((\endereco_PC[4]~input_o ) # ((\endereco_PC[2]~input_o ) # (\endereco_PC[3]~input_o )))) # (!\endereco_PC[5]~input_o  & ((\endereco_PC[2]~input_o  $ (\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~100_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~100 .lut_mask = 16'hAFF8;
-defparam \memoria_ROM~100 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N16
-fiftyfivenm_lcell_comb \memoria_ROM~101 (
-// Equation(s):
-// \memoria_ROM~101_combout  = (\endereco_PC[5]~input_o  & (!\endereco_PC[3]~input_o  & (!\endereco_PC[4]~input_o  & !\endereco_PC[2]~input_o )))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[4]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~101_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~101 .lut_mask = 16'h0002;
-defparam \memoria_ROM~101 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N18
-fiftyfivenm_lcell_comb \memoria_ROM~102 (
-// Equation(s):
-// \memoria_ROM~102_combout  = (\endereco_PC[6]~input_o  & (((\endereco_PC[7]~input_o )))) # (!\endereco_PC[6]~input_o  & ((\endereco_PC[7]~input_o  & (!\memoria_ROM~100_combout )) # (!\endereco_PC[7]~input_o  & ((\memoria_ROM~101_combout )))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\memoria_ROM~100_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~101_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~102_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~102 .lut_mask = 16'hB5B0;
-defparam \memoria_ROM~102 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N12
-fiftyfivenm_lcell_comb \memoria_ROM~103 (
-// Equation(s):
-// \memoria_ROM~103_combout  = (\endereco_PC[6]~input_o  & (\memoria_ROM~99_combout  & (\memoria_ROM~102_combout  $ (\endereco_PC[3]~input_o )))) # (!\endereco_PC[6]~input_o  & (((\memoria_ROM~102_combout ))))
-
-	.dataa(\memoria_ROM~99_combout ),
-	.datab(\memoria_ROM~102_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~103_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~103 .lut_mask = 16'h2C8C;
-defparam \memoria_ROM~103 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N28
-fiftyfivenm_lcell_comb \memoria_ROM~161 (
-// Equation(s):
-// \memoria_ROM~161_combout  = (!\endereco_PC[9]~input_o  & (!\endereco_PC[8]~input_o  & \memoria_ROM~103_combout ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\memoria_ROM~103_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~161_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~161 .lut_mask = 16'h0300;
-defparam \memoria_ROM~161 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N16
-fiftyfivenm_lcell_comb \memoria_ROM~106 (
-// Equation(s):
-// \memoria_ROM~106_combout  = (!\endereco_PC[7]~input_o  & (!\endereco_PC[9]~input_o  & (!\endereco_PC[8]~input_o  & \endereco_PC[6]~input_o )))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\endereco_PC[6]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~106_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~106 .lut_mask = 16'h0100;
-defparam \memoria_ROM~106 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N20
-fiftyfivenm_lcell_comb \memoria_ROM~104 (
-// Equation(s):
-// \memoria_ROM~104_combout  = (\endereco_PC[4]~input_o  & (\endereco_PC[2]~input_o  & (\endereco_PC[6]~input_o  $ (\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~104_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~104 .lut_mask = 16'h4080;
-defparam \memoria_ROM~104 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y20_N22
-fiftyfivenm_lcell_comb \memoria_ROM~105 (
-// Equation(s):
-// \memoria_ROM~105_combout  = (\endereco_PC[7]~input_o  & (\memoria_ROM~104_combout  & (\endereco_PC[5]~input_o  & \memoria_ROM~27_combout )))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\memoria_ROM~104_combout ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\memoria_ROM~27_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~105_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~105 .lut_mask = 16'h8000;
-defparam \memoria_ROM~105 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N14
-fiftyfivenm_lcell_comb \memoria_ROM~107 (
-// Equation(s):
-// \memoria_ROM~107_combout  = (\memoria_ROM~105_combout ) # ((\memoria_ROM~99_combout  & (\memoria_ROM~106_combout  & \endereco_PC[3]~input_o )))
-
-	.dataa(\memoria_ROM~99_combout ),
-	.datab(\memoria_ROM~106_combout ),
-	.datac(\memoria_ROM~105_combout ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~107_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~107 .lut_mask = 16'hF8F0;
-defparam \memoria_ROM~107 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N2
-fiftyfivenm_lcell_comb \memoria_ROM~108 (
-// Equation(s):
-// \memoria_ROM~108_combout  = (!\endereco_PC[5]~input_o  & (!\endereco_PC[3]~input_o  & !\endereco_PC[4]~input_o ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[5]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[4]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~108_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~108 .lut_mask = 16'h0003;
-defparam \memoria_ROM~108 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N24
-fiftyfivenm_lcell_comb \memoria_ROM~109 (
-// Equation(s):
-// \memoria_ROM~109_combout  = (\memoria_ROM~108_combout  & (!\endereco_PC[6]~input_o  & !\endereco_PC[2]~input_o ))
-
-	.dataa(\memoria_ROM~108_combout ),
-	.datab(\endereco_PC[6]~input_o ),
-	.datac(gnd),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~109_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~109 .lut_mask = 16'h0022;
-defparam \memoria_ROM~109 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N10
-fiftyfivenm_lcell_comb \memoria_ROM~110 (
-// Equation(s):
-// \memoria_ROM~110_combout  = (\memoria_ROM~107_combout ) # ((\memoria_ROM~27_combout  & (\endereco_PC[7]~input_o  & \memoria_ROM~109_combout )))
-
-	.dataa(\memoria_ROM~27_combout ),
-	.datab(\memoria_ROM~107_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~109_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~110_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~110 .lut_mask = 16'hECCC;
-defparam \memoria_ROM~110 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N10
-fiftyfivenm_lcell_comb \memoria_ROM~112 (
-// Equation(s):
-// \memoria_ROM~112_combout  = (\endereco_PC[5]~input_o  & ((\endereco_PC[4]~input_o ) # ((\endereco_PC[3]~input_o ) # (\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~112_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~112 .lut_mask = 16'hF0E0;
-defparam \memoria_ROM~112 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N4
-fiftyfivenm_lcell_comb \memoria_ROM~113 (
-// Equation(s):
-// \memoria_ROM~113_combout  = (\endereco_PC[3]~input_o  & (!\endereco_PC[4]~input_o  & (!\endereco_PC[5]~input_o  & \endereco_PC[2]~input_o ))) # (!\endereco_PC[3]~input_o  & (\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o  $ (!\endereco_PC[2]~input_o 
-// ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~113_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~113 .lut_mask = 16'h2410;
-defparam \memoria_ROM~113 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N30
-fiftyfivenm_lcell_comb \memoria_ROM~114 (
-// Equation(s):
-// \memoria_ROM~114_combout  = (\endereco_PC[7]~input_o  & ((\memoria_ROM~112_combout ) # ((\endereco_PC[6]~input_o )))) # (!\endereco_PC[7]~input_o  & (((\memoria_ROM~113_combout  & !\endereco_PC[6]~input_o ))))
-
-	.dataa(\memoria_ROM~112_combout ),
-	.datab(\memoria_ROM~113_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\endereco_PC[6]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~114_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~114 .lut_mask = 16'hF0AC;
-defparam \memoria_ROM~114 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N8
-fiftyfivenm_lcell_comb \memoria_ROM~115 (
-// Equation(s):
-// \memoria_ROM~115_combout  = (\endereco_PC[4]~input_o  & (\endereco_PC[3]~input_o  & (\endereco_PC[5]~input_o ))) # (!\endereco_PC[4]~input_o  & (!\endereco_PC[3]~input_o  & (\endereco_PC[5]~input_o  $ (\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~115_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~115 .lut_mask = 16'h8190;
-defparam \memoria_ROM~115 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N24
-fiftyfivenm_lcell_comb \memoria_ROM~111 (
-// Equation(s):
-// \memoria_ROM~111_combout  = (\endereco_PC[4]~input_o  & ((\endereco_PC[3]~input_o  & (\endereco_PC[5]~input_o  & !\endereco_PC[2]~input_o )) # (!\endereco_PC[3]~input_o  & (!\endereco_PC[5]~input_o  & \endereco_PC[2]~input_o )))) # 
-// (!\endereco_PC[4]~input_o  & (!\endereco_PC[2]~input_o  & (\endereco_PC[3]~input_o  $ (\endereco_PC[5]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~111_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~111 .lut_mask = 16'h0294;
-defparam \memoria_ROM~111 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N2
-fiftyfivenm_lcell_comb \memoria_ROM~116 (
-// Equation(s):
-// \memoria_ROM~116_combout  = (\memoria_ROM~114_combout  & (((!\memoria_ROM~115_combout )) # (!\endereco_PC[6]~input_o ))) # (!\memoria_ROM~114_combout  & (\endereco_PC[6]~input_o  & ((\memoria_ROM~111_combout ))))
-
-	.dataa(\memoria_ROM~114_combout ),
-	.datab(\endereco_PC[6]~input_o ),
-	.datac(\memoria_ROM~115_combout ),
-	.datad(\memoria_ROM~111_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~116_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~116 .lut_mask = 16'h6E2A;
-defparam \memoria_ROM~116 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N30
-fiftyfivenm_lcell_comb \memoria_ROM~162 (
-// Equation(s):
-// \memoria_ROM~162_combout  = (!\endereco_PC[9]~input_o  & (!\endereco_PC[8]~input_o  & \memoria_ROM~116_combout ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\memoria_ROM~116_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~162_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~162 .lut_mask = 16'h0300;
-defparam \memoria_ROM~162 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N16
-fiftyfivenm_lcell_comb \memoria_ROM~118 (
-// Equation(s):
-// \memoria_ROM~118_combout  = (\endereco_PC[6]~input_o  & ((\endereco_PC[3]~input_o ) # ((\endereco_PC[5]~input_o ) # (!\endereco_PC[7]~input_o )))) # (!\endereco_PC[6]~input_o  & (\endereco_PC[3]~input_o  & (\endereco_PC[5]~input_o )))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[7]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~118_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~118 .lut_mask = 16'hE8EA;
-defparam \memoria_ROM~118 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N30
-fiftyfivenm_lcell_comb \memoria_ROM~117 (
-// Equation(s):
-// \memoria_ROM~117_combout  = (\endereco_PC[6]~input_o  & (\endereco_PC[3]~input_o  $ (((!\endereco_PC[5]~input_o  & \endereco_PC[7]~input_o ))))) # (!\endereco_PC[6]~input_o  & ((\endereco_PC[5]~input_o ) # ((\endereco_PC[3]~input_o  & 
-// !\endereco_PC[7]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[7]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~117_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~117 .lut_mask = 16'hD2DC;
-defparam \memoria_ROM~117 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N26
-fiftyfivenm_lcell_comb \memoria_ROM~119 (
-// Equation(s):
-// \memoria_ROM~119_combout  = (\memoria_ROM~118_combout  & (((\memoria_ROM~117_combout )) # (!\endereco_PC[2]~input_o ))) # (!\memoria_ROM~118_combout  & ((\memoria_ROM~117_combout  & (\endereco_PC[2]~input_o )) # (!\memoria_ROM~117_combout  & 
-// ((\endereco_PC[7]~input_o )))))
-
-	.dataa(\endereco_PC[2]~input_o ),
-	.datab(\memoria_ROM~118_combout ),
-	.datac(\memoria_ROM~117_combout ),
-	.datad(\endereco_PC[7]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~119_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~119 .lut_mask = 16'hE7E4;
-defparam \memoria_ROM~119 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N28
-fiftyfivenm_lcell_comb \memoria_ROM~120 (
-// Equation(s):
-// \memoria_ROM~120_combout  = (\memoria_ROM~117_combout  & (((\endereco_PC[7]~input_o )))) # (!\memoria_ROM~117_combout  & (\memoria_ROM~118_combout  & (\endereco_PC[2]~input_o  $ (\endereco_PC[7]~input_o ))))
-
-	.dataa(\endereco_PC[2]~input_o ),
-	.datab(\memoria_ROM~118_combout ),
-	.datac(\memoria_ROM~117_combout ),
-	.datad(\endereco_PC[7]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~120_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~120 .lut_mask = 16'hF408;
-defparam \memoria_ROM~120 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X20_Y21_N22
-fiftyfivenm_lcell_comb \memoria_ROM~121 (
-// Equation(s):
-// \memoria_ROM~121_combout  = (\memoria_ROM~27_combout  & (\memoria_ROM~120_combout  $ (((\memoria_ROM~119_combout ) # (\endereco_PC[4]~input_o )))))
-
-	.dataa(\memoria_ROM~119_combout ),
-	.datab(\memoria_ROM~120_combout ),
-	.datac(\endereco_PC[4]~input_o ),
-	.datad(\memoria_ROM~27_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~121_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~121 .lut_mask = 16'h3600;
-defparam \memoria_ROM~121 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N12
-fiftyfivenm_lcell_comb \memoria_ROM~126 (
-// Equation(s):
-// \memoria_ROM~126_combout  = (\endereco_PC[5]~input_o ) # ((\endereco_PC[4]~input_o  & ((!\endereco_PC[2]~input_o ) # (!\endereco_PC[3]~input_o ))) # (!\endereco_PC[4]~input_o  & ((\endereco_PC[3]~input_o ) # (\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~126_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~126 .lut_mask = 16'hF7FE;
-defparam \memoria_ROM~126 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N28
-fiftyfivenm_lcell_comb \memoria_ROM~122 (
-// Equation(s):
-// \memoria_ROM~122_combout  = (!\endereco_PC[2]~input_o  & ((\endereco_PC[4]~input_o  & (\endereco_PC[3]~input_o  & \endereco_PC[5]~input_o )) # (!\endereco_PC[4]~input_o  & (\endereco_PC[3]~input_o  $ (\endereco_PC[5]~input_o )))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~122_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~122 .lut_mask = 16'h0094;
-defparam \memoria_ROM~122 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N6
-fiftyfivenm_lcell_comb \memoria_ROM~123 (
-// Equation(s):
-// \memoria_ROM~123_combout  = (\endereco_PC[4]~input_o  & (\endereco_PC[3]~input_o  & ((\endereco_PC[2]~input_o )))) # (!\endereco_PC[4]~input_o  & (!\endereco_PC[3]~input_o  & (\endereco_PC[5]~input_o  & !\endereco_PC[2]~input_o )))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~123_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~123 .lut_mask = 16'h8810;
-defparam \memoria_ROM~123 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N16
-fiftyfivenm_lcell_comb \memoria_ROM~124 (
-// Equation(s):
-// \memoria_ROM~124_combout  = (\endereco_PC[2]~input_o  & ((\endereco_PC[4]~input_o  & (!\endereco_PC[3]~input_o  & \endereco_PC[5]~input_o )) # (!\endereco_PC[4]~input_o  & ((!\endereco_PC[5]~input_o )))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~124_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~124 .lut_mask = 16'h2500;
-defparam \memoria_ROM~124 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N18
-fiftyfivenm_lcell_comb \memoria_ROM~125 (
-// Equation(s):
-// \memoria_ROM~125_combout  = (\endereco_PC[7]~input_o  & ((\memoria_ROM~123_combout ) # ((\endereco_PC[6]~input_o )))) # (!\endereco_PC[7]~input_o  & (((\memoria_ROM~124_combout  & !\endereco_PC[6]~input_o ))))
-
-	.dataa(\memoria_ROM~123_combout ),
-	.datab(\memoria_ROM~124_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\endereco_PC[6]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~125_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~125 .lut_mask = 16'hF0AC;
-defparam \memoria_ROM~125 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N14
-fiftyfivenm_lcell_comb \memoria_ROM~127 (
-// Equation(s):
-// \memoria_ROM~127_combout  = (\endereco_PC[6]~input_o  & ((\memoria_ROM~125_combout  & (!\memoria_ROM~126_combout )) # (!\memoria_ROM~125_combout  & ((\memoria_ROM~122_combout ))))) # (!\endereco_PC[6]~input_o  & (((\memoria_ROM~125_combout ))))
-
-	.dataa(\memoria_ROM~126_combout ),
-	.datab(\memoria_ROM~122_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\memoria_ROM~125_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~127_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~127 .lut_mask = 16'h5FC0;
-defparam \memoria_ROM~127 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N24
-fiftyfivenm_lcell_comb \memoria_ROM~163 (
-// Equation(s):
-// \memoria_ROM~163_combout  = (!\endereco_PC[9]~input_o  & (!\endereco_PC[8]~input_o  & \memoria_ROM~127_combout ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\memoria_ROM~127_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~163_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~163 .lut_mask = 16'h0300;
-defparam \memoria_ROM~163 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N4
-fiftyfivenm_lcell_comb \memoria_ROM~128 (
-// Equation(s):
-// \memoria_ROM~128_combout  = (\endereco_PC[5]~input_o  & ((\endereco_PC[4]~input_o  & (\endereco_PC[2]~input_o  & \endereco_PC[3]~input_o )) # (!\endereco_PC[4]~input_o  & (!\endereco_PC[2]~input_o  & !\endereco_PC[3]~input_o )))) # 
-// (!\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o  & ((\endereco_PC[2]~input_o ) # (\endereco_PC[3]~input_o ))))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[2]~input_o ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~128_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~128 .lut_mask = 16'hC442;
-defparam \memoria_ROM~128 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y23_N6
-fiftyfivenm_lcell_comb \memoria_ROM~129 (
-// Equation(s):
-// \memoria_ROM~129_combout  = (\memoria_ROM~27_combout  & (\endereco_PC[7]~input_o  & (\memoria_ROM~128_combout  & !\endereco_PC[6]~input_o )))
-
-	.dataa(\memoria_ROM~27_combout ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\memoria_ROM~128_combout ),
-	.datad(\endereco_PC[6]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~129_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~129 .lut_mask = 16'h0080;
-defparam \memoria_ROM~129 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X16_Y21_N12
-fiftyfivenm_lcell_comb \memoria_ROM~130 (
-// Equation(s):
-// \memoria_ROM~130_combout  = (\endereco_PC[4]~input_o  & (!\endereco_PC[5]~input_o  & ((\endereco_PC[3]~input_o ) # (\endereco_PC[2]~input_o )))) # (!\endereco_PC[4]~input_o  & (\endereco_PC[5]~input_o  & (!\endereco_PC[3]~input_o  & 
-// !\endereco_PC[2]~input_o )))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[5]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~130_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~130 .lut_mask = 16'h2224;
-defparam \memoria_ROM~130 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N26
-fiftyfivenm_lcell_comb \memoria_ROM~131 (
-// Equation(s):
-// \memoria_ROM~131_combout  = (\memoria_ROM~130_combout  & (!\endereco_PC[6]~input_o  & (\endereco_PC[7]~input_o  & \memoria_ROM~27_combout )))
-
-	.dataa(\memoria_ROM~130_combout ),
-	.datab(\endereco_PC[6]~input_o ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~27_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~131_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~131 .lut_mask = 16'h2000;
-defparam \memoria_ROM~131 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N22
-fiftyfivenm_lcell_comb \memoria_ROM~132 (
-// Equation(s):
-// \memoria_ROM~132_combout  = (\endereco_PC[4]~input_o  & ((\endereco_PC[7]~input_o  & (\endereco_PC[5]~input_o  & !\endereco_PC[2]~input_o )) # (!\endereco_PC[7]~input_o  & ((\endereco_PC[2]~input_o ))))) # (!\endereco_PC[4]~input_o  & 
-// (\endereco_PC[7]~input_o  $ ((\endereco_PC[5]~input_o ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~132_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~132 .lut_mask = 16'h5692;
-defparam \memoria_ROM~132 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N24
-fiftyfivenm_lcell_comb \memoria_ROM~133 (
-// Equation(s):
-// \memoria_ROM~133_combout  = (\endereco_PC[7]~input_o  & ((\endereco_PC[5]~input_o  & ((!\endereco_PC[2]~input_o ))) # (!\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o )))) # (!\endereco_PC[7]~input_o  & (\endereco_PC[4]~input_o  & 
-// (\endereco_PC[5]~input_o  & \endereco_PC[2]~input_o )))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[4]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~133_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~133 .lut_mask = 16'h48A8;
-defparam \memoria_ROM~133 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N2
-fiftyfivenm_lcell_comb \memoria_ROM~134 (
-// Equation(s):
-// \memoria_ROM~134_combout  = (\memoria_ROM~132_combout  & (\memoria_ROM~133_combout  & (!\endereco_PC[6]~input_o  & !\endereco_PC[2]~input_o ))) # (!\memoria_ROM~132_combout  & ((\memoria_ROM~133_combout  & (\endereco_PC[6]~input_o  & 
-// \endereco_PC[2]~input_o )) # (!\memoria_ROM~133_combout  & (\endereco_PC[6]~input_o  $ (\endereco_PC[2]~input_o )))))
-
-	.dataa(\memoria_ROM~132_combout ),
-	.datab(\memoria_ROM~133_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~134_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~134 .lut_mask = 16'h4118;
-defparam \memoria_ROM~134 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N4
-fiftyfivenm_lcell_comb \memoria_ROM~135 (
-// Equation(s):
-// \memoria_ROM~135_combout  = (\memoria_ROM~132_combout  & ((\memoria_ROM~133_combout  & ((\endereco_PC[2]~input_o ))) # (!\memoria_ROM~133_combout  & (\endereco_PC[6]~input_o  & !\endereco_PC[2]~input_o ))))
-
-	.dataa(\memoria_ROM~132_combout ),
-	.datab(\memoria_ROM~133_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~135_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~135 .lut_mask = 16'h8820;
-defparam \memoria_ROM~135 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X22_Y19_N30
-fiftyfivenm_lcell_comb \memoria_ROM~136 (
-// Equation(s):
-// \memoria_ROM~136_combout  = (\memoria_ROM~27_combout  & ((\memoria_ROM~134_combout  & (!\memoria_ROM~135_combout  & \endereco_PC[3]~input_o )) # (!\memoria_ROM~134_combout  & (\memoria_ROM~135_combout  & !\endereco_PC[3]~input_o ))))
-
-	.dataa(\memoria_ROM~27_combout ),
-	.datab(\memoria_ROM~134_combout ),
-	.datac(\memoria_ROM~135_combout ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~136_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~136 .lut_mask = 16'h0820;
-defparam \memoria_ROM~136 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N26
-fiftyfivenm_lcell_comb \memoria_ROM~138 (
-// Equation(s):
-// \memoria_ROM~138_combout  = (\endereco_PC[4]~input_o  & (\endereco_PC[3]~input_o  $ ((\endereco_PC[5]~input_o )))) # (!\endereco_PC[4]~input_o  & ((\endereco_PC[5]~input_o ) # ((\endereco_PC[3]~input_o  & \endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~138_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~138 .lut_mask = 16'h7C78;
-defparam \memoria_ROM~138 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N0
-fiftyfivenm_lcell_comb \memoria_ROM~137 (
-// Equation(s):
-// \memoria_ROM~137_combout  = (\endereco_PC[2]~input_o  & (!\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o  $ (!\endereco_PC[3]~input_o )))) # (!\endereco_PC[2]~input_o  & (\endereco_PC[5]~input_o  $ (((!\endereco_PC[4]~input_o  & 
-// \endereco_PC[3]~input_o )))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~137_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~137 .lut_mask = 16'h09B4;
-defparam \memoria_ROM~137 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N20
-fiftyfivenm_lcell_comb \memoria_ROM~139 (
-// Equation(s):
-// \memoria_ROM~139_combout  = (\endereco_PC[7]~input_o  & (\endereco_PC[6]~input_o )) # (!\endereco_PC[7]~input_o  & ((\endereco_PC[6]~input_o  & ((\memoria_ROM~137_combout ))) # (!\endereco_PC[6]~input_o  & (\memoria_ROM~138_combout ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\endereco_PC[6]~input_o ),
-	.datac(\memoria_ROM~138_combout ),
-	.datad(\memoria_ROM~137_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~139_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~139 .lut_mask = 16'hDC98;
-defparam \memoria_ROM~139 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N20
-fiftyfivenm_lcell_comb \memoria_ROM~140 (
-// Equation(s):
-// \memoria_ROM~140_combout  = (\memoria_ROM~139_combout  & (((!\memoria_ROM~126_combout ) # (!\endereco_PC[7]~input_o )))) # (!\memoria_ROM~139_combout  & (\memoria_ROM~130_combout  & (\endereco_PC[7]~input_o )))
-
-	.dataa(\memoria_ROM~130_combout ),
-	.datab(\memoria_ROM~139_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~126_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~140_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~140 .lut_mask = 16'h2CEC;
-defparam \memoria_ROM~140 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N18
-fiftyfivenm_lcell_comb \memoria_ROM~164 (
-// Equation(s):
-// \memoria_ROM~164_combout  = (!\endereco_PC[9]~input_o  & (!\endereco_PC[8]~input_o  & \memoria_ROM~140_combout ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\memoria_ROM~140_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~164_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~164 .lut_mask = 16'h0300;
-defparam \memoria_ROM~164 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N20
-fiftyfivenm_lcell_comb \memoria_ROM~141 (
-// Equation(s):
-// \memoria_ROM~141_combout  = (\endereco_PC[5]~input_o  & (((!\endereco_PC[4]~input_o  & !\endereco_PC[2]~input_o )) # (!\endereco_PC[3]~input_o ))) # (!\endereco_PC[5]~input_o  & (\endereco_PC[4]~input_o  & ((\endereco_PC[3]~input_o ) # 
-// (\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[4]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~141_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~141 .lut_mask = 16'h726A;
-defparam \memoria_ROM~141 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X18_Y21_N22
-fiftyfivenm_lcell_comb \memoria_ROM~142 (
-// Equation(s):
-// \memoria_ROM~142_combout  = (\endereco_PC[4]~input_o  & (\endereco_PC[3]~input_o  & (!\endereco_PC[5]~input_o  & \endereco_PC[2]~input_o )))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[5]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~142_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~142 .lut_mask = 16'h0800;
-defparam \memoria_ROM~142 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N30
-fiftyfivenm_lcell_comb \memoria_ROM~143 (
-// Equation(s):
-// \memoria_ROM~143_combout  = (\endereco_PC[7]~input_o  & (((\endereco_PC[6]~input_o )))) # (!\endereco_PC[7]~input_o  & ((\endereco_PC[6]~input_o  & ((\memoria_ROM~142_combout ))) # (!\endereco_PC[6]~input_o  & (\memoria_ROM~108_combout ))))
-
-	.dataa(\memoria_ROM~108_combout ),
-	.datab(\memoria_ROM~142_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\endereco_PC[6]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~143_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~143 .lut_mask = 16'hFC0A;
-defparam \memoria_ROM~143 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N8
-fiftyfivenm_lcell_comb \memoria_ROM~144 (
-// Equation(s):
-// \memoria_ROM~144_combout  = (\endereco_PC[7]~input_o  & ((\memoria_ROM~143_combout  & ((\memoria_ROM~101_combout ))) # (!\memoria_ROM~143_combout  & (\memoria_ROM~141_combout )))) # (!\endereco_PC[7]~input_o  & (((\memoria_ROM~143_combout ))))
-
-	.dataa(\endereco_PC[7]~input_o ),
-	.datab(\memoria_ROM~141_combout ),
-	.datac(\memoria_ROM~143_combout ),
-	.datad(\memoria_ROM~101_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~144_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~144 .lut_mask = 16'hF858;
-defparam \memoria_ROM~144 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N12
-fiftyfivenm_lcell_comb \memoria_ROM~165 (
-// Equation(s):
-// \memoria_ROM~165_combout  = (!\endereco_PC[9]~input_o  & (!\endereco_PC[8]~input_o  & \memoria_ROM~144_combout ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\memoria_ROM~144_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~165_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~165 .lut_mask = 16'h0300;
-defparam \memoria_ROM~165 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N26
-fiftyfivenm_lcell_comb \memoria_ROM~145 (
-// Equation(s):
-// \memoria_ROM~145_combout  = (\memoria_ROM~27_combout  & (\memoria_ROM~141_combout  & (\endereco_PC[7]~input_o  & !\endereco_PC[6]~input_o )))
-
-	.dataa(\memoria_ROM~27_combout ),
-	.datab(\memoria_ROM~141_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\endereco_PC[6]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~145_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~145 .lut_mask = 16'h0080;
-defparam \memoria_ROM~145 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N4
-fiftyfivenm_lcell_comb \memoria_ROM~146 (
-// Equation(s):
-// \memoria_ROM~146_combout  = (!\endereco_PC[3]~input_o  & (!\endereco_PC[4]~input_o  & (\endereco_PC[5]~input_o  $ (\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[5]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[4]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~146_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~146 .lut_mask = 16'h0102;
-defparam \memoria_ROM~146 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N6
-fiftyfivenm_lcell_comb \memoria_ROM~147 (
-// Equation(s):
-// \memoria_ROM~147_combout  = (\memoria_ROM~145_combout ) # ((\memoria_ROM~20_combout  & (\endereco_PC[7]~input_o  & \memoria_ROM~146_combout )))
-
-	.dataa(\memoria_ROM~145_combout ),
-	.datab(\memoria_ROM~20_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~146_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~147_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~147 .lut_mask = 16'hEAAA;
-defparam \memoria_ROM~147 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N0
-fiftyfivenm_lcell_comb \memoria_ROM~148 (
-// Equation(s):
-// \memoria_ROM~148_combout  = (\memoria_ROM~147_combout ) # ((\memoria_ROM~27_combout  & (\memoria_ROM~109_combout  & !\endereco_PC[7]~input_o )))
-
-	.dataa(\memoria_ROM~27_combout ),
-	.datab(\memoria_ROM~109_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\memoria_ROM~147_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~148_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~148 .lut_mask = 16'hFF08;
-defparam \memoria_ROM~148 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N2
-fiftyfivenm_lcell_comb \memoria_ROM~149 (
-// Equation(s):
-// \memoria_ROM~149_combout  = (\endereco_PC[6]~input_o  & ((\endereco_PC[3]~input_o  $ (\endereco_PC[4]~input_o )) # (!\endereco_PC[2]~input_o ))) # (!\endereco_PC[6]~input_o  & ((\endereco_PC[3]~input_o ) # ((\endereco_PC[4]~input_o ))))
-
-	.dataa(\endereco_PC[6]~input_o ),
-	.datab(\endereco_PC[3]~input_o ),
-	.datac(\endereco_PC[4]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~149_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~149 .lut_mask = 16'h7CFE;
-defparam \memoria_ROM~149 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N28
-fiftyfivenm_lcell_comb \memoria_ROM~150 (
-// Equation(s):
-// \memoria_ROM~150_combout  = (\memoria_ROM~27_combout  & (!\memoria_ROM~149_combout  & (!\endereco_PC[7]~input_o  & !\endereco_PC[5]~input_o )))
-
-	.dataa(\memoria_ROM~27_combout ),
-	.datab(\memoria_ROM~149_combout ),
-	.datac(\endereco_PC[7]~input_o ),
-	.datad(\endereco_PC[5]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~150_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~150 .lut_mask = 16'h0002;
-defparam \memoria_ROM~150 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X17_Y21_N22
-fiftyfivenm_lcell_comb \memoria_ROM~151 (
-// Equation(s):
-// \memoria_ROM~151_combout  = (\memoria_ROM~150_combout ) # ((\memoria_ROM~99_combout  & (\memoria_ROM~106_combout  & !\endereco_PC[3]~input_o )))
-
-	.dataa(\memoria_ROM~99_combout ),
-	.datab(\memoria_ROM~150_combout ),
-	.datac(\memoria_ROM~106_combout ),
-	.datad(\endereco_PC[3]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~151_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~151 .lut_mask = 16'hCCEC;
-defparam \memoria_ROM~151 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N30
-fiftyfivenm_lcell_comb \memoria_ROM~152 (
-// Equation(s):
-// \memoria_ROM~152_combout  = (\endereco_PC[4]~input_o  & ((\endereco_PC[7]~input_o ) # ((!\endereco_PC[3]~input_o )))) # (!\endereco_PC[4]~input_o  & ((\endereco_PC[3]~input_o ) # ((\endereco_PC[7]~input_o  & !\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~152_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~152 .lut_mask = 16'hDADE;
-defparam \memoria_ROM~152 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N8
-fiftyfivenm_lcell_comb \memoria_ROM~153 (
-// Equation(s):
-// \memoria_ROM~153_combout  = (\endereco_PC[4]~input_o  & ((\endereco_PC[7]~input_o ) # ((!\endereco_PC[3]~input_o  & !\endereco_PC[2]~input_o )))) # (!\endereco_PC[4]~input_o  & (((\endereco_PC[3]~input_o ) # (\endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~153_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~153 .lut_mask = 16'hDDDA;
-defparam \memoria_ROM~153 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N18
-fiftyfivenm_lcell_comb \memoria_ROM~154 (
-// Equation(s):
-// \memoria_ROM~154_combout  = (\endereco_PC[6]~input_o  & (((\endereco_PC[5]~input_o )))) # (!\endereco_PC[6]~input_o  & ((\endereco_PC[5]~input_o  & ((!\memoria_ROM~153_combout ))) # (!\endereco_PC[5]~input_o  & (!\memoria_ROM~83_combout ))))
-
-	.dataa(\memoria_ROM~83_combout ),
-	.datab(\memoria_ROM~153_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\endereco_PC[5]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~154_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~154 .lut_mask = 16'hF305;
-defparam \memoria_ROM~154 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N12
-fiftyfivenm_lcell_comb \memoria_ROM~155 (
-// Equation(s):
-// \memoria_ROM~155_combout  = (\endereco_PC[7]~input_o  & (\endereco_PC[4]~input_o  $ (((!\endereco_PC[3]~input_o  & !\endereco_PC[2]~input_o ))))) # (!\endereco_PC[7]~input_o  & ((\endereco_PC[4]~input_o  & (!\endereco_PC[3]~input_o )) # 
-// (!\endereco_PC[4]~input_o  & (\endereco_PC[3]~input_o  & \endereco_PC[2]~input_o ))))
-
-	.dataa(\endereco_PC[4]~input_o ),
-	.datab(\endereco_PC[7]~input_o ),
-	.datac(\endereco_PC[3]~input_o ),
-	.datad(\endereco_PC[2]~input_o ),
-	.cin(gnd),
-	.combout(\memoria_ROM~155_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~155 .lut_mask = 16'h9A86;
-defparam \memoria_ROM~155 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y20_N14
-fiftyfivenm_lcell_comb \memoria_ROM~156 (
-// Equation(s):
-// \memoria_ROM~156_combout  = (\memoria_ROM~154_combout  & (((!\memoria_ROM~155_combout ) # (!\endereco_PC[6]~input_o )))) # (!\memoria_ROM~154_combout  & (\memoria_ROM~152_combout  & (\endereco_PC[6]~input_o )))
-
-	.dataa(\memoria_ROM~152_combout ),
-	.datab(\memoria_ROM~154_combout ),
-	.datac(\endereco_PC[6]~input_o ),
-	.datad(\memoria_ROM~155_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~156_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~156 .lut_mask = 16'h2CEC;
-defparam \memoria_ROM~156 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: LCCOMB_X19_Y21_N6
-fiftyfivenm_lcell_comb \memoria_ROM~166 (
-// Equation(s):
-// \memoria_ROM~166_combout  = (!\endereco_PC[9]~input_o  & (!\endereco_PC[8]~input_o  & \memoria_ROM~156_combout ))
-
-	.dataa(gnd),
-	.datab(\endereco_PC[9]~input_o ),
-	.datac(\endereco_PC[8]~input_o ),
-	.datad(\memoria_ROM~156_combout ),
-	.cin(gnd),
-	.combout(\memoria_ROM~166_combout ),
-	.cout());
-// synopsys translate_off
-defparam \memoria_ROM~166 .lut_mask = 16'h0300;
-defparam \memoria_ROM~166 .sum_lutc_input = "datac";
-// synopsys translate_on
-
-// Location: IOIBUF_X24_Y0_N22
-fiftyfivenm_io_ibuf \endereco_PC[0]~input (
-	.i(endereco_PC[0]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[0]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[0]~input .bus_hold = "false";
-defparam \endereco_PC[0]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[0]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X6_Y0_N1
-fiftyfivenm_io_ibuf \endereco_PC[1]~input (
-	.i(endereco_PC[1]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[1]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[1]~input .bus_hold = "false";
-defparam \endereco_PC[1]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[1]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X13_Y0_N15
-fiftyfivenm_io_ibuf \endereco_PC[10]~input (
-	.i(endereco_PC[10]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[10]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[10]~input .bus_hold = "false";
-defparam \endereco_PC[10]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[10]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X27_Y0_N29
-fiftyfivenm_io_ibuf \endereco_PC[11]~input (
-	.i(endereco_PC[11]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[11]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[11]~input .bus_hold = "false";
-defparam \endereco_PC[11]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[11]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X24_Y0_N1
-fiftyfivenm_io_ibuf \endereco_PC[12]~input (
-	.i(endereco_PC[12]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[12]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[12]~input .bus_hold = "false";
-defparam \endereco_PC[12]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[12]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X10_Y20_N22
-fiftyfivenm_io_ibuf \endereco_PC[13]~input (
-	.i(endereco_PC[13]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[13]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[13]~input .bus_hold = "false";
-defparam \endereco_PC[13]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[13]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X22_Y0_N22
-fiftyfivenm_io_ibuf \endereco_PC[14]~input (
-	.i(endereco_PC[14]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[14]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[14]~input .bus_hold = "false";
-defparam \endereco_PC[14]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[14]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X3_Y0_N29
-fiftyfivenm_io_ibuf \endereco_PC[15]~input (
-	.i(endereco_PC[15]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[15]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[15]~input .bus_hold = "false";
-defparam \endereco_PC[15]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[15]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X3_Y10_N29
-fiftyfivenm_io_ibuf \endereco_PC[16]~input (
-	.i(endereco_PC[16]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[16]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[16]~input .bus_hold = "false";
-defparam \endereco_PC[16]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[16]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X0_Y5_N22
-fiftyfivenm_io_ibuf \endereco_PC[17]~input (
-	.i(endereco_PC[17]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[17]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[17]~input .bus_hold = "false";
-defparam \endereco_PC[17]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[17]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X10_Y19_N1
-fiftyfivenm_io_ibuf \endereco_PC[18]~input (
-	.i(endereco_PC[18]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[18]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[18]~input .bus_hold = "false";
-defparam \endereco_PC[18]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[18]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X0_Y8_N1
-fiftyfivenm_io_ibuf \endereco_PC[19]~input (
-	.i(endereco_PC[19]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[19]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[19]~input .bus_hold = "false";
-defparam \endereco_PC[19]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[19]~input .simulate_z_as = "z";
-// synopsys translate_on
-
-// Location: IOIBUF_X10_Y20_N1
-fiftyfivenm_io_ibuf \endereco_PC[20]~input (
-	.i(endereco_PC[20]),
-	.ibar(gnd),
-	.nsleep(vcc),
-	.o(\endereco_PC[20]~input_o ));
-// synopsys translate_off
-defparam \endereco_PC[20]~input .bus_hold = "false";
-defparam \endereco_PC[20]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[20]~input .simulate_z_as = "z";
+	.o(\Address[5]~input_o ));
+// synopsys translate_off
+defparam \Address[5]~input .bus_hold = "false";
+defparam \Address[5]~input .listen_to_nsleep_signal = "false";
+defparam \Address[5]~input .simulate_z_as = "z";
 // synopsys translate_on
 
 // Location: IOIBUF_X9_Y0_N29
-fiftyfivenm_io_ibuf \endereco_PC[21]~input (
-	.i(endereco_PC[21]),
+fiftyfivenm_io_ibuf \Address[6]~input (
+	.i(Address[6]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[21]~input_o ));
+	.o(\Address[6]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[21]~input .bus_hold = "false";
-defparam \endereco_PC[21]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[21]~input .simulate_z_as = "z";
+defparam \Address[6]~input .bus_hold = "false";
+defparam \Address[6]~input .listen_to_nsleep_signal = "false";
+defparam \Address[6]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X19_Y0_N22
-fiftyfivenm_io_ibuf \endereco_PC[22]~input (
-	.i(endereco_PC[22]),
+// Location: IOIBUF_X31_Y4_N1
+fiftyfivenm_io_ibuf \Address[7]~input (
+	.i(Address[7]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[22]~input_o ));
+	.o(\Address[7]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[22]~input .bus_hold = "false";
-defparam \endereco_PC[22]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[22]~input .simulate_z_as = "z";
+defparam \Address[7]~input .bus_hold = "false";
+defparam \Address[7]~input .listen_to_nsleep_signal = "false";
+defparam \Address[7]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X17_Y0_N8
-fiftyfivenm_io_ibuf \endereco_PC[23]~input (
-	.i(endereco_PC[23]),
+// Location: IOIBUF_X10_Y15_N8
+fiftyfivenm_io_ibuf \Address[8]~input (
+	.i(Address[8]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[23]~input_o ));
+	.o(\Address[8]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[23]~input .bus_hold = "false";
-defparam \endereco_PC[23]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[23]~input .simulate_z_as = "z";
+defparam \Address[8]~input .bus_hold = "false";
+defparam \Address[8]~input .listen_to_nsleep_signal = "false";
+defparam \Address[8]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X22_Y0_N8
-fiftyfivenm_io_ibuf \endereco_PC[24]~input (
-	.i(endereco_PC[24]),
+// Location: IOIBUF_X24_Y25_N1
+fiftyfivenm_io_ibuf \Address[9]~input (
+	.i(Address[9]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[24]~input_o ));
+	.o(\Address[9]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[24]~input .bus_hold = "false";
-defparam \endereco_PC[24]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[24]~input .simulate_z_as = "z";
+defparam \Address[9]~input .bus_hold = "false";
+defparam \Address[9]~input .listen_to_nsleep_signal = "false";
+defparam \Address[9]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X6_Y10_N29
-fiftyfivenm_io_ibuf \endereco_PC[25]~input (
-	.i(endereco_PC[25]),
+// Location: IOIBUF_X24_Y25_N22
+fiftyfivenm_io_ibuf \Address[10]~input (
+	.i(Address[10]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[25]~input_o ));
+	.o(\Address[10]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[25]~input .bus_hold = "false";
-defparam \endereco_PC[25]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[25]~input .simulate_z_as = "z";
+defparam \Address[10]~input .bus_hold = "false";
+defparam \Address[10]~input .listen_to_nsleep_signal = "false";
+defparam \Address[10]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X1_Y10_N22
-fiftyfivenm_io_ibuf \endereco_PC[26]~input (
-	.i(endereco_PC[26]),
+// Location: IOIBUF_X27_Y25_N8
+fiftyfivenm_io_ibuf \Address[11]~input (
+	.i(Address[11]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[26]~input_o ));
+	.o(\Address[11]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[26]~input .bus_hold = "false";
-defparam \endereco_PC[26]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[26]~input .simulate_z_as = "z";
+defparam \Address[11]~input .bus_hold = "false";
+defparam \Address[11]~input .listen_to_nsleep_signal = "false";
+defparam \Address[11]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X19_Y0_N15
-fiftyfivenm_io_ibuf \endereco_PC[27]~input (
-	.i(endereco_PC[27]),
+// Location: IOIBUF_X10_Y19_N22
+fiftyfivenm_io_ibuf \Address[12]~input (
+	.i(Address[12]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[27]~input_o ));
+	.o(\Address[12]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[27]~input .bus_hold = "false";
-defparam \endereco_PC[27]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[27]~input .simulate_z_as = "z";
+defparam \Address[12]~input .bus_hold = "false";
+defparam \Address[12]~input .listen_to_nsleep_signal = "false";
+defparam \Address[12]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X0_Y6_N15
-fiftyfivenm_io_ibuf \endereco_PC[28]~input (
-	.i(endereco_PC[28]),
+// Location: IOIBUF_X0_Y8_N15
+fiftyfivenm_io_ibuf \Address[13]~input (
+	.i(Address[13]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[28]~input_o ));
+	.o(\Address[13]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[28]~input .bus_hold = "false";
-defparam \endereco_PC[28]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[28]~input .simulate_z_as = "z";
+defparam \Address[13]~input .bus_hold = "false";
+defparam \Address[13]~input .listen_to_nsleep_signal = "false";
+defparam \Address[13]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X11_Y25_N15
-fiftyfivenm_io_ibuf \endereco_PC[29]~input (
-	.i(endereco_PC[29]),
+// Location: IOIBUF_X31_Y22_N22
+fiftyfivenm_io_ibuf \Address[14]~input (
+	.i(Address[14]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[29]~input_o ));
+	.o(\Address[14]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[29]~input .bus_hold = "false";
-defparam \endereco_PC[29]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[29]~input .simulate_z_as = "z";
+defparam \Address[14]~input .bus_hold = "false";
+defparam \Address[14]~input .listen_to_nsleep_signal = "false";
+defparam \Address[14]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X11_Y0_N8
+fiftyfivenm_io_ibuf \Address[15]~input (
+	.i(Address[15]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[15]~input_o ));
+// synopsys translate_off
+defparam \Address[15]~input .bus_hold = "false";
+defparam \Address[15]~input .listen_to_nsleep_signal = "false";
+defparam \Address[15]~input .simulate_z_as = "z";
 // synopsys translate_on
 
 // Location: IOIBUF_X24_Y0_N29
-fiftyfivenm_io_ibuf \endereco_PC[30]~input (
-	.i(endereco_PC[30]),
+fiftyfivenm_io_ibuf \Address[16]~input (
+	.i(Address[16]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[30]~input_o ));
+	.o(\Address[16]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[30]~input .bus_hold = "false";
-defparam \endereco_PC[30]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[30]~input .simulate_z_as = "z";
+defparam \Address[16]~input .bus_hold = "false";
+defparam \Address[16]~input .listen_to_nsleep_signal = "false";
+defparam \Address[16]~input .simulate_z_as = "z";
 // synopsys translate_on
 
-// Location: IOIBUF_X13_Y25_N22
-fiftyfivenm_io_ibuf \endereco_PC[31]~input (
-	.i(endereco_PC[31]),
+// Location: IOIBUF_X0_Y4_N22
+fiftyfivenm_io_ibuf \Address[17]~input (
+	.i(Address[17]),
 	.ibar(gnd),
 	.nsleep(vcc),
-	.o(\endereco_PC[31]~input_o ));
+	.o(\Address[17]~input_o ));
 // synopsys translate_off
-defparam \endereco_PC[31]~input .bus_hold = "false";
-defparam \endereco_PC[31]~input .listen_to_nsleep_signal = "false";
-defparam \endereco_PC[31]~input .simulate_z_as = "z";
+defparam \Address[17]~input .bus_hold = "false";
+defparam \Address[17]~input .listen_to_nsleep_signal = "false";
+defparam \Address[17]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y1_N22
+fiftyfivenm_io_ibuf \Address[18]~input (
+	.i(Address[18]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[18]~input_o ));
+// synopsys translate_off
+defparam \Address[18]~input .bus_hold = "false";
+defparam \Address[18]~input .listen_to_nsleep_signal = "false";
+defparam \Address[18]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X24_Y0_N1
+fiftyfivenm_io_ibuf \Address[19]~input (
+	.i(Address[19]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[19]~input_o ));
+// synopsys translate_off
+defparam \Address[19]~input .bus_hold = "false";
+defparam \Address[19]~input .listen_to_nsleep_signal = "false";
+defparam \Address[19]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X22_Y0_N1
+fiftyfivenm_io_ibuf \Address[20]~input (
+	.i(Address[20]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[20]~input_o ));
+// synopsys translate_off
+defparam \Address[20]~input .bus_hold = "false";
+defparam \Address[20]~input .listen_to_nsleep_signal = "false";
+defparam \Address[20]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X0_Y5_N1
+fiftyfivenm_io_ibuf \Address[21]~input (
+	.i(Address[21]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[21]~input_o ));
+// synopsys translate_off
+defparam \Address[21]~input .bus_hold = "false";
+defparam \Address[21]~input .listen_to_nsleep_signal = "false";
+defparam \Address[21]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y21_N15
+fiftyfivenm_io_ibuf \Address[22]~input (
+	.i(Address[22]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[22]~input_o ));
+// synopsys translate_off
+defparam \Address[22]~input .bus_hold = "false";
+defparam \Address[22]~input .listen_to_nsleep_signal = "false";
+defparam \Address[22]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y13_N15
+fiftyfivenm_io_ibuf \Address[23]~input (
+	.i(Address[23]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[23]~input_o ));
+// synopsys translate_off
+defparam \Address[23]~input .bus_hold = "false";
+defparam \Address[23]~input .listen_to_nsleep_signal = "false";
+defparam \Address[23]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X27_Y0_N22
+fiftyfivenm_io_ibuf \Address[24]~input (
+	.i(Address[24]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[24]~input_o ));
+// synopsys translate_off
+defparam \Address[24]~input .bus_hold = "false";
+defparam \Address[24]~input .listen_to_nsleep_signal = "false";
+defparam \Address[24]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y4_N22
+fiftyfivenm_io_ibuf \Address[25]~input (
+	.i(Address[25]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[25]~input_o ));
+// synopsys translate_off
+defparam \Address[25]~input .bus_hold = "false";
+defparam \Address[25]~input .listen_to_nsleep_signal = "false";
+defparam \Address[25]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X10_Y18_N1
+fiftyfivenm_io_ibuf \Address[26]~input (
+	.i(Address[26]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[26]~input_o ));
+// synopsys translate_off
+defparam \Address[26]~input .bus_hold = "false";
+defparam \Address[26]~input .listen_to_nsleep_signal = "false";
+defparam \Address[26]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X3_Y10_N8
+fiftyfivenm_io_ibuf \Address[27]~input (
+	.i(Address[27]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[27]~input_o ));
+// synopsys translate_off
+defparam \Address[27]~input .bus_hold = "false";
+defparam \Address[27]~input .listen_to_nsleep_signal = "false";
+defparam \Address[27]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X15_Y25_N15
+fiftyfivenm_io_ibuf \Address[28]~input (
+	.i(Address[28]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[28]~input_o ));
+// synopsys translate_off
+defparam \Address[28]~input .bus_hold = "false";
+defparam \Address[28]~input .listen_to_nsleep_signal = "false";
+defparam \Address[28]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X11_Y25_N15
+fiftyfivenm_io_ibuf \Address[29]~input (
+	.i(Address[29]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[29]~input_o ));
+// synopsys translate_off
+defparam \Address[29]~input .bus_hold = "false";
+defparam \Address[29]~input .listen_to_nsleep_signal = "false";
+defparam \Address[29]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X13_Y0_N15
+fiftyfivenm_io_ibuf \Address[30]~input (
+	.i(Address[30]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[30]~input_o ));
+// synopsys translate_off
+defparam \Address[30]~input .bus_hold = "false";
+defparam \Address[30]~input .listen_to_nsleep_signal = "false";
+defparam \Address[30]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y15_N1
+fiftyfivenm_io_ibuf \Address[31]~input (
+	.i(Address[31]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\Address[31]~input_o ));
+// synopsys translate_off
+defparam \Address[31]~input .bus_hold = "false";
+defparam \Address[31]~input .listen_to_nsleep_signal = "false";
+defparam \Address[31]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X0_Y6_N15
+fiftyfivenm_io_ibuf \WriteData[0]~input (
+	.i(WriteData[0]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[0]~input_o ));
+// synopsys translate_off
+defparam \WriteData[0]~input .bus_hold = "false";
+defparam \WriteData[0]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[0]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y22_N15
+fiftyfivenm_io_ibuf \WriteData[1]~input (
+	.i(WriteData[1]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[1]~input_o ));
+// synopsys translate_off
+defparam \WriteData[1]~input .bus_hold = "false";
+defparam \WriteData[1]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[1]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X10_Y21_N8
+fiftyfivenm_io_ibuf \WriteData[2]~input (
+	.i(WriteData[2]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[2]~input_o ));
+// synopsys translate_off
+defparam \WriteData[2]~input .bus_hold = "false";
+defparam \WriteData[2]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[2]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y12_N22
+fiftyfivenm_io_ibuf \WriteData[3]~input (
+	.i(WriteData[3]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[3]~input_o ));
+// synopsys translate_off
+defparam \WriteData[3]~input .bus_hold = "false";
+defparam \WriteData[3]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[3]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X6_Y10_N29
+fiftyfivenm_io_ibuf \WriteData[4]~input (
+	.i(WriteData[4]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[4]~input_o ));
+// synopsys translate_off
+defparam \WriteData[4]~input .bus_hold = "false";
+defparam \WriteData[4]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[4]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X19_Y0_N8
+fiftyfivenm_io_ibuf \WriteData[5]~input (
+	.i(WriteData[5]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[5]~input_o ));
+// synopsys translate_off
+defparam \WriteData[5]~input .bus_hold = "false";
+defparam \WriteData[5]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[5]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y13_N8
+fiftyfivenm_io_ibuf \WriteData[6]~input (
+	.i(WriteData[6]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[6]~input_o ));
+// synopsys translate_off
+defparam \WriteData[6]~input .bus_hold = "false";
+defparam \WriteData[6]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[6]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X19_Y0_N15
+fiftyfivenm_io_ibuf \WriteData[7]~input (
+	.i(WriteData[7]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[7]~input_o ));
+// synopsys translate_off
+defparam \WriteData[7]~input .bus_hold = "false";
+defparam \WriteData[7]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[7]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X11_Y0_N15
+fiftyfivenm_io_ibuf \WriteData[8]~input (
+	.i(WriteData[8]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[8]~input_o ));
+// synopsys translate_off
+defparam \WriteData[8]~input .bus_hold = "false";
+defparam \WriteData[8]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[8]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y21_N22
+fiftyfivenm_io_ibuf \WriteData[9]~input (
+	.i(WriteData[9]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[9]~input_o ));
+// synopsys translate_off
+defparam \WriteData[9]~input .bus_hold = "false";
+defparam \WriteData[9]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[9]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X1_Y10_N29
+fiftyfivenm_io_ibuf \WriteData[10]~input (
+	.i(WriteData[10]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[10]~input_o ));
+// synopsys translate_off
+defparam \WriteData[10]~input .bus_hold = "false";
+defparam \WriteData[10]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[10]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y14_N22
+fiftyfivenm_io_ibuf \WriteData[11]~input (
+	.i(WriteData[11]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[11]~input_o ));
+// synopsys translate_off
+defparam \WriteData[11]~input .bus_hold = "false";
+defparam \WriteData[11]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[11]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X29_Y0_N8
+fiftyfivenm_io_ibuf \WriteData[12]~input (
+	.i(WriteData[12]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[12]~input_o ));
+// synopsys translate_off
+defparam \WriteData[12]~input .bus_hold = "false";
+defparam \WriteData[12]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[12]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X0_Y6_N22
+fiftyfivenm_io_ibuf \WriteData[13]~input (
+	.i(WriteData[13]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[13]~input_o ));
+// synopsys translate_off
+defparam \WriteData[13]~input .bus_hold = "false";
+defparam \WriteData[13]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[13]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X0_Y3_N22
+fiftyfivenm_io_ibuf \WriteData[14]~input (
+	.i(WriteData[14]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[14]~input_o ));
+// synopsys translate_off
+defparam \WriteData[14]~input .bus_hold = "false";
+defparam \WriteData[14]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[14]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X3_Y0_N15
+fiftyfivenm_io_ibuf \WriteData[15]~input (
+	.i(WriteData[15]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[15]~input_o ));
+// synopsys translate_off
+defparam \WriteData[15]~input .bus_hold = "false";
+defparam \WriteData[15]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[15]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X13_Y0_N8
+fiftyfivenm_io_ibuf \WriteData[16]~input (
+	.i(WriteData[16]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[16]~input_o ));
+// synopsys translate_off
+defparam \WriteData[16]~input .bus_hold = "false";
+defparam \WriteData[16]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[16]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X3_Y0_N29
+fiftyfivenm_io_ibuf \WriteData[17]~input (
+	.i(WriteData[17]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[17]~input_o ));
+// synopsys translate_off
+defparam \WriteData[17]~input .bus_hold = "false";
+defparam \WriteData[17]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[17]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X27_Y0_N8
+fiftyfivenm_io_ibuf \WriteData[18]~input (
+	.i(WriteData[18]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[18]~input_o ));
+// synopsys translate_off
+defparam \WriteData[18]~input .bus_hold = "false";
+defparam \WriteData[18]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[18]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X24_Y25_N15
+fiftyfivenm_io_ibuf \WriteData[19]~input (
+	.i(WriteData[19]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[19]~input_o ));
+// synopsys translate_off
+defparam \WriteData[19]~input .bus_hold = "false";
+defparam \WriteData[19]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[19]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X29_Y0_N15
+fiftyfivenm_io_ibuf \WriteData[20]~input (
+	.i(WriteData[20]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[20]~input_o ));
+// synopsys translate_off
+defparam \WriteData[20]~input .bus_hold = "false";
+defparam \WriteData[20]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[20]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y12_N1
+fiftyfivenm_io_ibuf \WriteData[21]~input (
+	.i(WriteData[21]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[21]~input_o ));
+// synopsys translate_off
+defparam \WriteData[21]~input .bus_hold = "false";
+defparam \WriteData[21]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[21]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X13_Y0_N29
+fiftyfivenm_io_ibuf \WriteData[22]~input (
+	.i(WriteData[22]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[22]~input_o ));
+// synopsys translate_off
+defparam \WriteData[22]~input .bus_hold = "false";
+defparam \WriteData[22]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[22]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X27_Y25_N1
+fiftyfivenm_io_ibuf \WriteData[23]~input (
+	.i(WriteData[23]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[23]~input_o ));
+// synopsys translate_off
+defparam \WriteData[23]~input .bus_hold = "false";
+defparam \WriteData[23]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[23]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y2_N1
+fiftyfivenm_io_ibuf \WriteData[24]~input (
+	.i(WriteData[24]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[24]~input_o ));
+// synopsys translate_off
+defparam \WriteData[24]~input .bus_hold = "false";
+defparam \WriteData[24]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[24]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X15_Y25_N22
+fiftyfivenm_io_ibuf \WriteData[25]~input (
+	.i(WriteData[25]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[25]~input_o ));
+// synopsys translate_off
+defparam \WriteData[25]~input .bus_hold = "false";
+defparam \WriteData[25]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[25]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X29_Y0_N29
+fiftyfivenm_io_ibuf \WriteData[26]~input (
+	.i(WriteData[26]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[26]~input_o ));
+// synopsys translate_off
+defparam \WriteData[26]~input .bus_hold = "false";
+defparam \WriteData[26]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[26]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y14_N15
+fiftyfivenm_io_ibuf \WriteData[27]~input (
+	.i(WriteData[27]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[27]~input_o ));
+// synopsys translate_off
+defparam \WriteData[27]~input .bus_hold = "false";
+defparam \WriteData[27]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[27]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X29_Y0_N22
+fiftyfivenm_io_ibuf \WriteData[28]~input (
+	.i(WriteData[28]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[28]~input_o ));
+// synopsys translate_off
+defparam \WriteData[28]~input .bus_hold = "false";
+defparam \WriteData[28]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[28]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X22_Y0_N22
+fiftyfivenm_io_ibuf \WriteData[29]~input (
+	.i(WriteData[29]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[29]~input_o ));
+// synopsys translate_off
+defparam \WriteData[29]~input .bus_hold = "false";
+defparam \WriteData[29]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[29]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X10_Y17_N1
+fiftyfivenm_io_ibuf \WriteData[30]~input (
+	.i(WriteData[30]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[30]~input_o ));
+// synopsys translate_off
+defparam \WriteData[30]~input .bus_hold = "false";
+defparam \WriteData[30]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[30]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X11_Y25_N29
+fiftyfivenm_io_ibuf \WriteData[31]~input (
+	.i(WriteData[31]),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\WriteData[31]~input_o ));
+// synopsys translate_off
+defparam \WriteData[31]~input .bus_hold = "false";
+defparam \WriteData[31]~input .listen_to_nsleep_signal = "false";
+defparam \WriteData[31]~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X27_Y0_N1
+fiftyfivenm_io_ibuf \MemWrite~input (
+	.i(MemWrite),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\MemWrite~input_o ));
+// synopsys translate_off
+defparam \MemWrite~input .bus_hold = "false";
+defparam \MemWrite~input .listen_to_nsleep_signal = "false";
+defparam \MemWrite~input .simulate_z_as = "z";
+// synopsys translate_on
+
+// Location: IOIBUF_X31_Y14_N8
+fiftyfivenm_io_ibuf \MemRead~input (
+	.i(MemRead),
+	.ibar(gnd),
+	.nsleep(vcc),
+	.o(\MemRead~input_o ));
+// synopsys translate_off
+defparam \MemRead~input .bus_hold = "false";
+defparam \MemRead~input .listen_to_nsleep_signal = "false";
+defparam \MemRead~input .simulate_z_as = "z";
 // synopsys translate_on
 
 // Location: UNVM_X0_Y11_N40
@@ -3748,69 +1546,69 @@ defparam \~QUARTUS_CREATED_ADC1~ .tsclkdiv = 1;
 defparam \~QUARTUS_CREATED_ADC1~ .tsclksel = 0;
 // synopsys translate_on
 
-assign instrucao_out[0] = \instrucao_out[0]~output_o ;
+assign ReadData[0] = \ReadData[0]~output_o ;
 
-assign instrucao_out[1] = \instrucao_out[1]~output_o ;
+assign ReadData[1] = \ReadData[1]~output_o ;
 
-assign instrucao_out[2] = \instrucao_out[2]~output_o ;
+assign ReadData[2] = \ReadData[2]~output_o ;
 
-assign instrucao_out[3] = \instrucao_out[3]~output_o ;
+assign ReadData[3] = \ReadData[3]~output_o ;
 
-assign instrucao_out[4] = \instrucao_out[4]~output_o ;
+assign ReadData[4] = \ReadData[4]~output_o ;
 
-assign instrucao_out[5] = \instrucao_out[5]~output_o ;
+assign ReadData[5] = \ReadData[5]~output_o ;
 
-assign instrucao_out[6] = \instrucao_out[6]~output_o ;
+assign ReadData[6] = \ReadData[6]~output_o ;
 
-assign instrucao_out[7] = \instrucao_out[7]~output_o ;
+assign ReadData[7] = \ReadData[7]~output_o ;
 
-assign instrucao_out[8] = \instrucao_out[8]~output_o ;
+assign ReadData[8] = \ReadData[8]~output_o ;
 
-assign instrucao_out[9] = \instrucao_out[9]~output_o ;
+assign ReadData[9] = \ReadData[9]~output_o ;
 
-assign instrucao_out[10] = \instrucao_out[10]~output_o ;
+assign ReadData[10] = \ReadData[10]~output_o ;
 
-assign instrucao_out[11] = \instrucao_out[11]~output_o ;
+assign ReadData[11] = \ReadData[11]~output_o ;
 
-assign instrucao_out[12] = \instrucao_out[12]~output_o ;
+assign ReadData[12] = \ReadData[12]~output_o ;
 
-assign instrucao_out[13] = \instrucao_out[13]~output_o ;
+assign ReadData[13] = \ReadData[13]~output_o ;
 
-assign instrucao_out[14] = \instrucao_out[14]~output_o ;
+assign ReadData[14] = \ReadData[14]~output_o ;
 
-assign instrucao_out[15] = \instrucao_out[15]~output_o ;
+assign ReadData[15] = \ReadData[15]~output_o ;
 
-assign instrucao_out[16] = \instrucao_out[16]~output_o ;
+assign ReadData[16] = \ReadData[16]~output_o ;
 
-assign instrucao_out[17] = \instrucao_out[17]~output_o ;
+assign ReadData[17] = \ReadData[17]~output_o ;
 
-assign instrucao_out[18] = \instrucao_out[18]~output_o ;
+assign ReadData[18] = \ReadData[18]~output_o ;
 
-assign instrucao_out[19] = \instrucao_out[19]~output_o ;
+assign ReadData[19] = \ReadData[19]~output_o ;
 
-assign instrucao_out[20] = \instrucao_out[20]~output_o ;
+assign ReadData[20] = \ReadData[20]~output_o ;
 
-assign instrucao_out[21] = \instrucao_out[21]~output_o ;
+assign ReadData[21] = \ReadData[21]~output_o ;
 
-assign instrucao_out[22] = \instrucao_out[22]~output_o ;
+assign ReadData[22] = \ReadData[22]~output_o ;
 
-assign instrucao_out[23] = \instrucao_out[23]~output_o ;
+assign ReadData[23] = \ReadData[23]~output_o ;
 
-assign instrucao_out[24] = \instrucao_out[24]~output_o ;
+assign ReadData[24] = \ReadData[24]~output_o ;
 
-assign instrucao_out[25] = \instrucao_out[25]~output_o ;
+assign ReadData[25] = \ReadData[25]~output_o ;
 
-assign instrucao_out[26] = \instrucao_out[26]~output_o ;
+assign ReadData[26] = \ReadData[26]~output_o ;
 
-assign instrucao_out[27] = \instrucao_out[27]~output_o ;
+assign ReadData[27] = \ReadData[27]~output_o ;
 
-assign instrucao_out[28] = \instrucao_out[28]~output_o ;
+assign ReadData[28] = \ReadData[28]~output_o ;
 
-assign instrucao_out[29] = \instrucao_out[29]~output_o ;
+assign ReadData[29] = \ReadData[29]~output_o ;
 
-assign instrucao_out[30] = \instrucao_out[30]~output_o ;
+assign ReadData[30] = \ReadData[30]~output_o ;
 
-assign instrucao_out[31] = \instrucao_out[31]~output_o ;
+assign ReadData[31] = \ReadData[31]~output_o ;
 
 endmodule
 

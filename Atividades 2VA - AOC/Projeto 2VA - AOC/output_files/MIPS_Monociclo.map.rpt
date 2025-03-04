@@ -1,5 +1,5 @@
 Analysis & Synthesis report for MIPS_Monociclo
-Sat Mar  1 22:53:27 2025
+Mon Mar  3 21:01:51 2025
 Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
 
 
@@ -14,7 +14,7 @@ Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
   8. General Register Statistics
-  9. Parameter Settings for User Entity Instance: Top-level Entity: |i_mem
+  9. Parameter Settings for User Entity Instance: Top-level Entity: |d_mem
  10. Post-Synthesis Netlist Statistics for Top Partition
  11. Elapsed Time Per Partition
  12. Analysis & Synthesis Messages
@@ -44,16 +44,16 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                        ;
 +------------------------------------+------------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Sat Mar  1 22:53:27 2025          ;
+; Analysis & Synthesis Status        ; Successful - Mon Mar  3 21:01:51 2025          ;
 ; Quartus Prime Version              ; 23.1std.1 Build 993 05/14/2024 SC Lite Edition ;
 ; Revision Name                      ; MIPS_Monociclo                                 ;
-; Top-level Entity Name              ; i_mem                                          ;
+; Top-level Entity Name              ; d_mem                                          ;
 ; Family                             ; MAX 10                                         ;
-; Total logic elements               ; 147                                            ;
-;     Total combinational functions  ; 147                                            ;
+; Total logic elements               ; 0                                              ;
+;     Total combinational functions  ; 0                                              ;
 ;     Dedicated logic registers      ; 0                                              ;
 ; Total registers                    ; 0                                              ;
-; Total pins                         ; 64                                             ;
+; Total pins                         ; 98                                             ;
 ; Total virtual pins                 ; 0                                              ;
 ; Total memory bits                  ; 0                                              ;
 ; Embedded Multiplier 9-bit elements ; 0                                              ;
@@ -69,7 +69,7 @@ https://fpgasoftware.intel.com/eula.
 ; Option                                                           ; Setting            ; Default Value      ;
 +------------------------------------------------------------------+--------------------+--------------------+
 ; Device                                                           ; 10M08DAF484C8G     ;                    ;
-; Top-level entity name                                            ; i_mem              ; MIPS_Monociclo     ;
+; Top-level entity name                                            ; d_mem              ; MIPS_Monociclo     ;
 ; Family name                                                      ; MAX 10             ; Cyclone V          ;
 ; Use smart compilation                                            ; Off                ; Off                ;
 ; Enable parallel Assembler and Timing Analyzer during compilation ; On                 ; On                 ;
@@ -154,8 +154,8 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+-------------+
 ; Processors                 ; Number      ;
 +----------------------------+-------------+
-; Number detected on machine ; 12          ;
-; Maximum allowed            ; 12          ;
+; Number detected on machine ; 8           ;
+; Maximum allowed            ; 4           ;
 ;                            ;             ;
 ; Average used               ; 1.00        ;
 ; Maximum used               ; 1           ;
@@ -165,46 +165,44 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+-------------+
 
 
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                                                                                   ;
-+----------------------------------+-----------------+------------------------------+------------------------------------------------------------------------------------------------------------+---------+
-; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                                               ; Library ;
-+----------------------------------+-----------------+------------------------------+------------------------------------------------------------------------------------------------------------+---------+
-; i_mem.v                          ; yes             ; User Verilog HDL File        ; C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v          ;         ;
-; instruction.list                 ; yes             ; Auto-Found Unspecified File  ; C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/instruction.list ;         ;
-+----------------------------------+-----------------+------------------------------+------------------------------------------------------------------------------------------------------------+---------+
++--------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                 ;
++----------------------------------+-----------------+------------------------+----------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                                   ; Library ;
++----------------------------------+-----------------+------------------------+----------------------------------------------------------------+---------+
+; d_mem.v                          ; yes             ; User Verilog HDL File  ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v ;         ;
++----------------------------------+-----------------+------------------------+----------------------------------------------------------------+---------+
 
 
-+--------------------------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary                        ;
-+---------------------------------------------+----------------------+
-; Resource                                    ; Usage                ;
-+---------------------------------------------+----------------------+
-; Estimated Total logic elements              ; 147                  ;
-;                                             ;                      ;
-; Total combinational functions               ; 147                  ;
-; Logic element usage by number of LUT inputs ;                      ;
-;     -- 4 input functions                    ; 129                  ;
-;     -- 3 input functions                    ; 17                   ;
-;     -- <=2 input functions                  ; 1                    ;
-;                                             ;                      ;
-; Logic elements by mode                      ;                      ;
-;     -- normal mode                          ; 147                  ;
-;     -- arithmetic mode                      ; 0                    ;
-;                                             ;                      ;
-; Total registers                             ; 0                    ;
-;     -- Dedicated logic registers            ; 0                    ;
-;     -- I/O registers                        ; 0                    ;
-;                                             ;                      ;
-; I/O pins                                    ; 64                   ;
-;                                             ;                      ;
-; Embedded Multiplier 9-bit elements          ; 0                    ;
-;                                             ;                      ;
-; Maximum fan-out node                        ; endereco_PC[2]~input ;
-; Maximum fan-out                             ; 72                   ;
-; Total fan-out                               ; 664                  ;
-; Average fan-out                             ; 2.41                 ;
-+---------------------------------------------+----------------------+
++----------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary              ;
++---------------------------------------------+------------+
+; Resource                                    ; Usage      ;
++---------------------------------------------+------------+
+;                                             ;            ;
+; Total combinational functions               ; 0          ;
+; Logic element usage by number of LUT inputs ;            ;
+;     -- 4 input functions                    ; 0          ;
+;     -- 3 input functions                    ; 0          ;
+;     -- <=2 input functions                  ; 0          ;
+;                                             ;            ;
+; Logic elements by mode                      ;            ;
+;     -- normal mode                          ; 0          ;
+;     -- arithmetic mode                      ; 0          ;
+;                                             ;            ;
+; Total registers                             ; 0          ;
+;     -- Dedicated logic registers            ; 0          ;
+;     -- I/O registers                        ; 0          ;
+;                                             ;            ;
+; I/O pins                                    ; 98         ;
+;                                             ;            ;
+; Embedded Multiplier 9-bit elements          ; 0          ;
+;                                             ;            ;
+; Maximum fan-out node                        ; Address[0] ;
+; Maximum fan-out                             ; 1          ;
+; Total fan-out                               ; 98         ;
+; Average fan-out                             ; 0.50       ;
++---------------------------------------------+------------+
 
 
 +------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -212,7 +210,7 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------+-------------+--------------+
 ; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; UFM Blocks ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; ADC blocks ; Full Hierarchy Name ; Entity Name ; Library Name ;
 +----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------+-------------+--------------+
-; |i_mem                     ; 147 (147)           ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 64   ; 0            ; 0          ; |i_mem              ; i_mem       ; work         ;
+; |d_mem                     ; 0 (0)               ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 98   ; 0            ; 0          ; |d_mem              ; d_mem       ; work         ;
 +----------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------+-------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
@@ -233,12 +231,12 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 
 
 +-----------------------------------------------------------------------+
-; Parameter Settings for User Entity Instance: Top-level Entity: |i_mem ;
-+-----------------+-------+---------------------------------------------+
-; Parameter Name  ; Value ; Type                                        ;
-+-----------------+-------+---------------------------------------------+
-; MEMORIA_TAMANHO ; 256   ; Signed Integer                              ;
-+-----------------+-------+---------------------------------------------+
+; Parameter Settings for User Entity Instance: Top-level Entity: |d_mem ;
++----------------+-------+----------------------------------------------+
+; Parameter Name ; Value ; Type                                         ;
++----------------+-------+----------------------------------------------+
+; MemSize        ; 10    ; Signed Integer                               ;
++----------------+-------+----------------------------------------------+
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
@@ -247,16 +245,13 @@ Note: In order to hide this table in the UI and the text report file, please set
 +-----------------------+-----------------------------+
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
-; boundary_port         ; 64                          ;
-; cycloneiii_lcell_comb ; 148                         ;
-;     normal            ; 148                         ;
+; boundary_port         ; 98                          ;
+; cycloneiii_lcell_comb ; 1                           ;
+;     normal            ; 1                           ;
 ;         0 data inputs ; 1                           ;
-;         2 data inputs ; 1                           ;
-;         3 data inputs ; 17                          ;
-;         4 data inputs ; 129                         ;
 ;                       ;                             ;
-; Max LUT depth         ; 4.00                        ;
-; Average LUT depth     ; 3.33                        ;
+; Max LUT depth         ; 0.00                        ;
+; Average LUT depth     ; 0.00                        ;
 +-----------------------+-----------------------------+
 
 
@@ -265,7 +260,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:00:01     ;
+; Top            ; 00:00:00     ;
 +----------------+--------------+
 
 
@@ -275,73 +270,147 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
-    Info: Processing started: Sat Mar  1 22:53:18 2025
+    Info: Processing started: Mon Mar  3 21:01:41 2025
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off MIPS_Monociclo -c MIPS_Monociclo
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
-Info (20030): Parallel compilation is enabled and will use 12 of the 12 processors detected
-Info (12021): Found 1 design units, including 1 entities, in source file somador_pc_mais_4.v
-    Info (12023): Found entity 1: somador_PC_mais_4 File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_mais_4.v Line: 9
+Info (20030): Parallel compilation is enabled and will use 4 of the 4 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file somador_pc_4.v
+    Info (12023): Found entity 1: somador_PC_4 File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file somador_pc_jump.v
-    Info (12023): Found entity 1: somador_PC_jump File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v Line: 9
+    Info (12023): Found entity 1: somador_PC_jump File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file mips_monociclo.v
-    Info (12023): Found entity 1: MIPS_Monociclo File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 9
+    Info (12023): Found entity 1: MIPS_Monociclo File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 26
 Info (12021): Found 1 design units, including 1 entities, in source file mux2x1.v
-    Info (12023): Found entity 1: mux2x1 File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v Line: 8
+    Info (12023): Found entity 1: mux2x1 File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v Line: 8
 Info (12021): Found 1 design units, including 1 entities, in source file pc.v
-    Info (12023): Found entity 1: PC File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v Line: 9
+    Info (12023): Found entity 1: PC File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file extensor_de_sinal.v
-    Info (12023): Found entity 1: extensor_de_sinal File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v Line: 9
+    Info (12023): Found entity 1: extensor_de_sinal File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file shift_left_2.v
-    Info (12023): Found entity 1: shift_left_2 File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v Line: 9
+    Info (12023): Found entity 1: shift_left_2 File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file i_mem.v
-    Info (12023): Found entity 1: i_mem File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 9
-Info (12127): Elaborating entity "i_mem" for the top level hierarchy
-Warning (10850): Verilog HDL warning at i_mem.v(22): number of words (62) in memory file does not match the number of elements in the address range [0:255] File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 22
-Warning (10030): Net "memoria_ROM.data_a" at i_mem.v(18) has no driver or initial value, using a default initial value '0' File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
-Warning (10030): Net "memoria_ROM.waddr_a" at i_mem.v(18) has no driver or initial value, using a default initial value '0' File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
-Warning (10030): Net "memoria_ROM.we_a" at i_mem.v(18) has no driver or initial value, using a default initial value '0' File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
-Warning (127007): Memory Initialization File or Hexadecimal (Intel-Format) File "C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/db/MIPS_Monociclo.ram0_i_mem_72d5bc3.hdl.mif" contains "don't care" values -- overwriting them with 0s
-Info (276014): Found 1 instances of uninferred RAM logic
-    Info (276013): RAM logic "memoria_ROM" is uninferred because MIF is not supported for the selected family File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
-Warning (127007): Memory Initialization File or Hexadecimal (Intel-Format) File "C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/db/MIPS_Monociclo.ram0_i_mem_72d5bc3.hdl.mif" contains "don't care" values -- overwriting them with 0s
+    Info (12023): Found entity 1: i_mem File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 9
+Info (12021): Found 1 design units, including 1 entities, in source file regfile.v
+    Info (12023): Found entity 1: regfile File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/regfile.v Line: 9
+Info (12021): Found 1 design units, including 1 entities, in source file d_mem.v
+    Info (12023): Found entity 1: d_mem File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 10
+Warning (10236): Verilog HDL Implicit Net warning at MIPS_Monociclo.v(84): created implicit net for "cabo_mux_PC_next_PC" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 84
+Warning (10236): Verilog HDL Implicit Net warning at MIPS_Monociclo.v(134): created implicit net for "cabo_mux_dest_reg_regfile" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 134
+Warning (10236): Verilog HDL Implicit Net warning at MIPS_Monociclo.v(145): created implicit net for "somador_PC_4_out" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 145
+Warning (10236): Verilog HDL Implicit Net warning at MIPS_Monociclo.v(146): created implicit net for "jump_address" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 146
+Info (12127): Elaborating entity "d_mem" for the top level hierarchy
+Warning (10036): Verilog HDL or VHDL warning at d_mem.v(22): object "mem" assigned a value but never read File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 22
+Warning (10034): Output port "ReadData" at d_mem.v(18) has no driver File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+Warning (12158): Entity "d_mem" contains only dangling pins
 Warning (13024): Output pins are stuck at VCC or GND
-    Warning (13410): Pin "instrucao_out[30]" is stuck at GND File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 13
-Info (286030): Timing-Driven Synthesis is running
+    Warning (13410): Pin "ReadData[0]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[1]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[2]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[3]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[4]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[5]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[6]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[7]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[8]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[9]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[10]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[11]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[12]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[13]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[14]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[15]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[16]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[17]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[18]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[19]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[20]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[21]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[22]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[23]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[24]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[25]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[26]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[27]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[28]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[29]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[30]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
+    Warning (13410): Pin "ReadData[31]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 18
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Warning (21074): Design contains 24 input pin(s) that do not drive logic
-    Warning (15610): No output dependent on input pin "endereco_PC[0]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[1]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[10]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[11]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[12]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[13]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[14]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[15]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[16]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[17]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[18]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[19]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[20]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[21]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[22]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[23]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[24]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[25]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[26]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[27]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[28]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[29]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[30]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-    Warning (15610): No output dependent on input pin "endereco_PC[31]" File: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 12
-Info (21057): Implemented 211 device resources after synthesis - the final resource count might be different
-    Info (21058): Implemented 32 input pins
+Warning (21074): Design contains 66 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "Address[0]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[1]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[2]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[3]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[4]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[5]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[6]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[7]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[8]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[9]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[10]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[11]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[12]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[13]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[14]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[15]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[16]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[17]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[18]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[19]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[20]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[21]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[22]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[23]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[24]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[25]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[26]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[27]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[28]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[29]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[30]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "Address[31]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[0]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[1]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[2]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[3]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[4]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[5]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[6]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[7]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[8]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[9]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[10]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[11]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[12]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[13]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[14]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[15]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[16]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[17]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[18]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[19]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[20]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[21]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[22]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[23]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[24]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[25]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[26]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[27]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[28]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[29]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[30]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "WriteData[31]" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 14
+    Warning (15610): No output dependent on input pin "MemWrite" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 16
+    Warning (15610): No output dependent on input pin "MemRead" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 16
+Info (21057): Implemented 98 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 66 input pins
     Info (21059): Implemented 32 output pins
-    Info (21061): Implemented 147 logic cells
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 34 warnings
-    Info: Peak virtual memory: 4770 megabytes
-    Info: Processing ended: Sat Mar  1 22:53:27 2025
-    Info: Elapsed time: 00:00:09
-    Info: Total CPU time (on all processors): 00:00:19
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 108 warnings
+    Info: Peak virtual memory: 4835 megabytes
+    Info: Processing ended: Mon Mar  3 21:01:51 2025
+    Info: Elapsed time: 00:00:10
+    Info: Total CPU time (on all processors): 00:00:09
 
 
