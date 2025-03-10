@@ -6,7 +6,7 @@
 // Descrição do arquivo:  Unidade de controle
 
 
-module unidade_controle(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite, Jump);
+module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite, Jump);
 
 	input logic [31:26] opcode;
 	output logic RegDst, Branch, MemRead, MemToReg, MemWrite, ALUSrc, RegWrite, Jump;
