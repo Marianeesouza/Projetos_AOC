@@ -71,10 +71,12 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	wire Branch;
 	wire MemRead;	
 	wire MemtoReg;
-	wire [3:0] ALUOp;
+	wire [1:0] ALUOp;
 	wire MemWrite; 
 	wire ALUSrc;
 	wire RegWrite; 
+	wire Link;
+	wire Jump;
 	
 	//Declaração dos módulos:
 	
@@ -172,7 +174,19 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 		.saida(cabo_mux_valor_write_data)        	// Saída:   Cabo que vai para WriteData em regfile
 	);
 	
-
+	control uc (
+        .opcode(cabo_opcode),
+        .RegDst(RegDst),
+        .Branch(Branch),
+        .MemRead(MemRead),
+        .MemToReg(MemToReg),
+        .ALUOp(ALUOp),
+        .MemWrite(MemWrite),
+        .ALUSrc(ALUSrc),
+        .RegWrite(RegWrite),
+        .Jump(Jump),
+        .Link(Link)
+    );
 	
 	// Inicialização das saídas do programa
 	assign PC_out = cabo_PC_out;

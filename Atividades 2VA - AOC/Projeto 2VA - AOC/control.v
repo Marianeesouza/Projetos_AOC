@@ -7,10 +7,10 @@
 */
 
 
-module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite, Jump);
+module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSrc, RegWrite, Jump, Link);
 
 	input wire [5:0] opcode;
-	output reg RegDst, Branch, MemRead, MemToReg, MemWrite, ALUSrc, RegWrite, Jump;
+	output reg RegDst, Branch, MemRead, MemToReg, MemWrite, ALUSrc, RegWrite, Jump, Link;
 	output reg [1:0] ALUOp;
 
 	
@@ -24,6 +24,7 @@ module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSr
     MemWrite = 0;
     Branch   = 0;
 	 Jump 	 = 0;
+	 Link		 = 0;
     ALUOp    = 2'b00; // vetor de 2 bits iniciado com 00
 	 
 	 
@@ -68,6 +69,7 @@ module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSr
       // Instrução JAL (Jump and Link)
 		6'b000011: begin          
 			RegWrite = 1;
+			Link	= 1;
 			Jump = 1;
 		end
 
