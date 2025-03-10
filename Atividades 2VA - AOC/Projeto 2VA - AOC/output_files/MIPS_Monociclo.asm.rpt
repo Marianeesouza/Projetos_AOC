@@ -1,5 +1,5 @@
 Assembler report for MIPS_Monociclo
-Fri Mar  7 16:15:07 2025
+Sun Mar  9 22:36:55 2025
 Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
 
 
@@ -10,7 +10,7 @@ Quartus Prime Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
   2. Assembler Summary
   3. Assembler Settings
   4. Assembler Generated Files
-  5. Assembler Device Options: MIPS_Monociclo.sof
+  5. Assembler Device Options: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/output_files/MIPS_Monociclo.sof
   6. Assembler Messages
 
 
@@ -38,9 +38,9 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Fri Mar  7 16:15:07 2025 ;
+; Assembler Status      ; Successful - Sun Mar  9 22:36:55 2025 ;
 ; Revision Name         ; MIPS_Monociclo                        ;
-; Top-level Entity Name ; d_mem                                 ;
+; Top-level Entity Name ; ULA                                   ;
 ; Family                ; MAX 10                                ;
 ; Device                ; 10M08DAF484C8G                        ;
 +-----------------------+---------------------------------------+
@@ -53,23 +53,23 @@ https://fpgasoftware.intel.com/eula.
 +--------+---------+---------------+
 
 
-+------------------------------------------------------------------------------------------------------+
-; Assembler Generated Files                                                                            ;
-+------------------------------------------------------------------------------------------------------+
-; File Name                                                                                            ;
-+------------------------------------------------------------------------------------------------------+
-; /home/samuel/git/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/output_files/MIPS_Monociclo.sof ;
-+------------------------------------------------------------------------------------------------------+
++---------------------------------------------------------------------------------------------------------------------------+
+; Assembler Generated Files                                                                                                 ;
++---------------------------------------------------------------------------------------------------------------------------+
+; File Name                                                                                                                 ;
++---------------------------------------------------------------------------------------------------------------------------+
+; C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/output_files/MIPS_Monociclo.sof ;
++---------------------------------------------------------------------------------------------------------------------------+
 
 
-+----------------------------------------------+
-; Assembler Device Options: MIPS_Monociclo.sof ;
-+----------------+-----------------------------+
-; Option         ; Setting                     ;
-+----------------+-----------------------------+
-; JTAG usercode  ; 0x00072169                  ;
-; Checksum       ; 0x00072169                  ;
-+----------------+-----------------------------+
++-----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assembler Device Options: C:/Users/joaov/OneDrive/Documentos/GitHub/MIPShelf/Atividades 2VA - AOC/Projeto 2VA - AOC/output_files/MIPS_Monociclo.sof ;
++----------------+------------------------------------------------------------------------------------------------------------------------------------+
+; Option         ; Setting                                                                                                                            ;
++----------------+------------------------------------------------------------------------------------------------------------------------------------+
+; JTAG usercode  ; 0x0011D23D                                                                                                                         ;
+; Checksum       ; 0x0011D23D                                                                                                                         ;
++----------------+------------------------------------------------------------------------------------------------------------------------------------+
 
 
 +--------------------+
@@ -78,14 +78,14 @@ https://fpgasoftware.intel.com/eula.
 Info: *******************************************************************
 Info: Running Quartus Prime Assembler
     Info: Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
-    Info: Processing started: Fri Mar  7 16:15:06 2025
+    Info: Processing started: Sun Mar  9 22:36:54 2025
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off MIPS_Monociclo -c MIPS_Monociclo
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus Prime Assembler was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 349 megabytes
-    Info: Processing ended: Fri Mar  7 16:15:07 2025
+    Info: Peak virtual memory: 4714 megabytes
+    Info: Processing ended: Sun Mar  9 22:36:55 2025
     Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:01
 
