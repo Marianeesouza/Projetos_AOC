@@ -1,5 +1,13 @@
-// Módulo ULA
-// Realiza operações aritméticas e lógicas conforme o sinal OP recebido.
+/* Projeto 2° VA - Arquitetura e Organização de Computadores - 2024.2
+   Alunos: Heitor Leander Feitosa da silva
+           Joao victor Morais Barreto da silva
+           Mariane Elisa dos Santos Souza
+           Samuel Roberto de Carvalho Bezerra
+	Descrição do arquivo:  Módulo ULA 
+	
+	Realiza operações aritméticas e lógicas conforme o sinal OP recebido.
+
+*/ 
 
 module ULA(in1, in2, OP, shamt, result, zero_flag);
     // Descrição das portas
