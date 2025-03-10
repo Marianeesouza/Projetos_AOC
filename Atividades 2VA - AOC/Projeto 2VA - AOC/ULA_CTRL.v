@@ -7,7 +7,7 @@
 // Módulo ULA_CTRL
 // Define o código de controle da ULA com base nos sinais ALUOp e funct
 
-module ULA_CTRL(ALUOp, funct, ALUControl);
+module ULA_crtl(ALUOp, funct, ALUControl);
     // Descrição das portas
     input  wire [3:0] ALUOp;      // Código da operação da ULA (derivado do opcode da instrução)
     input  wire [5:0] funct;      // Campo funct para instruções do tipo R
