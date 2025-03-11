@@ -6,7 +6,7 @@
 	Descrição do arquivo:  Núcleo MIPS Monociclo
 */
 
-module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
+module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out, ula_in1, ula_in2);
 	
 	//Descrição das entradas e saídas:
 	input wire clock;                // sinal do clock
@@ -14,6 +14,7 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	output wire [31:0] PC_out; 		// saida do pc
 	output wire [31:0] ALU_out; 		// saida da ula
 	output wire [31:0] d_mem_out; 	// saida da d_mem
+	output wire [31:0] ula_in1, ula_in2; //entradas da ula (apenas para teste)
 	
 	//Declaração dos cabos relacionado aos módulos:
 	wire [31:0] cabo_PC_out; 						 			// cabo da saída do PC que conecta com outros 2 módulos (i_men e somador_pc_4)
@@ -41,11 +42,6 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	assign cabo_shamt = cabo_i_men_out[10:6]; 					// separa os bits para shamt
 	assign cabo_funct = cabo_i_men_out[5:0];   					// separa os bits para funct
 	assign cabo_extensor_de_sinal = cabo_i_men_out[15:0];  	// separa os bits para extensor de sinal
-	
-	// Inicialização das saídas do programa
-	assign PC_out = cabo_PC_out;
-	assign d_mem_out = cabo_d_mem_out;
-	assign ALU_out = cabo_ALU_out;
 	
 	// Cabos saídos do banco de registradores
 	wire [31:0] valor_reg1;
@@ -85,7 +81,7 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 		.PC (cabo_PC_out)						// Saida:   cabo de saída do PC que possui o endereco atual do PC
 	);
 	
-	i_mem imen(
+	i_mem Imem(
 		.endereco_PC(cabo_PC_out),      // Entrada: cabo que possui o valor atual do PC
 		.instrucao_out(cabo_i_men_out)  // Saída:   cabo que contém a intrução correspondente ao valor do PC
 	);
@@ -110,23 +106,23 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	);
 	
 	//Declaração da instância do extensor de sinal
-	extensor_de_sinal extensor (
+	extensor_de_sinal extensor  (
 		.imediato(cabo_extensor_de_sinal),         // Entrada: parte imediata da instrução
 		.extensor_out(cabo_extensor_de_sinal_out)  // Saída: 	 imediato estendido para 32 bits
 	);
 	
 	//Declaração da instância da Memória de Dados
-	//MemSize define a quantidade de endereços disponíveis (2^MemSize endereços disponíveis)
-	d_mem d_mem (
+	d_mem D_mem (
 	.Address(cabo_ALU_out), 
 	.WriteData(valor_reg2), 
 	.ReadData(cabo_d_mem_out), 
 	.MemWrite(MemWrite), 
-	.MemRead(MemRead)
+	.MemRead(MemRead),
+	.clock(clock)
 	);
 	
 	//Declaração da instância do Banco de Registradores
-	regfile regfile (
+	regfile Regfile (
 		.ReadAddr1(cabo_rs), 
 		.ReadAddr2(cabo_rt), 
 		.ReadData1(valor_reg1), 
@@ -137,6 +133,38 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 		.reset(reset), 
 		.RegWrite(RegWrite)
 	);
+	
+	//Declaração da instância da Unidade de Controle
+	control uc (
+		.opcode(cabo_opcode),
+		.RegDst(RegDst),
+		.Branch(Branch),
+		.MemRead(MemRead),
+		.MemToReg(MemToReg),
+		.ALUOp(ALUOp),
+		.MemWrite(MemWrite),
+		.ALUSrc(ALUSrc),
+		.RegWrite(RegWrite),
+		.Jump(Jump),
+		.Link(Link)
+    );
+	 
+	 //Declaração da instância do Unidade Lógica e Aritmética
+	 ULA ula(
+		.in1(valor_reg1), 
+		.in2(cabo_mux_dest_reg_para_regfile), 
+		.OP(alu_ctrl_out), 
+		.shamt(cabo_shamt), 
+		.result(cabo_ALU_out), 
+		.zero_flag(cabo_zero)
+	 );
+	 
+	 //Declaração da instância do Controle da ULA
+	 ula_ctrl ULA_ctrl (
+		.ALUOp(ALUOp), 
+		.funct(cabo_funct), 
+		.ALUControl(alu_ctrl_out)
+	 );
 	
 	//Declaração dos multiplexadores:
 	
@@ -170,36 +198,13 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 		.entrada1(cabo_d_mem_out),   						// Entrada: Valor lido da memória 
 		.seletor(MemToReg),           		 		// Entrada: Cabo que tem o sinal para definir qual o valor a ser usado
 		.saida(cabo_mux_valor_write_data)        	// Saída:   Cabo que vai para WriteData em regfile
-	);
+	);	
 	
-	control uc (
-        .opcode(cabo_opcode),
-        .RegDst(RegDst),
-        .Branch(Branch),
-        .MemRead(MemRead),
-        .MemToReg(MemToReg),
-        .ALUOp(ALUOp),
-        .MemWrite(MemWrite),
-        .ALUSrc(ALUSrc),
-        .RegWrite(RegWrite),
-        .Jump(Jump),
-        .Link(Link)
-    );
-	 
-	 ULA ula(
-		.in1(valor_reg1), 
-		.in2(cabo_mux_dest_reg_para_regfile), 
-		.OP(alu_ctrl_out), 
-		.shamt(cabo_shamt), 
-		.result(cabo_ALU_out), 
-		.zero_flag(cabo_zero)
-	 );
-	 
-	 ula_ctrl ula_ctrl (
-		.ALUOp(ALUOp), 
-		.funct(cabo_funct), 
-		.ALUControl(alu_ctrl_out)
-	 );
-	
+	// Inicialização das saídas do programa
+	assign PC_out = cabo_PC_out;
+	assign d_mem_out = cabo_d_mem_out;
+	assign ALU_out = cabo_ALU_out;
+	assign ula_in1 = valor_reg1;
+	assign ula_in2 = cabo_mux_dest_reg_para_regfile;
 	
 endmodule

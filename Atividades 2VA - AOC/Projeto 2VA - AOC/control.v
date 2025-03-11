@@ -32,33 +32,32 @@ module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSr
 	 // Instrucao lw
 		6'b100011: begin
 			ALUSrc   = 1;
+			MemRead	= 1;
 			MemToReg = 1;
 			RegWrite = 1;
-			ALUOp    = 4'b0000;
 		end
 	 // Instrucao sw
 	   6'b101011: begin
 			ALUSrc	= 1;
 			MemWrite = 1;
-			ALUOp		= 4'b0000;
 			
 		end
 	 // Instrucoes tipo R
 		6'b000000: begin
 			RegDst   = 1;
 			RegWrite = 1;
-			ALUOp    = 4'b0000;
+			ALUOp    = 4'b1111;
 		end
 		// Instrucao BEQ
 		6'b000100: begin
-		Branch=1;
-		ALUOp=4'b0100;
+			Branch=1;
+			ALUOp=4'b0100;
 		end
 		
 		// Instrucao BNE
 		6'b000101: begin
-		Branch=1;
-		ALUOp=4'b0101;
+			Branch=1;
+			ALUOp=4'b0101;
 		end
 		
 		// Instrução J (Jump)
@@ -115,10 +114,11 @@ module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSr
 			ALUOp    = 4'b1011;			
 		end
 		
-		// Instruçao LUI
+		// Instruçao LUI (Load Unsigned Immediate)
 		6'b001111: begin
-			ALUSrc = 1;
+			ALUSrc 	= 1;
 			RegWrite = 1;
+			ALUOp 	= 4'b1111;
 		end
 		
 		default: begin

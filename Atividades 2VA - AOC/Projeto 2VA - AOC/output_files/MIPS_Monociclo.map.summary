@@ -1,13 +1,13 @@
-Analysis & Synthesis Status : Successful - Tue Mar 11 02:23:38 2025
+Analysis & Synthesis Status : Successful - Tue Mar 11 13:02:06 2025
 Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 Revision Name : MIPS_Monociclo
 Top-level Entity Name : MIPS_Monociclo
 Family : MAX 10
-Total logic elements : 3,748
-    Total combinational functions : 2,788
-    Dedicated logic registers : 1,022
-Total registers : 1022
-Total pins : 98
+Total logic elements : 5,451
+    Total combinational functions : 3,499
+    Dedicated logic registers : 2,078
+Total registers : 2078
+Total pins : 162
 Total virtual pins : 0
 Total memory bits : 0
 Embedded Multiplier 9-bit elements : 0

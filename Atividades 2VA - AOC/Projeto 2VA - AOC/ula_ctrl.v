@@ -16,7 +16,7 @@ module ula_ctrl(ALUOp, funct, ALUControl);
     // Bloco combinacional: Define o controle da ULA com base na operação
     always @(*) begin
         case(ALUOp)
-            4'b0000: begin // Instruções do tipo R
+            4'b1111: begin // Instruções do tipo R
                 case(funct)
                     6'b000000: ALUControl = 4'b1001; // SLL (Shift Left Logical)
                     6'b000010: ALUControl = 4'b1010; // SRL (Shift Right Logical)
