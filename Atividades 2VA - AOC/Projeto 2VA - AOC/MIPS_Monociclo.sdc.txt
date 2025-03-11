@@ -1,0 +1,11 @@
+# Define um clock principal de 50 MHz no pino 'clk'
+create_clock -name clock -period 20.0 [get_ports clock]
+
+# Define um tempo de entrada para sinais externos
+set_input_delay -clock clock 2.0 [all_inputs]
+
+# Define um tempo de saída para sinais externos
+set_output_delay -clock clock 2.0 [all_outputs]
+
+# Configura caminhos de dados críticos para otimização de tempo
+set_max_delay -from [get_ports data_in] -to [get_ports data_out] 10.0

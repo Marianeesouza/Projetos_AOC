@@ -7,7 +7,7 @@
 */
 
 					// O parametro MemSize tem por padrão valor 10, mas pode ser alterado no módulo top-level
-module d_mem #(parameter MemSize = 10)(Address, WriteData, ReadData, MemWrite, MemRead);
+module d_mem(Address, WriteData, ReadData, MemWrite, MemRead);
 	
 	//Descrição das entradas e saidas:
 	// O endereço de memória e o valor a ser escrito na memória (em caso de MemWrite=1) tem 32 bits
@@ -17,6 +17,7 @@ module d_mem #(parameter MemSize = 10)(Address, WriteData, ReadData, MemWrite, M
 	// Valor de saída lido no endereço dado tem 32 bits
 	output reg [31:0] ReadData;
 	
+	parameter MemSize = 10;
 	
 	// A memória em si tem (2^MemSize) espaços de memória, de 32 bits cada
 	reg [31:0] mem [0:(1 << MemSize) -1];
@@ -27,10 +28,11 @@ module d_mem #(parameter MemSize = 10)(Address, WriteData, ReadData, MemWrite, M
 			$display ("Endereço %d fora do limite!", Address);
 		else begin
 			if (MemRead)
-				mem[Address] <= ReadData;
+				ReadData <= mem[Address];
 			else begin
 				if (MemWrite)
 					mem[Address] <= WriteData;
+					ReadData <= 32'b0;
 			end
 		end
 	end
