@@ -7,7 +7,7 @@
 // Módulo ULA_CTRL
 // Define o código de controle da ULA com base nos sinais ALUOp e funct
 
-module ULA_crtl(ALUOp, funct, ALUControl);
+module ula_ctrl(ALUOp, funct, ALUControl);
     // Descrição das portas
     input  wire [3:0] ALUOp;      // Código da operação da ULA (derivado do opcode da instrução)
     input  wire [5:0] funct;      // Campo funct para instruções do tipo R
@@ -16,7 +16,7 @@ module ULA_crtl(ALUOp, funct, ALUControl);
     // Bloco combinacional: Define o controle da ULA com base na operação
     always @(*) begin
         case(ALUOp)
-            4'b0000: begin // Instruções do tipo R
+            4'b1111: begin // Instruções do tipo R
                 case(funct)
                     6'b000000: ALUControl = 4'b1001; // SLL (Shift Left Logical)
                     6'b000010: ALUControl = 4'b1010; // SRL (Shift Right Logical)

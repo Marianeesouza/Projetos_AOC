@@ -3,7 +3,7 @@
            Joao victor Morais Barreto da silva
            Mariane Elisa dos Santos Souza
            Samuel Roberto de Carvalho Bezerra
-	Descrição do arquivo:  somador PC + 4
+	Descrição do arquivo:  Unidade de controle (control)
 */
 
 

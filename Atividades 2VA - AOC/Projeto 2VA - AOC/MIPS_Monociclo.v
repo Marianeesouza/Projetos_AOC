@@ -30,8 +30,8 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out, ula_in1, ula_in2
 	wire [31:0] cabo_mux_in_2_ALU;							// cado de saída do mux_in_2_ALU que diz qual o 2º operando da ALU
 	
 	//Declaração do conjunto de cabos do i_men que conecta com 4 módulos (control, regfile, mux_dest_reg, extensor_de_sinal)
-	wire [5:0] cabo_opcode, cabo_funct; 					// cabos dos bits para opcode e funct
-	wire [4:0] cabo_rs, cabo_rt, cabo_rd, cabo_shamt;  // cabos dos bit para rs, rt, rd, shamt
+	wire [5:0] cabo_opcode, cabo_funct; 					 // cabos dos bits para opcode e funct
+	wire [4:0] cabo_rs, cabo_rt, cabo_rd, cabo_shamt;   // cabos dos bit para rs, rt, rd, shamt
 	wire [15:0] cabo_extensor_de_sinal;                 // cabo para o extensor de sinal
 	
 	//separador dos campos da instrução vinda do cabo_i_men_out
@@ -76,9 +76,9 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out, ula_in1, ula_in2
 	
 	//Declaração da instância do PC
 	PC pc(
-		.clock (clock),                  // Entrada: Cabo que contém o clock   
+		.clock (clock),                       // Entrada: Cabo que contém o clock   
 		.next_PC (cabo_mux_PC_next_para_PC),  // Entrada: cabo de saída do mux_PC_next contendo o valor do próximo pc
-		.PC (cabo_PC_out)						// Saida:   cabo de saída do PC que possui o endereco atual do PC
+		.PC (cabo_PC_out)							  // Saida:   cabo de saída do PC que possui o endereco atual do PC
 	);
 	
 	i_mem Imem(
@@ -107,63 +107,63 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out, ula_in1, ula_in2
 	
 	//Declaração da instância do extensor de sinal
 	extensor_de_sinal extensor  (
-		.imediato(cabo_extensor_de_sinal),         // Entrada: parte imediata da instrução
+		.imediato(cabo_extensor_de_sinal),         // Entrada: parte imediato da instrução
 		.extensor_out(cabo_extensor_de_sinal_out)  // Saída: 	 imediato estendido para 32 bits
 	);
 	
 	//Declaração da instância da Memória de Dados
 	d_mem D_mem (
-	.Address(cabo_ALU_out), 
-	.WriteData(valor_reg2), 
-	.ReadData(cabo_d_mem_out), 
-	.MemWrite(MemWrite), 
-	.MemRead(MemRead),
-	.clock(clock)
+	.Address(cabo_ALU_out),       // Entrada:  cabo de saída do ALU, contendo o resultado da operacao das duas entradas da ALU
+	.WriteData(valor_reg2),       // Entrada:  cabo de saída do read data 2 do regfile
+	.ReadData(cabo_d_mem_out),    // Saída:    cabo de saída do d_mem que vai parao o mux_valor_write_data
+	.MemWrite(MemWrite),          // Entrada:  cabo da unidade de controle contendo o sinal indicando se deve ou não haver escrita
+	.MemRead(MemRead),            // Entrada:  cabo da unidade de controle contendo o sinal indicando se deve ou não haver leitura
+	.clock(clock)                 // Entrada:  Cabo que contém o clock 
 	);
 	
 	//Declaração da instância do Banco de Registradores
 	regfile Regfile (
-		.ReadAddr1(cabo_rs), 
-		.ReadAddr2(cabo_rt), 
-		.ReadData1(valor_reg1), 
-		.ReadData2(valor_reg2), 
-		.WriteAddr(cabo_mux_dest_reg_regfile), 
-		.WriteData(cabo_mux_valor_write_data), 
-		.clock(clock), 
-		.reset(reset), 
-		.RegWrite(RegWrite)
+		.ReadAddr1(cabo_rs),                     // Entrada: cabo do rs
+		.ReadAddr2(cabo_rt),                     // Saída:   cabo do rt
+		.ReadData1(valor_reg1),                  // saída:   cabo de saída do read data 1 do regfile
+		.ReadData2(valor_reg2),                  // saída:   cabo de saída do read data 1 do regfile
+		.WriteAddr(cabo_mux_dest_reg_regfile),   // Entrada: cabo saída do mux_dest_reg contendo o reg de escrita (rs ou rd)
+		.WriteData(cabo_mux_valor_write_data),   // Entrada: cabo saída do mux_valor_write_data contendo o dado para a escrita no regfile 
+		.clock(clock),                           // Entrada: Cabo que contém o clock 
+		.reset(reset),                           // Entrada: Cabo que contém o reset 
+		.RegWrite(RegWrite)                      // Entrada: Cabo da unidade de controle contendo osinal indicando se deve ou não fazer escrita no rd
 	);
 	
 	//Declaração da instância da Unidade de Controle
 	control uc (
-		.opcode(cabo_opcode),
-		.RegDst(RegDst),
-		.Branch(Branch),
-		.MemRead(MemRead),
-		.MemToReg(MemToReg),
-		.ALUOp(ALUOp),
-		.MemWrite(MemWrite),
-		.ALUSrc(ALUSrc),
-		.RegWrite(RegWrite),
-		.Jump(Jump),
-		.Link(Link)
+		.opcode(cabo_opcode),    // Entrada:  Cabo que contém opcode da instrução 
+		.RegDst(RegDst),         // saída: cabo que contém o sinal que indica o reg de escrita
+		.Branch(Branch),         // saída: cabo que contém o sinal que indica se deve haver jump
+		.MemRead(MemRead),       // saída: cabo que contém o sinal que indica se deve haver leitura
+		.MemToReg(MemToReg),     // saída: cabo que contém o sinal que indica se dado vem da memória ou da ALU
+		.ALUOp(ALUOp),           // saída: cabo que contém o sinal que indica o tipo de operação a ser realizada pela ALU
+		.MemWrite(MemWrite),     // saída: cabo que contém o sinal que indica se deve haver escrita na memória
+		.ALUSrc(ALUSrc),         // saída: cabo que contém o sinal que indica qual vai ser o 2° operando da ALU
+		.RegWrite(RegWrite),     // saída: cabo que contém o sinal que indica se o dado vai ser escrito no rs ou rd
+		.Jump(Jump),             
+		.Link(Link)              
     );
 	 
 	 //Declaração da instância do Unidade Lógica e Aritmética
 	 ULA ula(
-		.in1(valor_reg1), 
-		.in2(cabo_mux_dest_reg_para_regfile), 
-		.OP(alu_ctrl_out), 
-		.shamt(cabo_shamt), 
-		.result(cabo_ALU_out), 
-		.zero_flag(cabo_zero)
-	 );
+		.in1(valor_reg1),                        // Entrada: cabo de saída do read data 1 do reg file
+		.in2(cabo_mux_dest_reg_para_regfile),    // Entrada: cabo de saída do 
+		.OP(alu_ctrl_out),                       // Entrada:
+		.shamt(cabo_shamt),                      // Entrada: cabo da Unidade de controle contendo o shamt
+		.result(cabo_ALU_out),                   // Saída:   cabo de saída contendo o resultado da ALU
+		.zero_flag(cabo_zero)                    // Saída:   cabo de saída que contem a flag se result deu 0
+	 );   
 	 
 	 //Declaração da instância do Controle da ULA
 	 ula_ctrl ULA_ctrl (
-		.ALUOp(ALUOp), 
-		.funct(cabo_funct), 
-		.ALUControl(alu_ctrl_out)
+		.ALUOp(ALUOp),               // Entrada: cabo que contém o sinal que indica o tipo de operação a ser realizada pela ALU
+		.funct(cabo_funct),          // Entrada: cabo que contém o funct
+		.ALUControl(alu_ctrl_out)    // saida: cabo de saída contendo a operação da ALU 
 	 );
 	
 	//Declaração dos multiplexadores:
