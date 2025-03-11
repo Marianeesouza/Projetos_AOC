@@ -70,13 +70,22 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	wire RegDst; 
 	wire Branch;
 	wire MemRead;	
-	wire MemtoReg;
-	wire [1:0] ALUOp;
+	wire MemToReg;
+	wire [3:0] ALUOp;
 	wire MemWrite; 
 	wire ALUSrc;
 	wire RegWrite; 
 	wire Link;
 	wire Jump;
+	
+	// Declaração dos cabos da ULA:
+	wire cabo_zero;
+	wire [31:0] cabo_ALU_out;
+	
+	//Declaração de cabos da ULA ctrl:
+	wire alu_ctrl_out;
+	
+	assign cabo_and_out = Branch & cabo_zero;
 	
 	//Declaração dos módulos:
 	
@@ -87,18 +96,18 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 		.PC (cabo_PC_out)						// Saida:   cabo de saída do PC que possui o endereco atual do PC
 	);
 	
-	i_men imen(
-		endereco_PC(cabo_PC_out),      // Entrada: cabo que possui o valor atual do PC
-		instrucao_out(cabo_i_men_out)  // Saída:   cabo que contém a intrução correspondente ao valor do PC
+	i_mem imen(
+		.endereco_PC(cabo_PC_out),      // Entrada: cabo que possui o valor atual do PC
+		.instrucao_out(cabo_i_men_out)  // Saída:   cabo que contém a intrução correspondente ao valor do PC
 	);
 	
 	//Declaração  do somador do pc + 4
 	somador_PC_4 somador_pc4(            		
-		.PC(cabo_PC_out),                     	// Entrada: Cabo que contem o valor atual do PC
+		.PC(cabo_PC_out),                    	// Entrada: Cabo que contem o valor atual do PC
 		.somador_out(cabo_somador_PC_4_out)    // Saida:   Cabo de saída do somador que possui o valor do PC + 4
 	);
 	
-	//Declaração  do somador do pc jump
+	//Declaração  do somador do pc 
 	somador_PC_jump somador_jump(
 		.endereco_PC(cabo_somador_PC_4_out),                         // Entrada:  Cabo que possui o valor do PC + 4
 		.endereco_deslocado(cabo_shift_left_2_para_somador_PC_jump), // Entrada:  cabo que possui o endereço com 2 bits deslocado
@@ -119,7 +128,7 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	
 	//Declaração da instância da Memória de Dados
 	//MemSize define a quantidade de endereços disponíveis (2^MemSize endereços disponíveis)
-	d_mem #(MemSize(10)) d_mem (
+	d_mem #(.MemSize(10)) d_mem (
 	.Address(ALU_out), 
 	.WriteData(valor_reg2), 
 	.ReadData(cabo_d_mem_out), 
@@ -144,8 +153,8 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	
 	//Declaração da instância do mux2x1 que une a saída do somador_pc_4 com a saída do somador_pc_jump para definir qual será o próximo valor do pc
 	mux2x1 mux_PC_next (
-      .entrada0(somador_PC_4_out),  	 // Entrada: Cabo que contém PC + 4
-		.entrada1(jump_address),          // Entrada: Cabo que contem o endereco do pc jump 
+      .entrada0(cabo_somador_PC_4_out),  	 // Entrada: Cabo que contém PC + 4
+		.entrada1(cabo_somador_PC_jump_para_mux_PC_next),          // Entrada: Cabo que contem o endereco do pc jump 
 		.seletor(cabo_and_out),           // Entrada: Cabo que tem o sinal para ocorrer o jump
 		.saida(cabo_mux_PC_next_PC)       // Saída: 	 Cabo que vai para o PC
 	);
@@ -170,7 +179,7 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
 	mux2x1 mux_valor_write_data (
 		.entrada0(ALU_out),  	 		  			  	// Entrada: Valor calculado pela ALU
 		.entrada1(d_mem_out),   						// Entrada: Valor lido da memória 
-		.seletor(MemtoReg),           		 		// Entrada: Cabo que tem o sinal para definir qual o valor a ser usado
+		.seletor(MemToReg),           		 		// Entrada: Cabo que tem o sinal para definir qual o valor a ser usado
 		.saida(cabo_mux_valor_write_data)        	// Saída:   Cabo que vai para WriteData em regfile
 	);
 	
@@ -187,10 +196,26 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out);
         .Jump(Jump),
         .Link(Link)
     );
+	 
+	 ULA ula(
+		.in1(valor_reg1), 
+		.in2(cabo_mux_dest_reg_para_regfile), 
+		.OP(alu_ctrl_out), 
+		.shamt(cabo_shamt), 
+		.result(cabo_ALU_out), 
+		.zero_flag(cabo_zero)
+	 );
+	 
+	 ULA_crtl ula_ctrl (
+		.ALUOp(ALUOp), 
+		.funct(cabo_funct), 
+		.ALUControl(alu_ctrl_out)
+	 );
 	
 	// Inicialização das saídas do programa
 	assign PC_out = cabo_PC_out;
 	assign d_mem_out = cabo_d_mem_out;
+	assign ALU_out = cabo_ALU_out;
 	
 	
 endmodule

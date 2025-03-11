@@ -11,7 +11,7 @@ module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSr
 
 	input wire [5:0] opcode;
 	output reg RegDst, Branch, MemRead, MemToReg, MemWrite, ALUSrc, RegWrite, Jump, Link;
-	output reg [1:0] ALUOp;
+	output reg [3:0] ALUOp;
 
 	
 	always @ (opcode) begin	            // Sensível a mudança de opcode
@@ -25,7 +25,7 @@ module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSr
     Branch   = 0;
 	 Jump 	 = 0;
 	 Link		 = 0;
-    ALUOp    = 2'b00; // vetor de 2 bits iniciado com 00
+    ALUOp    = 4'b0000; // vetor de 2 bits iniciado com 00
 	 
 	 
 		case(opcode)
@@ -34,31 +34,31 @@ module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSr
 			ALUSrc   = 1;
 			MemToReg = 1;
 			RegWrite = 1;
-			ALUOp    = 2'b00;
+			ALUOp    = 4'b0000;
 		end
 	 // Instrucao sw
 	   6'b101011: begin
 			ALUSrc	= 1;
 			MemWrite = 1;
-			ALUOp		= 2'b00;
+			ALUOp		= 4'b0000;
 			
 		end
 	 // Instrucoes tipo R
 		6'b000000: begin
 			RegDst   = 1;
 			RegWrite = 1;
-			ALUOp    = 2'b10;
+			ALUOp    = 4'b0000;
 		end
 		// Instrucao BEQ
 		6'b000100: begin
 		Branch=1;
-		ALUOp=01;
+		ALUOp=4'b0100;
 		end
 		
 		// Instrucao BNE
 		6'b000101: begin
 		Branch=1;
-		ALUOp=01;
+		ALUOp=4'b0101;
 		end
 		
 		// Instrução J (Jump)
@@ -77,42 +77,42 @@ module control(opcode, RegDst, Branch, MemRead, MemToReg, ALUOp, MemWrite, ALUSr
 		6'b001000: begin
 			ALUSrc   = 1;
 			RegWrite = 1;
-			ALUOp    = 2'b00;
+			ALUOp    = 4'b1000;
 		end
 
       // Instrução ANDI (And Immediate)
 		6'b001100: begin
 			ALUSrc   = 1;
 			RegWrite = 1;
-			ALUOp    = 2'b10;
+			ALUOp    = 4'b1100;
 		end
 
       // Instrução ORI (Or Immediate)
 		6'b001101: begin
 			ALUSrc   = 1;
 			RegWrite = 1;
-			ALUOp    = 2'b10;
+			ALUOp    = 4'b1101;
 		end
 		
 		// Instruçao XORI (XOR Imadiate)
 		6'b001110: begin
 			ALUSrc = 1;
 			RegWrite = 1;
-			ALUOp = 2'b10;
+			ALUOp = 4'b1110;
 		end 
 
 		// Instrução SLTI (Set Less Than Immediate)
 		6'b001010: begin
 			ALUSrc   = 1;
 			RegWrite = 1;
-			ALUOp    = 2'b11;			
+			ALUOp    = 4'b1010;			
 		end
 		
 		// Instrução SLTIU (Set Less Than Immediate Unsigned)
 		6'b001011: begin
 			ALUSrc   = 1;
 			RegWrite = 1;
-			ALUOp    = 2'b11;			
+			ALUOp    = 4'b1011;			
 		end
 		
 		// Instruçao LUI

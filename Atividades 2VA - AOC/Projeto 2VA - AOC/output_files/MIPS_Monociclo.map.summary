@@ -1,13 +1,13 @@
-Analysis & Synthesis Status : Successful - Sun Mar  9 22:36:46 2025
+Analysis & Synthesis Status : Successful - Mon Mar 10 22:38:11 2025
 Quartus Prime Version : 23.1std.1 Build 993 05/14/2024 SC Lite Edition
 Revision Name : MIPS_Monociclo
-Top-level Entity Name : ULA
+Top-level Entity Name : MIPS_Monociclo
 Family : MAX 10
-Total logic elements : 1,142
-    Total combinational functions : 1,142
+Total logic elements : 0
+    Total combinational functions : 0
     Dedicated logic registers : 0
 Total registers : 0
-Total pins : 106
+Total pins : 98
 Total virtual pins : 0
 Total memory bits : 0
 Embedded Multiplier 9-bit elements : 0

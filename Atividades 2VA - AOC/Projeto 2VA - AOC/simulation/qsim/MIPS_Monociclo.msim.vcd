@@ -1,0 +1,26 @@
+$comment
+	File created using the following command:
+		vcd file MIPS_Monociclo.msim.vcd -direction
+$end
+$date
+	Mon Mar 10 22:37:02 2025
+$end
+$version
+	Questa Intel Starter FPGA Edition Version 2023.3
+$end
+$timescale
+	1ps
+$end
+
+$scope module MIPS_Monociclo_vlg_vec_tst $end
+
+$scope module i1 $end
+$var tri1 1 ! devoe $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+1!
+$end
+#1000000

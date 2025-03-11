@@ -1,0 +1,257 @@
+m255
+K4
+z2
+!s11f vlog 2023.3 2023.07, Jul 17 2023
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/questa
+vcontrol
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v
+Z1 !s110 1741654607
+!i10b 1
+!s100 US25Wb`4KBMKPWMPKPEGa1
+IbdBD[b:J<>A>`;hO=_Bm_3
+R0
+w1741652755
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v
+!i122 1
+L0 10 121
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+Z3 OL;L;2023.3;77
+r1
+!s85 0
+31
+Z4 !s108 1741654607.000000
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v|
+!i113 0
+Z5 o-vlog01compat -work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z6 !s92 -vlog01compat -work work {+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC} -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z7 tCvgOpt 0
+vextensor_de_sinal
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v
+Z8 !s110 1741654608
+!i10b 1
+!s100 AN<Dd1eUPBP2L[aTa;SNY2
+IhNE4kA:R>cbX:7UbIo0oJ2
+R0
+Z9 w1740981761
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v
+!i122 8
+Z10 L0 9 10
+R2
+R3
+r1
+!s85 0
+31
+Z11 !s108 1741654608.000000
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v|
+!i113 0
+R5
+R6
+R7
+vMIPS_Monociclo
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v
+R1
+!i10b 1
+!s100 ?nk9ig;`P:G;JXan[FFb_1
+I0mojzbE1iJkPK96CI4L[A0
+R0
+w1741653849
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v
+!i122 5
+L0 26 196
+R2
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v|
+!i113 0
+R5
+R6
+R7
+n@m@i@p@s_@monociclo
+vmux2x1
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v
+R8
+!i10b 1
+!s100 FkFG8hN@Q@ifcB=CWmP060
+IU7aWKl?EW<aG7C^116ERT0
+R0
+w1741650405
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v
+!i122 6
+L0 8 12
+R2
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v|
+!i113 0
+R5
+R6
+R7
+vPC
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v
+R8
+!i10b 1
+!s100 <J2BP;F;C<7d43j4=HD3a0
+INlPF7RkLQa?Q`Dj5E_54?1
+R0
+R9
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v
+!i122 7
+L0 9 13
+R2
+R3
+r1
+!s85 0
+31
+R11
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v|
+!i113 0
+R5
+R6
+R7
+n@p@c
+vshift_left_2
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v
+R8
+!i10b 1
+!s100 ShSRo>:>3Tf?FS50^]]Ee1
+IkY6P<AbhA:@@Whn5hnlQ^3
+R0
+R9
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v
+!i122 9
+R10
+R2
+R3
+r1
+!s85 0
+31
+R11
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v|
+!i113 0
+R5
+R6
+R7
+vsomador_PC_4
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v
+R1
+!i10b 1
+!s100 2OVi[a8mISjW`kUOAB=:63
+I9aAzo::YhlW4P[VU=[i180
+R0
+R9
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v
+!i122 3
+R10
+R2
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v|
+!i113 0
+R5
+R6
+R7
+nsomador_@p@c_4
+vsomador_PC_jump
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v
+R1
+!i10b 1
+!s100 FSjRBZ:gLXL5PzjjN=f4m2
+I;G;YcdmUc]1K5`L1]SA6f1
+R0
+R9
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v
+!i122 4
+L0 9 11
+R2
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v|
+!i113 0
+R5
+R6
+R7
+nsomador_@p@c_jump
+vULA
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v
+R1
+!i10b 1
+!s100 54MB9m>^g@8XHjhRno@IL3
+IadM[U>cc:3OSIR8VmGX[]3
+R0
+w1741654443
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v
+!i122 2
+L0 12 35
+R2
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v|
+!i113 0
+R5
+R6
+R7
+n@u@l@a
+vULA_crtl
+2C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v
+R1
+!i10b 1
+!s100 JC]ag^>jSbFj:oIonI1ET2
+Id4SAbUU`dmlA7Z@G`SKb90
+R0
+w1741648920
+8C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v
+FC:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v
+!i122 0
+L0 10 41
+R2
+R3
+r1
+!s85 0
+31
+R4
+!s107 C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC|C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v|
+!i113 0
+R5
+R6
+R7
+n@u@l@a_crtl

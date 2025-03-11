@@ -1,0 +1,139 @@
+# Reading pref.tcl
+# //  Questa Intel Starter FPGA Edition-64
+# //  Version 2023.3 win64 Jul 17 2023
+# //
+# //  Copyright 1991-2023 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# do MIPS_Monociclo_run_msim_rtl_verilog.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Questa Intel Starter FPGA Edition-64 vmap 2023.3 Lib Mapping Utility 2023.07 Jul 17 2023
+# vmap work rtl_work 
+# Copying c:/intelfpga_lite/23.1std/questa_fse/win64/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:47 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v 
+# -- Compiling module ULA_crtl
+# 
+# Top level modules:
+# 	ULA_crtl
+# End time: 21:56:47 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:47 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v 
+# -- Compiling module control
+# 
+# Top level modules:
+# 	control
+# End time: 21:56:47 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:47 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v 
+# -- Compiling module ULA
+# 
+# Top level modules:
+# 	ULA
+# End time: 21:56:47 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:47 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v 
+# -- Compiling module somador_PC_4
+# 
+# Top level modules:
+# 	somador_PC_4
+# End time: 21:56:47 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:47 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v 
+# -- Compiling module somador_PC_jump
+# 
+# Top level modules:
+# 	somador_PC_jump
+# End time: 21:56:47 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:47 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v 
+# -- Compiling module MIPS_Monociclo
+# 
+# Top level modules:
+# 	MIPS_Monociclo
+# End time: 21:56:47 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:47 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v 
+# -- Compiling module mux2x1
+# 
+# Top level modules:
+# 	mux2x1
+# End time: 21:56:48 on Mar 10,2025, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:48 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v 
+# -- Compiling module PC
+# 
+# Top level modules:
+# 	PC
+# End time: 21:56:48 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:48 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v 
+# -- Compiling module extensor_de_sinal
+# 
+# Top level modules:
+# 	extensor_de_sinal
+# End time: 21:56:48 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:48 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v 
+# -- Compiling module shift_left_2
+# 
+# Top level modules:
+# 	shift_left_2
+# End time: 21:56:48 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/regfile.v}
+# Questa Intel Starter FPGA Edition-64 vlog 2023.3 Compiler 2023.07 Jul 17 2023
+# Start time: 21:56:48 on Mar 10,2025
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC" C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/regfile.v 
+# -- Compiling module regfile
+# ** Error: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/regfile.v(23): Declarations not allowed in unnamed block.
+# End time: 21:56:48 on Mar 10,2025, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 0
+# ** Error: c:/intelfpga_lite/23.1std/questa_fse/win64/vlog failed.
+# Error in macro ./MIPS_Monociclo_run_msim_rtl_verilog.do line 18
+# c:/intelfpga_lite/23.1std/questa_fse/win64/vlog failed.
+#     while executing
+# "vlog -vlog01compat -work work +incdir+C:/Projetos_AOC/Atividades\ 2VA\ -\ AOC/Projeto\ 2VA\ -\ AOC {C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA -..."
