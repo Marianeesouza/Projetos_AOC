@@ -1,12 +1,12 @@
-Fitter Status : Successful - Tue Mar 11 13:03:32 2025
+Fitter Status : Successful - Tue Mar 11 21:05:30 2025
 Quartus Prime Version : 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 Revision Name : MIPS_Monociclo
 Top-level Entity Name : MIPS_Monociclo
 Family : MAX 10
 Device : 10M08DAF484C8G
 Timing Models : Final
-Total logic elements : 4,328 / 8,064 ( 54 % )
-    Total combinational functions : 3,500 / 8,064 ( 43 % )
+Total logic elements : 4,031 / 8,064 ( 50 % )
+    Total combinational functions : 3,219 / 8,064 ( 40 % )
     Dedicated logic registers : 2,078 / 8,064 ( 26 % )
 Total registers : 2078
 Total pins : 162 / 250 ( 65 % )

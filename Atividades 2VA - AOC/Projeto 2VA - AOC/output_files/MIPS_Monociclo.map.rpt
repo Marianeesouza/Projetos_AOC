@@ -1,5 +1,5 @@
 Analysis & Synthesis report for MIPS_Monociclo
-Tue Mar 11 13:02:06 2025
+Tue Mar 11 21:03:55 2025
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -14,15 +14,14 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
   8. Registers Removed During Synthesis
-  9. Removed Registers Triggering Further Register Optimizations
- 10. General Register Statistics
- 11. Multiplexer Restructuring Statistics (Restructuring Performed)
- 12. Parameter Settings for User Entity Instance: i_mem:Imem
- 13. Parameter Settings for User Entity Instance: d_mem:D_mem
- 14. Port Connectivity Checks: "control:uc"
- 15. Post-Synthesis Netlist Statistics for Top Partition
- 16. Elapsed Time Per Partition
- 17. Analysis & Synthesis Messages
+  9. General Register Statistics
+ 10. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 11. Parameter Settings for User Entity Instance: i_mem:Imem
+ 12. Parameter Settings for User Entity Instance: d_mem:D_mem
+ 13. Port Connectivity Checks: "control:uc"
+ 14. Post-Synthesis Netlist Statistics for Top Partition
+ 15. Elapsed Time Per Partition
+ 16. Analysis & Synthesis Messages
 
 
 
@@ -49,13 +48,13 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Tue Mar 11 13:02:06 2025       ;
+; Analysis & Synthesis Status        ; Successful - Tue Mar 11 21:03:55 2025       ;
 ; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                      ; MIPS_Monociclo                              ;
 ; Top-level Entity Name              ; MIPS_Monociclo                              ;
 ; Family                             ; MAX 10                                      ;
-; Total logic elements               ; 5,451                                       ;
-;     Total combinational functions  ; 3,499                                       ;
+; Total logic elements               ; 5,170                                       ;
+;     Total combinational functions  ; 3,218                                       ;
 ;     Dedicated logic registers      ; 2,078                                       ;
 ; Total registers                    ; 2078                                        ;
 ; Total pins                         ; 162                                         ;
@@ -159,41 +158,43 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+-------------+
 ; Processors                 ; Number      ;
 +----------------------------+-------------+
-; Number detected on machine ; 8           ;
-; Maximum allowed            ; 4           ;
+; Number detected on machine ; 6           ;
+; Maximum allowed            ; 6           ;
 ;                            ;             ;
 ; Average used               ; 1.00        ;
-; Maximum used               ; 4           ;
+; Maximum used               ; 6           ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
 ;     Processor 2            ;   0.1%      ;
 ;     Processor 3            ;   0.1%      ;
 ;     Processor 4            ;   0.1%      ;
+;     Processor 5            ;   0.1%      ;
+;     Processor 6            ;   0.1%      ;
 +----------------------------+-------------+
 
 
-+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                                                   ;
-+----------------------------------+-----------------+------------------------------+----------------------------------------------------------------------------+---------+
-; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                               ; Library ;
-+----------------------------------+-----------------+------------------------------+----------------------------------------------------------------------------+---------+
-; ula_ctrl.v                       ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v          ;         ;
-; control.v                        ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v           ;         ;
-; ULA.v                            ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v               ;         ;
-; somador_PC_4.v                   ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v      ;         ;
-; somador_PC_jump.v                ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v   ;         ;
-; MIPS_Monociclo.v                 ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v    ;         ;
-; mux2x1.v                         ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v            ;         ;
-; PC.v                             ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v                ;         ;
-; extensor_de_sinal.v              ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v ;         ;
-; shift_left_2.v                   ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v      ;         ;
-; i_mem.v                          ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v             ;         ;
-; regfile.v                        ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/regfile.v           ;         ;
-; d_mem.v                          ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v             ;         ;
-; mux2x1_regdst.v                  ; yes             ; User Verilog HDL File        ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1_regdst.v     ;         ;
-; instructions.list                ; yes             ; Auto-Found Unspecified File  ; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/instructions.list   ;         ;
-+----------------------------------+-----------------+------------------------------+----------------------------------------------------------------------------+---------+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                           ;
++----------------------------------+-----------------+------------------------------+----------------------------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                                       ; Library ;
++----------------------------------+-----------------+------------------------------+----------------------------------------------------------------------------------------------------+---------+
+; ula_ctrl.v                       ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v          ;         ;
+; control.v                        ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v           ;         ;
+; ULA.v                            ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v               ;         ;
+; somador_PC_4.v                   ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v      ;         ;
+; somador_PC_jump.v                ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v   ;         ;
+; MIPS_Monociclo.v                 ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v    ;         ;
+; mux2x1.v                         ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v            ;         ;
+; PC.v                             ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v                ;         ;
+; extensor_de_sinal.v              ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v ;         ;
+; shift_left_2.v                   ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v      ;         ;
+; i_mem.v                          ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v             ;         ;
+; regfile.v                        ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/regfile.v           ;         ;
+; d_mem.v                          ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v             ;         ;
+; mux2x1_regdst.v                  ; yes             ; User Verilog HDL File        ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1_regdst.v     ;         ;
+; instructions.list                ; yes             ; Auto-Found Unspecified File  ; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/instructions.list   ;         ;
++----------------------------------+-----------------+------------------------------+----------------------------------------------------------------------------------------------------+---------+
 
 
 +-----------------------------------------------------------+
@@ -201,16 +202,16 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------+-------------+
 ; Resource                                    ; Usage       ;
 +---------------------------------------------+-------------+
-; Estimated Total logic elements              ; 5,451       ;
+; Estimated Total logic elements              ; 5,170       ;
 ;                                             ;             ;
-; Total combinational functions               ; 3499        ;
+; Total combinational functions               ; 3218        ;
 ; Logic element usage by number of LUT inputs ;             ;
-;     -- 4 input functions                    ; 2951        ;
-;     -- 3 input functions                    ; 484         ;
-;     -- <=2 input functions                  ; 64          ;
+;     -- 4 input functions                    ; 2701        ;
+;     -- 3 input functions                    ; 467         ;
+;     -- <=2 input functions                  ; 50          ;
 ;                                             ;             ;
 ; Logic elements by mode                      ;             ;
-;     -- normal mode                          ; 3317        ;
+;     -- normal mode                          ; 3036        ;
 ;     -- arithmetic mode                      ; 182         ;
 ;                                             ;             ;
 ; Total registers                             ; 2078        ;
@@ -223,8 +224,8 @@ https://fpgasoftware.intel.com/eula.
 ;                                             ;             ;
 ; Maximum fan-out node                        ; clock~input ;
 ; Maximum fan-out                             ; 2078        ;
-; Total fan-out                               ; 20959       ;
-; Average fan-out                             ; 3.55        ;
+; Total fan-out                               ; 19880       ;
+; Average fan-out                             ; 3.54        ;
 +---------------------------------------------+-------------+
 
 
@@ -233,18 +234,18 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------------------------------+----------------+--------------+
 ; Compilation Hierarchy Node       ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; UFM Blocks ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; ADC blocks ; Full Hierarchy Name                         ; Entity Name    ; Library Name ;
 +----------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------------------------------+----------------+--------------+
-; |MIPS_Monociclo                  ; 3499 (17)           ; 2078 (0)                  ; 0           ; 0          ; 0            ; 0       ; 0         ; 162  ; 0            ; 0          ; |MIPS_Monociclo                             ; MIPS_Monociclo ; work         ;
+; |MIPS_Monociclo                  ; 3218 (12)           ; 2078 (0)                  ; 0           ; 0          ; 0            ; 0       ; 0         ; 162  ; 0            ; 0          ; |MIPS_Monociclo                             ; MIPS_Monociclo ; work         ;
 ;    |PC:pc|                       ; 30 (30)             ; 30 (30)                   ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|PC:pc                       ; PC             ; work         ;
-;    |ULA:ula|                     ; 1034 (1034)         ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|ULA:ula                     ; ULA            ; work         ;
-;    |control:uc|                  ; 15 (15)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|control:uc                  ; control        ; work         ;
-;    |d_mem:D_mem|                 ; 720 (720)           ; 1056 (1056)               ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|d_mem:D_mem                 ; d_mem          ; work         ;
-;    |i_mem:Imem|                  ; 129 (129)           ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|i_mem:Imem                  ; i_mem          ; work         ;
-;    |mux2x1:mux_in_2_ALU|         ; 37 (37)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|mux2x1:mux_in_2_ALU         ; mux2x1         ; work         ;
+;    |ULA:ula|                     ; 769 (769)           ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|ULA:ula                     ; ULA            ; work         ;
+;    |control:uc|                  ; 13 (13)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|control:uc                  ; control        ; work         ;
+;    |d_mem:D_mem|                 ; 721 (721)           ; 1056 (1056)               ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|d_mem:D_mem                 ; d_mem          ; work         ;
+;    |i_mem:Imem|                  ; 127 (127)           ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|i_mem:Imem                  ; i_mem          ; work         ;
+;    |mux2x1:mux_in_2_ALU|         ; 33 (33)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|mux2x1:mux_in_2_ALU         ; mux2x1         ; work         ;
 ;    |mux2x1:mux_valor_write_data| ; 32 (32)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|mux2x1:mux_valor_write_data ; mux2x1         ; work         ;
 ;    |mux2x1_regdst:mux_dest_reg|  ; 4 (4)               ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|mux2x1_regdst:mux_dest_reg  ; mux2x1_regdst  ; work         ;
-;    |regfile:Regfile|             ; 1427 (1427)         ; 992 (992)                 ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|regfile:Regfile             ; regfile        ; work         ;
+;    |regfile:Regfile|             ; 1428 (1428)         ; 992 (992)                 ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|regfile:Regfile             ; regfile        ; work         ;
 ;    |somador_PC_4:somador_pc4|    ; 30 (30)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|somador_PC_4:somador_pc4    ; somador_PC_4   ; work         ;
-;    |ula_ctrl:ULA_ctrl|           ; 24 (24)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|ula_ctrl:ULA_ctrl           ; ula_ctrl       ; work         ;
+;    |ula_ctrl:ULA_ctrl|           ; 19 (19)             ; 0 (0)                     ; 0           ; 0          ; 0            ; 0       ; 0         ; 0    ; 0            ; 0          ; |MIPS_Monociclo|ula_ctrl:ULA_ctrl           ; ula_ctrl       ; work         ;
 +----------------------------------+---------------------+---------------------------+-------------+------------+--------------+---------+-----------+------+--------------+------------+---------------------------------------------+----------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
@@ -292,16 +293,6 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------+---------------------------------------------+
 
 
-+------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Removed Registers Triggering Further Register Optimizations                                                                                          ;
-+-----------------------------+--------------------------------+---------------------------------------------------------------------------------------+
-; Register name               ; Reason for Removal             ; Registers Removed due to This Register                                                ;
-+-----------------------------+--------------------------------+---------------------------------------------------------------------------------------+
-; regfile:Regfile|regs[0][27] ; Stuck at GND                   ; regfile:Regfile|regs[0][16], regfile:Regfile|regs[0][15], regfile:Regfile|regs[0][3], ;
-;                             ; due to stuck port clock_enable ; regfile:Regfile|regs[0][2], regfile:Regfile|regs[0][1]                                ;
-+-----------------------------+--------------------------------+---------------------------------------------------------------------------------------+
-
-
 +------------------------------------------------------+
 ; General Register Statistics                          ;
 +----------------------------------------------+-------+
@@ -322,13 +313,15 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------+
 ; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                    ;
 +--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------+
-; 16:1               ; 4 bits    ; 40 LEs        ; 24 LEs               ; 16 LEs                 ; No         ; |MIPS_Monociclo|ula_ctrl:ULA_ctrl|Mux0        ;
-; 33:1               ; 32 bits   ; 704 LEs       ; 704 LEs              ; 0 LEs                  ; No         ; |MIPS_Monociclo|regfile:Regfile|ReadData2[28] ;
-; 33:1               ; 32 bits   ; 704 LEs       ; 704 LEs              ; 0 LEs                  ; No         ; |MIPS_Monociclo|regfile:Regfile|ReadData1[9]  ;
-; 26:1               ; 7 bits    ; 119 LEs       ; 77 LEs               ; 42 LEs                 ; No         ; |MIPS_Monociclo|ULA:ula|Mux23                 ;
-; 27:1               ; 7 bits    ; 126 LEs       ; 77 LEs               ; 49 LEs                 ; No         ; |MIPS_Monociclo|ULA:ula|Mux14                 ;
-; 27:1               ; 4 bits    ; 72 LEs        ; 48 LEs               ; 24 LEs                 ; No         ; |MIPS_Monociclo|ULA:ula|Mux26                 ;
-; 28:1               ; 4 bits    ; 72 LEs        ; 48 LEs               ; 24 LEs                 ; No         ; |MIPS_Monociclo|ULA:ula|Mux4                  ;
+; 16:1               ; 4 bits    ; 40 LEs        ; 24 LEs               ; 16 LEs                 ; No         ; |MIPS_Monociclo|ula_ctrl:ULA_ctrl|Mux1        ;
+; 33:1               ; 32 bits   ; 704 LEs       ; 704 LEs              ; 0 LEs                  ; No         ; |MIPS_Monociclo|regfile:Regfile|ReadData2[14] ;
+; 33:1               ; 32 bits   ; 704 LEs       ; 704 LEs              ; 0 LEs                  ; No         ; |MIPS_Monociclo|regfile:Regfile|ReadData1[2]  ;
+; 19:1               ; 8 bits    ; 96 LEs        ; 64 LEs               ; 32 LEs                 ; No         ; |MIPS_Monociclo|ULA:ula|Mux23                 ;
+; 20:1               ; 7 bits    ; 91 LEs        ; 56 LEs               ; 35 LEs                 ; No         ; |MIPS_Monociclo|ULA:ula|Mux13                 ;
+; 20:1               ; 4 bits    ; 52 LEs        ; 36 LEs               ; 16 LEs                 ; No         ; |MIPS_Monociclo|ULA:ula|Mux27                 ;
+; 21:1               ; 4 bits    ; 56 LEs        ; 36 LEs               ; 20 LEs                 ; No         ; |MIPS_Monociclo|ULA:ula|Mux5                  ;
+; 21:1               ; 2 bits    ; 28 LEs        ; 18 LEs               ; 10 LEs                 ; No         ; |MIPS_Monociclo|ULA:ula|Mux28                 ;
+; 22:1               ; 2 bits    ; 28 LEs        ; 20 LEs               ; 8 LEs                  ; No         ; |MIPS_Monociclo|ULA:ula|Mux2                  ;
 +--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------+
 
 
@@ -372,19 +365,19 @@ Note: In order to hide this table in the UI and the text report file, please set
 ;     ENA               ; 1056                        ;
 ;     ENA CLR           ; 992                         ;
 ;     SLD               ; 30                          ;
-; cycloneiii_lcell_comb ; 3500                        ;
+; cycloneiii_lcell_comb ; 3219                        ;
 ;     arith             ; 182                         ;
 ;         2 data inputs ; 29                          ;
 ;         3 data inputs ; 153                         ;
-;     normal            ; 3318                        ;
+;     normal            ; 3037                        ;
 ;         0 data inputs ; 1                           ;
 ;         1 data inputs ; 1                           ;
-;         2 data inputs ; 34                          ;
-;         3 data inputs ; 331                         ;
-;         4 data inputs ; 2951                        ;
+;         2 data inputs ; 20                          ;
+;         3 data inputs ; 314                         ;
+;         4 data inputs ; 2701                        ;
 ;                       ;                             ;
-; Max LUT depth         ; 28.00                       ;
-; Average LUT depth     ; 19.20                       ;
+; Max LUT depth         ; 26.00                       ;
+; Average LUT depth     ; 17.61                       ;
 +-----------------------+-----------------------------+
 
 
@@ -393,7 +386,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:00:15     ;
+; Top            ; 00:00:13     ;
 +----------------+--------------+
 
 
@@ -403,72 +396,72 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Tue Mar 11 13:01:40 2025
+    Info: Processing started: Tue Mar 11 21:03:33 2025
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off MIPS_Monociclo -c MIPS_Monociclo
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
-Info (20030): Parallel compilation is enabled and will use 4 of the 4 processors detected
+Info (20030): Parallel compilation is enabled and will use 6 of the 6 processors detected
 Info (12021): Found 1 design units, including 1 entities, in source file ula_ctrl.v
-    Info (12023): Found entity 1: ula_ctrl File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v Line: 10
+    Info (12023): Found entity 1: ula_ctrl File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ula_ctrl.v Line: 10
 Info (12021): Found 1 design units, including 1 entities, in source file control.v
-    Info (12023): Found entity 1: control File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v Line: 10
+    Info (12023): Found entity 1: control File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/control.v Line: 10
 Info (12021): Found 1 design units, including 1 entities, in source file ula.v
-    Info (12023): Found entity 1: ULA File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v Line: 12
+    Info (12023): Found entity 1: ULA File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/ULA.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file somador_pc_4.v
-    Info (12023): Found entity 1: somador_PC_4 File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v Line: 9
+    Info (12023): Found entity 1: somador_PC_4 File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_4.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file somador_pc_jump.v
-    Info (12023): Found entity 1: somador_PC_jump File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v Line: 9
+    Info (12023): Found entity 1: somador_PC_jump File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/somador_PC_jump.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file mips_monociclo.v
-    Info (12023): Found entity 1: MIPS_Monociclo File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 9
+    Info (12023): Found entity 1: MIPS_Monociclo File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file mux2x1.v
-    Info (12023): Found entity 1: mux2x1 File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v Line: 8
+    Info (12023): Found entity 1: mux2x1 File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1.v Line: 8
 Info (12021): Found 1 design units, including 1 entities, in source file pc.v
-    Info (12023): Found entity 1: PC File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v Line: 9
+    Info (12023): Found entity 1: PC File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/PC.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file extensor_de_sinal.v
-    Info (12023): Found entity 1: extensor_de_sinal File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v Line: 9
+    Info (12023): Found entity 1: extensor_de_sinal File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/extensor_de_sinal.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file shift_left_2.v
-    Info (12023): Found entity 1: shift_left_2 File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v Line: 9
+    Info (12023): Found entity 1: shift_left_2 File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/shift_left_2.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file i_mem.v
-    Info (12023): Found entity 1: i_mem File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 9
+    Info (12023): Found entity 1: i_mem File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file regfile.v
-    Info (12023): Found entity 1: regfile File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/regfile.v Line: 9
+    Info (12023): Found entity 1: regfile File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/regfile.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file d_mem.v
-    Info (12023): Found entity 1: d_mem File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 10
+    Info (12023): Found entity 1: d_mem File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 10
 Info (12021): Found 1 design units, including 1 entities, in source file mux2x1_regdst.v
-    Info (12023): Found entity 1: mux2x1_regdst File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1_regdst.v Line: 9
+    Info (12023): Found entity 1: mux2x1_regdst File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/mux2x1_regdst.v Line: 9
 Info (12127): Elaborating entity "MIPS_Monociclo" for the top level hierarchy
-Info (12128): Elaborating entity "PC" for hierarchy "PC:pc" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 82
-Info (12128): Elaborating entity "i_mem" for hierarchy "i_mem:Imem" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 87
-Warning (10030): Net "memoria_ROM.data_a" at i_mem.v(18) has no driver or initial value, using a default initial value '0' File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
-Warning (10030): Net "memoria_ROM.waddr_a" at i_mem.v(18) has no driver or initial value, using a default initial value '0' File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
-Warning (10030): Net "memoria_ROM.we_a" at i_mem.v(18) has no driver or initial value, using a default initial value '0' File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
-Info (12128): Elaborating entity "somador_PC_4" for hierarchy "somador_PC_4:somador_pc4" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 93
-Info (12128): Elaborating entity "somador_PC_jump" for hierarchy "somador_PC_jump:somador_jump" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 100
-Info (12128): Elaborating entity "shift_left_2" for hierarchy "shift_left_2:sll2" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 106
-Info (12128): Elaborating entity "extensor_de_sinal" for hierarchy "extensor_de_sinal:extensor" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 112
-Info (12128): Elaborating entity "d_mem" for hierarchy "d_mem:D_mem" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 122
-Info (12128): Elaborating entity "regfile" for hierarchy "regfile:Regfile" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 135
-Info (12128): Elaborating entity "control" for hierarchy "control:uc" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 150
-Info (12128): Elaborating entity "ULA" for hierarchy "ULA:ula" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 160
-Info (12128): Elaborating entity "ula_ctrl" for hierarchy "ula_ctrl:ULA_ctrl" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 167
-Info (12128): Elaborating entity "mux2x1" for hierarchy "mux2x1:mux_PC_next" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 177
-Info (12128): Elaborating entity "mux2x1_regdst" for hierarchy "mux2x1_regdst:mux_dest_reg" File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 193
+Info (12128): Elaborating entity "PC" for hierarchy "PC:pc" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 81
+Info (12128): Elaborating entity "i_mem" for hierarchy "i_mem:Imem" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 86
+Warning (10030): Net "memoria_ROM.data_a" at i_mem.v(18) has no driver or initial value, using a default initial value '0' File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
+Warning (10030): Net "memoria_ROM.waddr_a" at i_mem.v(18) has no driver or initial value, using a default initial value '0' File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
+Warning (10030): Net "memoria_ROM.we_a" at i_mem.v(18) has no driver or initial value, using a default initial value '0' File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
+Info (12128): Elaborating entity "somador_PC_4" for hierarchy "somador_PC_4:somador_pc4" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 92
+Info (12128): Elaborating entity "somador_PC_jump" for hierarchy "somador_PC_jump:somador_jump" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 99
+Info (12128): Elaborating entity "shift_left_2" for hierarchy "shift_left_2:sll2" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 105
+Info (12128): Elaborating entity "extensor_de_sinal" for hierarchy "extensor_de_sinal:extensor" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 111
+Info (12128): Elaborating entity "d_mem" for hierarchy "d_mem:D_mem" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 121
+Info (12128): Elaborating entity "regfile" for hierarchy "regfile:Regfile" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 134
+Info (12128): Elaborating entity "control" for hierarchy "control:uc" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 149
+Info (12128): Elaborating entity "ULA" for hierarchy "ULA:ula" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 158
+Info (12128): Elaborating entity "ula_ctrl" for hierarchy "ula_ctrl:ULA_ctrl" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 165
+Info (12128): Elaborating entity "mux2x1" for hierarchy "mux2x1:mux_PC_next" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 175
+Info (12128): Elaborating entity "mux2x1_regdst" for hierarchy "mux2x1_regdst:mux_dest_reg" File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 191
 Info (276014): Found 2 instances of uninferred RAM logic
-    Info (276013): RAM logic "i_mem:Imem|memoria_ROM" is uninferred because MIF is not supported for the selected family File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
-    Info (276007): RAM logic "d_mem:D_mem|mem" is uninferred due to asynchronous read logic File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 24
+    Info (276013): RAM logic "i_mem:Imem|memoria_ROM" is uninferred because MIF is not supported for the selected family File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/i_mem.v Line: 18
+    Info (276007): RAM logic "d_mem:D_mem|mem" is uninferred due to asynchronous read logic File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/d_mem.v Line: 24
 Warning (13024): Output pins are stuck at VCC or GND
-    Warning (13410): Pin "PC_out[0]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 14
-    Warning (13410): Pin "PC_out[1]" is stuck at GND File: C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 14
+    Warning (13410): Pin "PC_out[0]" is stuck at GND File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 14
+    Warning (13410): Pin "PC_out[1]" is stuck at GND File: C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/MIPS_Monociclo.v Line: 14
 Info (286030): Timing-Driven Synthesis is running
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Info (21057): Implemented 5677 device resources after synthesis - the final resource count might be different
+Info (21057): Implemented 5396 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 2 input pins
     Info (21059): Implemented 160 output pins
-    Info (21061): Implemented 5515 logic cells
+    Info (21061): Implemented 5234 logic cells
 Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 7 warnings
-    Info: Peak virtual memory: 4797 megabytes
-    Info: Processing ended: Tue Mar 11 13:02:06 2025
-    Info: Elapsed time: 00:00:26
-    Info: Total CPU time (on all processors): 00:00:23
+    Info: Peak virtual memory: 4824 megabytes
+    Info: Processing ended: Tue Mar 11 21:03:55 2025
+    Info: Elapsed time: 00:00:22
+    Info: Total CPU time (on all processors): 00:00:30
 
 

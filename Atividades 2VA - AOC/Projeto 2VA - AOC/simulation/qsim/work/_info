@@ -29,73 +29,73 @@ n@_opt
 OL;O;2023.3;77
 R2
 vhard_block
-Z4 !s110 1741709039
+Z4 !s110 1741737974
 !i10b 1
-!s100 e6DZ8DolY?lWXC1El2D6M3
+!s100 @]Y1Q4[DBRkCXSb<U@GRU0
 Z5 !s11b Dg1SIo80bB@j0V0VzS_@n1
-IUXI]Wh3G@oSGD[7z5D4l01
+I>=RPo[Djzg8]_0>Ie=AGe3
 Z6 VDg1SIo80bB@j0V0VzS_@n1
-R2
-Z7 w1741709037
-Z8 8MIPS_Monociclo.vo
-Z9 FMIPS_Monociclo.vo
-!i122 44
-L0 116689 45
-Z10 OV;L;2020.1;71
+Z7 dC:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim
+Z8 w1741737973
+Z9 8MIPS_Monociclo.vo
+Z10 FMIPS_Monociclo.vo
+!i122 50
+L0 111729 45
+Z11 OV;L;2020.1;71
 r1
 !s85 0
 31
-Z11 !s108 1741709039.000000
-Z12 !s107 MIPS_Monociclo.vo|
-Z13 !s90 -work|work|MIPS_Monociclo.vo|
+Z12 !s108 1741737974.000000
+Z13 !s107 MIPS_Monociclo.vo|
+Z14 !s90 -work|work|MIPS_Monociclo.vo|
 !i113 1
-Z14 o-work work
+Z15 o-work work
 R3
 vMIPS_Monociclo
 R4
 !i10b 1
-!s100 liE=EKbPZo6c?OFi`W[P72
+!s100 TZlizB=KXN<L_][ED94FH0
 R5
-I7iak^l>^AzDSYM28APS7`0
+I^:f]0cCCR1ef?8e>bY2KK0
 R6
-R2
 R7
 R8
 R9
-!i122 44
-L0 32 116656
 R10
+!i122 50
+L0 32 111696
+R11
 r1
 !s85 0
 31
-R11
 R12
 R13
-!i113 1
 R14
+!i113 1
+R15
 R3
 n@m@i@p@s_@monociclo
 vMIPS_Monociclo_vlg_vec_tst
 R4
 !i10b 1
-!s100 RUC;0d[6M:35ZaWi;h4P:1
+!s100 Xe[E_R2C9<I36@;:BNn]J0
 R5
-Infcj7FlOJE8[0CRAEG=Yn0
+IoJ:Z:f_nNXRzm]HQQ9iTa0
 R6
-R2
-w1741709036
-8Waveform2.vwf.vt
-FWaveform2.vwf.vt
-!i122 45
-L0 30 44
-R10
+R7
+w1741737971
+8Waveform3.vwf.vt
+FWaveform3.vwf.vt
+!i122 51
+L0 30 42
+R11
 r1
 !s85 0
 31
-R11
-!s107 Waveform2.vwf.vt|
-!s90 -work|work|Waveform2.vwf.vt|
+R12
+!s107 Waveform3.vwf.vt|
+!s90 -work|work|Waveform3.vwf.vt|
 !i113 1
-R14
+R15
 R3
 n@m@i@p@s_@monociclo_vlg_vec_tst

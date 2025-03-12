@@ -31,7 +31,7 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out, ula_in1, ula_in2
 	
 	//Declaração do conjunto de cabos do i_men que conecta com 4 módulos (control, regfile, mux_dest_reg, extensor_de_sinal)
 	wire [5:0] cabo_opcode, cabo_funct; 					 // cabos dos bits para opcode e funct
-	wire [4:0] cabo_rs, cabo_rt, cabo_rd, cabo_shamt;   // cabos dos bit para rs, rt, rd, shamt
+	wire [4:0] cabo_rs, cabo_rt, cabo_rd;   // cabos dos bit para rs, rt, rd, shamt
 	wire [15:0] cabo_extensor_de_sinal;                 // cabo para o extensor de sinal
 	
 	//separador dos campos da instrução vinda do cabo_i_men_out
@@ -39,7 +39,6 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out, ula_in1, ula_in2
 	assign cabo_rs = cabo_i_men_out[25:21];  						// separa os bits para rs
 	assign cabo_rt = cabo_i_men_out[20:16];  						// separa os bits para rt
 	assign cabo_rd = cabo_i_men_out[15:11];  						// separa os bits para rd
-	assign cabo_shamt = cabo_i_men_out[10:6]; 					// separa os bits para shamt
 	assign cabo_funct = cabo_i_men_out[5:0];   					// separa os bits para funct
 	assign cabo_extensor_de_sinal = cabo_i_men_out[15:0];  	// separa os bits para extensor de sinal
 	
@@ -154,7 +153,6 @@ module MIPS_Monociclo(clock, reset, PC_out, ALU_out, d_mem_out, ula_in1, ula_in2
 		.in1(valor_reg1),                        // Entrada: cabo de saída do read data 1 do reg file
 		.in2(cabo_mux_dest_reg_para_regfile),    // Entrada: cabo de saída do 
 		.OP(alu_ctrl_out),                       // Entrada:
-		.shamt(cabo_shamt),                      // Entrada: cabo da Unidade de controle contendo o shamt
 		.result(cabo_ALU_out),                   // Saída:   cabo de saída contendo o resultado da ALU
 		.zero_flag(cabo_zero)                    // Saída:   cabo de saída que contem a flag se result deu 0
 	 );   

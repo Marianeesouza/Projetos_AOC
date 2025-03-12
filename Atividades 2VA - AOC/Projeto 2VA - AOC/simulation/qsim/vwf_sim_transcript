@@ -1,13 +1,13 @@
 Determining the location of the ModelSim executable...
 
-Using: C:\intelFPGA_lite\20.1\modelsim_ase\win32aloem
+Using: d:/ssdsdsadsa/modelsim_ase/win32aloem/
 
 To specify a ModelSim executable directory, select: Tools -> Options -> EDA Tool Options
 Note: if both ModelSim-Altera and ModelSim executables are available, ModelSim-Altera will be used.
 
 **** Generating the ModelSim Testbench ****
 
-quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off MIPS_Monociclo -c MIPS_Monociclo --vector_source="C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/Waveform2.vwf" --testbench_file="C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/Waveform2.vwf.vt"
+quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off MIPS_Monociclo -c MIPS_Monociclo --vector_source="C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/Waveform3.vwf" --testbench_file="C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/Waveform3.vwf.vt"
 
 Info: *******************************************************************
 Info: Running Quartus Prime EDA Netlist Writer
@@ -26,11 +26,11 @@ Info: Running Quartus Prime EDA Netlist Writer
     Info: Intel and sold by Intel or its authorized distributors.  Please
     Info: refer to the applicable agreement for further details, at
     Info: https://fpgasoftware.intel.com/eula.
-    Info: Processing started: Tue Mar 11 13:03:56 2025
-Info: Command: quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off MIPS_Monociclo -c MIPS_Monociclo --vector_source="C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/Waveform2.vwf" --testbench_file="C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/Waveform2.vwf.vt"
+    Info: Processing started: Tue Mar 11 21:06:11 2025
+Info: Command: quartus_eda --gen_testbench --tool=modelsim_oem --format=verilog --write_settings_files=off MIPS_Monociclo -c MIPS_Monociclo --vector_source="C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/Waveform3.vwf" --testbench_file="C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/Waveform3.vwf.vt"
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 
-est bench files
+la_in2[24]" in vector source file when writing test bench files
 
 Completed successfully. 
 
@@ -38,7 +38,7 @@ Completed successfully.
 
 **** Generating the functional simulation netlist ****
 
-quartus_eda --write_settings_files=off --simulation --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/" MIPS_Monociclo -c MIPS_Monociclo
+quartus_eda --write_settings_files=off --simulation --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/" MIPS_Monociclo -c MIPS_Monociclo
 
 Info: *******************************************************************
 Info: Running Quartus Prime EDA Netlist Writer
@@ -57,61 +57,60 @@ Info: Running Quartus Prime EDA Netlist Writer
     Info: Intel and sold by Intel or its authorized distributors.  Please
     Info: refer to the applicable agreement for further details, at
     Info: https://fpgasoftware.intel.com/eula.
-    Info: Processing started: Tue Mar 11 13:03:56 2025
-Info: Command: quartus_eda --write_settings_files=off --simulation=on --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/" MIPS_Monociclo -c MIPS_Monociclo
+    Info: Processing started: Tue Mar 11 21:06:12 2025
+Info: Command: quartus_eda --write_settings_files=off --simulation=on --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/" MIPS_Monociclo -c MIPS_Monociclo
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
-Info (204019): Generated file MIPS_Monociclo.vo in folder "C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim//" for EDA simulation tool
+Info (204019): Generated file MIPS_Monociclo.vo in folder "C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim//" for EDA simulation tool
 Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 4661 megabytes
-    Info: Processing ended: Tue Mar 11 13:03:58 2025
-    Info: Elapsed time: 00:00:02
+    Info: Peak virtual memory: 4656 megabytes
+    Info: Processing ended: Tue Mar 11 21:06:13 2025
+    Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:01
 
 Completed successfully. 
 
 **** Generating the ModelSim .do script ****
 
-C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/MIPS_Monociclo.do generated.
+C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/MIPS_Monociclo.do generated.
 
 Completed successfully. 
 
 **** Running the ModelSim simulation ****
 
-C:/intelFPGA_lite/20.1/modelsim_ase/win32aloem/vsim -c -do MIPS_Monociclo.do
+d:/ssdsdsadsa/modelsim_ase/win32aloem//vsim -c -do MIPS_Monociclo.do
 
 Reading pref.tcl
 
 # 2020.1
 
-
 # do MIPS_Monociclo.do
+
 # ** Warning: (vlib-34) Library already exists at "work".
-
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 13:03:59 on Mar 11,2025
+# Start time: 21:06:14 on Mar 11,2025
 # vlog -work work MIPS_Monociclo.vo 
-
 # -- Compiling module MIPS_Monociclo
 
 # -- Compiling module hard_block
 # 
 # Top level modules:
 # 	MIPS_Monociclo
-# End time: 13:03:59 on Mar 11,2025, Elapsed time: 0:00:00
+# End time: 21:06:14 on Mar 11,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 13:03:59 on Mar 11,2025
-# vlog -work work Waveform2.vwf.vt 
+# Start time: 21:06:14 on Mar 11,2025
+# vlog -work work Waveform3.vwf.vt 
+
 # -- Compiling module MIPS_Monociclo_vlg_vec_tst
 # 
 # Top level modules:
 # 	MIPS_Monociclo_vlg_vec_tst
-# End time: 13:03:59 on Mar 11,2025, Elapsed time: 0:00:00
+# End time: 21:06:14 on Mar 11,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 
 # vsim -c -t 1ps -L fiftyfivenm_ver -L altera_ver -L altera_mf_ver -L 220model_ver -L sgate_ver -L altera_lnsim_ver work.MIPS_Monociclo_vlg_vec_tst 
-# Start time: 13:03:59 on Mar 11,2025
+# Start time: 21:06:14 on Mar 11,2025
 # Loading work.MIPS_Monociclo_vlg_vec_tst
 # Loading work.MIPS_Monociclo
 # Loading work.hard_block
@@ -126,11 +125,10 @@ Reading pref.tcl
 # Loading fiftyfivenm_ver.fiftyfivenm_adcblock
 # Loading altera_ver.PRIM_GDFF_LOW
 # ** Warning: (vsim-2685) [TFMPC] - Too few port connections for '\~QUARTUS_CREATED_ADC1~ '.  Expected 8, found 7.
-#    Time: 0 ps  Iteration: 0  Instance: /MIPS_Monociclo_vlg_vec_tst/i1/\~QUARTUS_CREATED_ADC1~  File: MIPS_Monociclo.vo Line: 116345
-# ** Warning: (vsim-3722) MIPS_Monociclo.vo(116345): [TFMPC] - Missing connection for port 'clk_dft'.
-# ** Warning: Design size of 15663 statements exceeds ModelSim-Intel FPGA Starter Edition recommended capacity.
+#    Time: 0 ps  Iteration: 0  Instance: /MIPS_Monociclo_vlg_vec_tst/i1/\~QUARTUS_CREATED_ADC1~  File: MIPS_Monociclo.vo Line: 111385
+# ** Warning: (vsim-3722) MIPS_Monociclo.vo(111385): [TFMPC] - Missing connection for port 'clk_dft'.
+# ** Warning: Design size of 15115 statements exceeds ModelSim-Intel FPGA Starter Edition recommended capacity.
 # Expect performance to be adversely affected.
-
 # after#26
 
 # Simulation time: 0 ps
@@ -139,25 +137,22 @@ Reading pref.tcl
 
 # Simulation time: 0 ps
 
-# Simulation time: 0 ps
-
-# ** Note: $finish    : Waveform2.vwf.vt(55)
+# ** Note: $finish    : Waveform3.vwf.vt(55)
 #    Time: 1 us  Iteration: 0  Instance: /MIPS_Monociclo_vlg_vec_tst
-
-# End time: 13:04:11 on Mar 11,2025, Elapsed time: 0:00:12
+# End time: 21:06:24 on Mar 11,2025, Elapsed time: 0:00:10
 # Errors: 0, Warnings: 3
 
 Completed successfully. 
 
 **** Converting ModelSim VCD to vector waveform ****
 
-Reading C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/Waveform2.vwf...
+Reading C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/Waveform3.vwf...
 
-Reading C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/MIPS_Monociclo.msim.vcd...
+Reading C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/MIPS_Monociclo.msim.vcd...
 
 Processing channel transitions... 
 
-Writing the resulting VWF to C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/MIPS_Monociclo_20250311130411.sim.vwf
+Writing the resulting VWF to C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/MIPS_Monociclo_20250311210624.sim.vwf
 
 Finished VCD to VWF conversion.
 

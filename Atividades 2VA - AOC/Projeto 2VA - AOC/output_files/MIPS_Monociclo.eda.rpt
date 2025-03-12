@@ -1,5 +1,5 @@
 EDA Netlist Writer report for MIPS_Monociclo
-Tue Mar 11 13:03:57 2025
+Tue Mar 11 21:06:13 2025
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -37,7 +37,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------+
 ; EDA Netlist Writer Summary                                        ;
 +---------------------------+---------------------------------------+
-; EDA Netlist Writer Status ; Successful - Tue Mar 11 13:03:57 2025 ;
+; EDA Netlist Writer Status ; Successful - Tue Mar 11 21:06:13 2025 ;
 ; Revision Name             ; MIPS_Monociclo                        ;
 ; Top-level Entity Name     ; MIPS_Monociclo                        ;
 ; Family                    ; MAX 10                                ;
@@ -66,13 +66,13 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------------------------------------------------------------+---------------------------+
 
 
-+-------------------------------------------------------------------------------------------+
-; Simulation Generated Files                                                                ;
-+-------------------------------------------------------------------------------------------+
-; Generated Files                                                                           ;
-+-------------------------------------------------------------------------------------------+
-; C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim//MIPS_Monociclo.vo ;
-+-------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------------------------------+
+; Simulation Generated Files                                                                                        ;
++-------------------------------------------------------------------------------------------------------------------+
+; Generated Files                                                                                                   ;
++-------------------------------------------------------------------------------------------------------------------+
+; C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim//MIPS_Monociclo.vo ;
++-------------------------------------------------------------------------------------------------------------------+
 
 
 +-----------------------------+
@@ -95,14 +95,14 @@ Info: Running Quartus Prime EDA Netlist Writer
     Info: Intel and sold by Intel or its authorized distributors.  Please
     Info: refer to the applicable agreement for further details, at
     Info: https://fpgasoftware.intel.com/eula.
-    Info: Processing started: Tue Mar 11 13:03:56 2025
-Info: Command: quartus_eda --write_settings_files=off --simulation=on --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/" MIPS_Monociclo -c MIPS_Monociclo
+    Info: Processing started: Tue Mar 11 21:06:12 2025
+Info: Command: quartus_eda --write_settings_files=off --simulation=on --functional=on --flatten_buses=off --tool=modelsim_oem --format=verilog --output_directory="C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim/" MIPS_Monociclo -c MIPS_Monociclo
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
-Info (204019): Generated file MIPS_Monociclo.vo in folder "C:/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim//" for EDA simulation tool
+Info (204019): Generated file MIPS_Monociclo.vo in folder "C:/Users/user/Desktop/aocc/Projetos_AOC/Atividades 2VA - AOC/Projeto 2VA - AOC/simulation/qsim//" for EDA simulation tool
 Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 4661 megabytes
-    Info: Processing ended: Tue Mar 11 13:03:58 2025
-    Info: Elapsed time: 00:00:02
+    Info: Peak virtual memory: 4656 megabytes
+    Info: Processing ended: Tue Mar 11 21:06:13 2025
+    Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:01
 
 
