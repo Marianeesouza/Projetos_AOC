@@ -1,26 +1,26 @@
 # do MIPS_Monociclo.do
 # ** Warning: (vlib-34) Library already exists at "work".
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 21:06:14 on Mar 11,2025
+# Start time: 01:13:25 on Mar 12,2025
 # vlog -work work MIPS_Monociclo.vo 
 # -- Compiling module MIPS_Monociclo
 # -- Compiling module hard_block
 # 
 # Top level modules:
 # 	MIPS_Monociclo
-# End time: 21:06:14 on Mar 11,2025, Elapsed time: 0:00:00
+# End time: 01:13:26 on Mar 12,2025, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
 # Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
-# Start time: 21:06:14 on Mar 11,2025
+# Start time: 01:13:26 on Mar 12,2025
 # vlog -work work Waveform3.vwf.vt 
 # -- Compiling module MIPS_Monociclo_vlg_vec_tst
 # 
 # Top level modules:
 # 	MIPS_Monociclo_vlg_vec_tst
-# End time: 21:06:14 on Mar 11,2025, Elapsed time: 0:00:00
+# End time: 01:13:26 on Mar 12,2025, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
 # vsim -c -t 1ps -L fiftyfivenm_ver -L altera_ver -L altera_mf_ver -L 220model_ver -L sgate_ver -L altera_lnsim_ver work.MIPS_Monociclo_vlg_vec_tst 
-# Start time: 21:06:14 on Mar 11,2025
+# Start time: 01:13:26 on Mar 12,2025
 # Loading work.MIPS_Monociclo_vlg_vec_tst
 # Loading work.MIPS_Monociclo
 # Loading work.hard_block
@@ -35,15 +35,19 @@
 # Loading fiftyfivenm_ver.fiftyfivenm_adcblock
 # Loading altera_ver.PRIM_GDFF_LOW
 # ** Warning: (vsim-2685) [TFMPC] - Too few port connections for '\~QUARTUS_CREATED_ADC1~ '.  Expected 8, found 7.
-#    Time: 0 ps  Iteration: 0  Instance: /MIPS_Monociclo_vlg_vec_tst/i1/\~QUARTUS_CREATED_ADC1~  File: MIPS_Monociclo.vo Line: 111385
-# ** Warning: (vsim-3722) MIPS_Monociclo.vo(111385): [TFMPC] - Missing connection for port 'clk_dft'.
-# ** Warning: Design size of 15115 statements exceeds ModelSim-Intel FPGA Starter Edition recommended capacity.
+#    Time: 0 ps  Iteration: 0  Instance: /MIPS_Monociclo_vlg_vec_tst/i1/\~QUARTUS_CREATED_ADC1~  File: MIPS_Monociclo.vo Line: 135254
+# ** Warning: (vsim-3722) MIPS_Monociclo.vo(135254): [TFMPC] - Missing connection for port 'clk_dft'.
+# ** Warning: Design size of 16951 statements exceeds ModelSim-Intel FPGA Starter Edition recommended capacity.
 # Expect performance to be adversely affected.
 # after#26
 # Simulation time: 0 ps
 # Simulation time: 0 ps
 # Simulation time: 0 ps
+# Simulation time: 0 ps
+# Simulation time: 0 ps
+# Simulation time: 0 ps
+# Simulation time: 0 ps
 # ** Note: $finish    : Waveform3.vwf.vt(55)
 #    Time: 1 us  Iteration: 0  Instance: /MIPS_Monociclo_vlg_vec_tst
-# End time: 21:06:24 on Mar 11,2025, Elapsed time: 0:00:10
+# End time: 01:13:45 on Mar 12,2025, Elapsed time: 0:00:19
 # Errors: 0, Warnings: 3

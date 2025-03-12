@@ -20,8 +20,8 @@ module ULA(in1, in2, OP, result, zero_flag);
             4'b0000: result = in1 & in2;                   // AND
             4'b0001: result = in1 | in2;                   // OR
             4'b0010: result = in1 + in2;                   // ADD
-            4'b0011: result = in1 << in2[4:0];             // SLLV (Shift Left Logical Variable)
-            4'b0100: result = in1 >> in2[4:0];             // SRLV (Shift Right Logical Variable)
+            4'b0011: result = in2 << in1[4:0];             // SLLV (Shift Left Logical Variable)				
+            4'b0100: result = in2 >> in1[4:0];             // SRLV (Shift Right Logical Variable)
             4'b0101: result = $signed(in1) >>> in2[4:0];   // SRAV (Shift Right Arithmetic Variable)
             4'b0110: result = in1 - in2;                   // SUB
             4'b0111: result = ($signed(in1) < $signed(in2)) ? 32'b1 : 32'b0; // SLT (Signed Less Than)
@@ -34,6 +34,6 @@ module ULA(in1, in2, OP, result, zero_flag);
     end
 
     // A flag zero_flag é ativada se o resultado for zero, e no caso de BNE, se for diferente de zero
-    assign zero_flag = (result == 32'b0) ? 1'b1 : (OP == 4'b1000 ? 1'b0 : 1'b0);
+    assign zero_flag = (result == 32'b0) ? (OP == 4'b1000 ? 1'b0 : 1'b1) : (OP == 4'b1000 ? 1'b1 : 1'b0);
 
 endmodule
